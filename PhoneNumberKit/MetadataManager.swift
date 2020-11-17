@@ -49,17 +49,15 @@ final class MetadataManager {
     /// - Parameter metadataCallback: a closure that returns metadata as JSON Data.
     /// - Returns: array of MetadataTerritory objects
     private func populateTerritories(metadataCallback: MetadataCallback) -> [MetadataTerritory] {
-        var territoryArray = [MetadataTerritory]()
         do {
-            let jsonData: Data? = try metadataCallback()
+            let jsonData = try metadataCallback()
             let jsonDecoder = JSONDecoder()
-            if let jsonData = jsonData, let metadata: PhoneNumberMetadata = try? jsonDecoder.decode(PhoneNumberMetadata.self, from: jsonData) {
-                territoryArray = metadata.territories
-            }
+            let metadata = try jsonDecoder.decode(PhoneNumberMetadata.self, from: jsonData)
+            return metadata.territories
         } catch {
             debugPrint("ERROR: Unable to load PhoneNumberMetadata.json resource: \(error.localizedDescription)")
+            return []
         }
-        return territoryArray
     }
 
     // MARK: Filters

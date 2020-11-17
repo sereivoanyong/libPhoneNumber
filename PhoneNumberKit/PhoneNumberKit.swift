@@ -11,7 +11,7 @@ import Foundation
 import CoreTelephony
 #endif
 
-public typealias MetadataCallback = (() throws -> Data?)
+public typealias MetadataCallback = () throws -> Data
 
 public final class PhoneNumberKit: NSObject {
     // Manager objects
@@ -321,7 +321,7 @@ public final class PhoneNumberKit: NSObject {
     /// Default metadta callback, reads metadata from PhoneNumberMetadata.json file in bundle
     ///
     /// - returns: an optional Data representation of the metadata.
-    public static func defaultMetadataCallback() throws -> Data? {
+    public static func defaultMetadataCallback() throws -> Data {
         let frameworkBundle = Bundle.module
         guard let jsonPath = frameworkBundle.path(forResource: "PhoneNumberMetadata", ofType: "json") else {
             throw PhoneNumberError.metadataNotFound
