@@ -12,19 +12,15 @@ import Foundation
 public final class PartialFormatter {
     private let phoneNumberKit: PhoneNumberKit
 
+    let regexManager: RegexManager
     let metadataManager: MetadataManager
     let parser: PhoneNumberParser
-    let regexManager: RegexManager
 
-    public convenience init(phoneNumberKit: PhoneNumberKit = PhoneNumberKit(), defaultRegion: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true, maxDigits: Int? = nil) {
-        self.init(phoneNumberKit: phoneNumberKit, regexManager: phoneNumberKit.regexManager, metadataManager: phoneNumberKit.metadataManager, parser: phoneNumberKit.parseManager.parser, defaultRegion: defaultRegion, withPrefix: withPrefix, maxDigits: maxDigits)
-    }
-
-    init(phoneNumberKit: PhoneNumberKit, regexManager: RegexManager, metadataManager: MetadataManager, parser: PhoneNumberParser, defaultRegion: String, withPrefix: Bool = true, maxDigits: Int? = nil) {
+    public init(phoneNumberKit: PhoneNumberKit, defaultRegion: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true, maxDigits: Int? = nil) {
         self.phoneNumberKit = phoneNumberKit
-        self.regexManager = regexManager
-        self.metadataManager = metadataManager
-        self.parser = parser
+        self.regexManager = phoneNumberKit.regexManager
+        self.metadataManager = phoneNumberKit.metadataManager
+        self.parser = phoneNumberKit.parseManager.parser
         self.defaultRegion = defaultRegion
         self.updateMetadataForDefaultRegion()
         self.withPrefix = withPrefix

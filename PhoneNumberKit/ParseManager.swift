@@ -12,14 +12,14 @@ import Foundation
  Manager for parsing flow.
  */
 struct ParseManager {
+    let regexManager: RegexManager
     let metadataManager: MetadataManager
     let parser: PhoneNumberParser
-    let regexManager: RegexManager
 
-    init(metadataManager: MetadataManager, regexManager: RegexManager) {
-        self.metadataManager = metadataManager
-        self.parser = PhoneNumberParser(regex: regexManager, metadata: metadataManager)
+    init(regexManager: RegexManager, metadataManager: MetadataManager) {
         self.regexManager = regexManager
+        self.metadataManager = metadataManager
+        self.parser = PhoneNumberParser(regexManager: regexManager, metadataManager: metadataManager)
     }
 
     /**

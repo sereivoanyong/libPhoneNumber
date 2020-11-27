@@ -12,8 +12,8 @@ import Foundation
  Parser. Contains parsing functions.
  */
 struct PhoneNumberParser {
-    let regex: RegexManager
-    let metadata: MetadataManager
+    let regexManager: RegexManager
+    let metadataManager: MetadataManager
 
     // MARK: Normalizations
 
@@ -24,7 +24,7 @@ struct PhoneNumberParser {
      */
     func normalizePhoneNumber(_ number: String) -> String {
         let normalizationMappings = PhoneNumberPatterns.allNormalizationMappings
-        return regex.stringByReplacingOccurrences(number, map: normalizationMappings)
+        return regexManager.stringByReplacingOccurrences(number, map: normalizationMappings)
     }
 
     // MARK: Extractions
@@ -61,7 +61,7 @@ struct PhoneNumberParser {
                 }
                 stripNationalPrefix(&potentialNationalNumber, metadata: metadata)
                 let potentialNationalNumberStr = potentialNationalNumber
-                if (!regex.matchesEntirely(validNumberPattern, string: fullNumber) && regex.matchesEntirely(validNumberPattern, string: potentialNationalNumberStr)) || !regex.testStringLengthAgainstPattern(possibleNumberPattern, string: fullNumber as String) {
+                if (!regexManager.matchesEntirely(validNumberPattern, string: fullNumber) && regexManager.matchesEntirely(validNumberPattern, string: potentialNationalNumberStr)) || !regexManager.testStringLengthAgainstPattern(possibleNumberPattern, string: fullNumber as String) {
                     nationalNumber = potentialNationalNumberStr
                     if let countryCode = UInt64(defaultCountryCode) {
                         return UInt64(countryCode)
@@ -98,7 +98,7 @@ struct PhoneNumberParser {
             }
             let stringRange = NSRange(location: startPosition, length: i)
             let subNumber = nsFullNumber.substring(with: stringRange)
-            if let potentialCountryCode = UInt64(subNumber), metadata.territoriesByCode[potentialCountryCode] != nil {
+            if let potentialCountryCode = UInt64(subNumber), metadataManager.territoriesByCode[potentialCountryCode] != nil {
                 nationalNumber = nsFullNumber.substring(from: i)
                 return potentialCountryCode
             }
@@ -119,7 +119,7 @@ struct PhoneNumberParser {
         guard let generalNumberDesc = metadata.generalDesc else {
             return .unknown
         }
-        if !regex.hasValue(generalNumberDesc.nationalNumberPattern) || !isNumberMatchingDesc(nationalNumber, numberDesc: generalNumberDesc) {
+        if !regexManager.hasValue(generalNumberDesc.nationalNumberPattern) || !isNumberMatchingDesc(nationalNumber, numberDesc: generalNumberDesc) {
             return .unknown
         }
         if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.pager) {
@@ -168,7 +168,7 @@ struct PhoneNumberParser {
      - Returns: True or false.
      */
     func isNumberMatchingDesc(_ nationalNumber: String, numberDesc: MetadataPhoneNumberDesc?) -> Bool {
-        return regex.matchesEntirely(numberDesc?.nationalNumberPattern, string: nationalNumber)
+        return regexManager.matchesEntirely(numberDesc?.nationalNumberPattern, string: nationalNumber)
     }
 
     /**
@@ -178,9 +178,9 @@ struct PhoneNumberParser {
      - Returns: True or false and modifies the number accordingly.
      */
     func parsePrefixAsIdd(_ number: inout String, iddPattern: String) -> Bool {
-        if regex.stringPositionByRegex(iddPattern, string: number) == 0 {
+        if regexManager.stringPositionByRegex(iddPattern, string: number) == 0 {
             do {
-                guard let matched = try regex.regexMatches(iddPattern as String, string: number as String).first else {
+                guard let matched = try regexManager.regexMatches(iddPattern as String, string: number as String).first else {
                     return false
                 }
                 let matchedString = number.substring(with: matched.range)
@@ -191,7 +191,7 @@ struct PhoneNumberParser {
                 if let firstMatch = matchedGroups.first {
                     let digitMatched = remainString.substring(with: firstMatch.range) as NSString
                     if digitMatched.length > 0 {
-                        let normalizedGroup = regex.stringByReplacingOccurrences(digitMatched as String, map: PhoneNumberPatterns.allNormalizationMappings)
+                        let normalizedGroup = regexManager.stringByReplacingOccurrences(digitMatched as String, map: PhoneNumberPatterns.allNormalizationMappings)
                         if normalizedGroup == "0" {
                             return false
                         }
@@ -215,7 +215,7 @@ struct PhoneNumberParser {
      */
     func stripExtension(_ number: inout String) -> String? {
         do {
-            let matches = try regex.regexMatches(PhoneNumberPatterns.extnPattern, string: number)
+            let matches = try regexManager.regexMatches(PhoneNumberPatterns.extnPattern, string: number)
             if let match = matches.first {
                 let adjustedRange = NSRange(location: match.range.location + 1, length: match.range.length - 1)
                 let matchString = number.substring(with: adjustedRange)
@@ -236,8 +236,8 @@ struct PhoneNumberParser {
      - Returns: Modified normalized number without international prefix and a PNCountryCodeSource enumeration.
      */
     func stripInternationalPrefixAndNormalize(_ number: inout String, possibleIddPrefix: String?) -> PhoneNumberCountryCodeSource {
-        if regex.matchesAtStart(PhoneNumberPatterns.leadingPlusCharsPattern, string: number as String) {
-            number = regex.replaceStringByRegex(PhoneNumberPatterns.leadingPlusCharsPattern, string: number as String)
+        if regexManager.matchesAtStart(PhoneNumberPatterns.leadingPlusCharsPattern, string: number as String) {
+            number = regexManager.replaceStringByRegex(PhoneNumberPatterns.leadingPlusCharsPattern, string: number as String)
             return .numberWithPlusSign
         }
         number = normalizePhoneNumber(number as String)
@@ -264,7 +264,7 @@ struct PhoneNumberParser {
         }
         let prefixPattern = String(format: "^(?:%@)", possibleNationalPrefix)
         do {
-            let matches = try regex.regexMatches(prefixPattern, string: number)
+            let matches = try regexManager.regexMatches(prefixPattern, string: number)
             if let firstMatch = matches.first {
                 let nationalNumberRule = metadata.generalDesc?.nationalNumberPattern
                 let firstMatchString = number.substring(with: firstMatch.range)
@@ -272,14 +272,14 @@ struct PhoneNumberParser {
                 var transformedNumber: String = String()
                 let firstRange = firstMatch.range(at: numOfGroups)
                 let firstMatchStringWithGroup = (firstRange.location != NSNotFound && firstRange.location < number.count) ? number.substring(with: firstRange) : String()
-                let firstMatchStringWithGroupHasValue = regex.hasValue(firstMatchStringWithGroup)
+                let firstMatchStringWithGroupHasValue = regexManager.hasValue(firstMatchStringWithGroup)
                 if let transformRule = metadata.nationalPrefixTransformRule, firstMatchStringWithGroupHasValue {
-                    transformedNumber = regex.replaceFirstStringByRegex(prefixPattern, string: number, templateString: transformRule)
+                    transformedNumber = regexManager.replaceFirstStringByRegex(prefixPattern, string: number, templateString: transformRule)
                 } else {
                     let index = number.index(number.startIndex, offsetBy: firstMatchString.count)
                     transformedNumber = String(number[index...])
                 }
-                if regex.hasValue(nationalNumberRule), regex.matchesEntirely(nationalNumberRule, string: number), self.regex.matchesEntirely(nationalNumberRule, string: transformedNumber) == false {
+                if regexManager.hasValue(nationalNumberRule), regexManager.matchesEntirely(nationalNumberRule, string: number), self.regexManager.matchesEntirely(nationalNumberRule, string: transformedNumber) == false {
                     return
                 }
                 number = transformedNumber

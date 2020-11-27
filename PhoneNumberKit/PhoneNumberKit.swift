@@ -15,15 +15,16 @@ public typealias MetadataCallback = () throws -> Data
 
 public struct PhoneNumberKit {
     // Manager objects
+    let regexManager: RegexManager
     let metadataManager: MetadataManager
     let parseManager: ParseManager
-    let regexManager = RegexManager()
 
     // MARK: Lifecycle
 
     public init(metadataCallback: @escaping MetadataCallback = PhoneNumberKit.defaultMetadataCallback) {
+        regexManager = RegexManager()
         metadataManager = MetadataManager(metadataCallback: metadataCallback)
-        parseManager = ParseManager(metadataManager: metadataManager, regexManager: regexManager)
+        parseManager = ParseManager(regexManager: regexManager, metadataManager: metadataManager)
     }
 
     // MARK: Parsing
