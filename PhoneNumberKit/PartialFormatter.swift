@@ -12,7 +12,7 @@ import Foundation
 public final class PartialFormatter {
     private let phoneNumberKit: PhoneNumberKit
 
-    weak var metadataManager: MetadataManager?
+    let metadataManager: MetadataManager
     weak var parser: PhoneNumberParser?
     weak var regexManager: RegexManager?
 

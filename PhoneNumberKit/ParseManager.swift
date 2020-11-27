@@ -12,7 +12,7 @@ import Foundation
  Manager for parsing flow.
  */
 final class ParseManager {
-    weak var metadataManager: MetadataManager?
+    let metadataManager: MetadataManager
     let parser: PhoneNumberParser
     weak var regexManager: RegexManager?
 
@@ -29,7 +29,7 @@ final class ParseManager {
      - parameter ignoreType:   Avoids number type checking for faster performance.
      */
     func parse(_ numberString: String, withRegion region: String, ignoreType: Bool) throws -> PhoneNumber {
-        guard let metadataManager = metadataManager, let regexManager = regexManager else { throw PhoneNumberError.generalError }
+        guard let regexManager = regexManager else { throw PhoneNumberError.generalError }
         // Make sure region is in uppercase so that it matches metadata (1)
         let region = region.uppercased()
         // Extract number (2)
@@ -143,7 +143,7 @@ final class ParseManager {
     ///   - leadingZero: whether or not the number has a leading zero.
     /// - Returns: ISO 639 compliant region code.
     func getRegionCode(of nationalNumber: UInt64, countryCode: UInt64, leadingZero: Bool) -> String? {
-        guard let regexManager = regexManager, let metadataManager = metadataManager, let regions = metadataManager.territoriesByCode[countryCode] else { return nil }
+        guard let regexManager = regexManager, let regions = metadataManager.territoriesByCode[countryCode] else { return nil }
 
         if regions.count == 1 {
             return regions[0].codeID
