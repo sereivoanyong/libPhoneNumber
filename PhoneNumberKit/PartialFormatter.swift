@@ -390,7 +390,7 @@ public final class PartialFormatter {
             let remainingNationalNumber: String = String(rawNumber[nationalCharacterIndex...])
             rebuiltString.append(remainingNationalNumber)
         }
-        rebuiltString = rebuiltString.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        rebuiltString = rebuiltString.trimmingCharacters(in: .whitespacesAndNewlines)
 
         return rebuiltString
     }
