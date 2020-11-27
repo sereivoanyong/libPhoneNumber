@@ -11,7 +11,7 @@ import Foundation
 // MARK: - MetadataTerritory
 
 public extension MetadataTerritory {
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case codeID = "id"
         case countryCode
         case internationalPrefix
@@ -78,7 +78,7 @@ public extension MetadataTerritory {
 // MARK: - MetadataPhoneNumberFormat
 
 public extension MetadataPhoneNumberFormat {
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case pattern
         case format
         case intlFormat
@@ -107,7 +107,7 @@ public extension MetadataPhoneNumberFormat {
 // MARK: - PhoneNumberMetadata
 
 extension PhoneNumberMetadata {
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case phoneNumberMetadata
         case territories
         case territory
