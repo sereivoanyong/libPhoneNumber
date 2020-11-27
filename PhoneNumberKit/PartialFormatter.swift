@@ -13,7 +13,7 @@ public final class PartialFormatter {
     private let phoneNumberKit: PhoneNumberKit
 
     let metadataManager: MetadataManager
-    weak var parser: PhoneNumberParser?
+    let parser: PhoneNumberParser?
     weak var regexManager: RegexManager?
 
     public convenience init(phoneNumberKit: PhoneNumberKit = PhoneNumberKit(), defaultRegion: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true, maxDigits: Int? = nil) {
@@ -40,7 +40,6 @@ public final class PartialFormatter {
     public var maxDigits: Int?
 
     func updateMetadataForDefaultRegion() {
-        guard let metadataManager = metadataManager else { return }
         if let regionMetadata = metadataManager.territoriesByCountry[defaultRegion] {
             self.defaultMetadata = metadataManager.mainTerritory(forCode: regionMetadata.countryCode)
         } else {
@@ -241,7 +240,7 @@ public final class PartialFormatter {
         }
         if let potentialCountryCode = parser?.extractPotentialCountryCode(rawNumber, nationalNumber: &numberWithoutCountryCallingCode), potentialCountryCode != 0 {
             processedNumber = numberWithoutCountryCallingCode
-            self.currentMetadata = self.metadataManager?.mainTerritory(forCode: potentialCountryCode)
+            self.currentMetadata = metadataManager.mainTerritory(forCode: potentialCountryCode)
             let potentialCountryCodeString = String(potentialCountryCode)
             prefixBeforeNationalNumber.append(potentialCountryCodeString)
             self.prefixBeforeNationalNumber.append(" ")
