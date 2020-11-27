@@ -8,16 +8,8 @@
 
 import Foundation
 
-final class Formatter {
-    weak var regexManager: RegexManager?
-
-    init(phoneNumberKit: PhoneNumberKit) {
-        self.regexManager = phoneNumberKit.regexManager
-    }
-
-    init(regexManager: RegexManager) {
-        self.regexManager = regexManager
-    }
+struct Formatter {
+    let regexManager: RegexManager
 
     // MARK: Formatting functions
 
@@ -31,7 +23,7 @@ final class Formatter {
     func format(phoneNumber: PhoneNumber, formatType: PhoneNumberFormat, regionMetadata: MetadataTerritory?) -> String {
         var formattedNationalNumber = phoneNumber.adjustedNationalNumber()
         if let regionMetadata = regionMetadata {
-            formattedNationalNumber = self.formatNationalNumber(formattedNationalNumber, regionMetadata: regionMetadata, formatType: formatType)
+            formattedNationalNumber = formatNationalNumber(formattedNationalNumber, regionMetadata: regionMetadata, formatType: formatType)
             if let formattedExtension = formatExtension(phoneNumber.numberExtension, regionMetadata: regionMetadata) {
                 formattedNationalNumber = formattedNationalNumber + formattedExtension
             }
@@ -64,7 +56,6 @@ final class Formatter {
     ///   - formatType: Format type.
     /// - Returns: Modified nationalNumber for display.
     func formatNationalNumber(_ nationalNumber: String, regionMetadata: MetadataTerritory, formatType: PhoneNumberFormat) -> String {
-        guard let regexManager = regexManager else { return nationalNumber }
         let formats = regionMetadata.numberFormats
         var selectedFormat: MetadataPhoneNumberFormat?
         for format in formats {
@@ -111,7 +102,7 @@ public extension PhoneNumber {
      - Returns: A string representing the adjusted national number.
      */
     func adjustedNationalNumber() -> String {
-        if self.leadingZero == true {
+        if leadingZero {
             return "0" + String(nationalNumber)
         } else {
             return String(nationalNumber)
