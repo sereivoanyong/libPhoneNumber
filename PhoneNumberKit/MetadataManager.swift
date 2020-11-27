@@ -19,7 +19,7 @@ struct MetadataManager {
     /// Private init populates metadata territories and the two hashed dictionaries for faster lookup.
     ///
     /// - Parameter metadataCallback: a closure that returns metadata as JSON Data.
-    public init(metadataCallback: MetadataCallback) {
+    init(metadataCallback: MetadataCallback) {
         self.territories = Self.populateTerritories(metadataCallback: metadataCallback)
         var territoriesByCode: [UInt64: [MetadataTerritory]] = [:]
         var mainTerritoryByCode: [UInt64: MetadataTerritory] = [:]
@@ -67,7 +67,7 @@ struct MetadataManager {
     /// - parameter code:  international country code (e.g 44 for the UK).
     ///
     /// - returns: optional array of MetadataTerritory objects.
-    internal func filterTerritories(byCode code: UInt64) -> [MetadataTerritory]? {
+    func filterTerritories(byCode code: UInt64) -> [MetadataTerritory]? {
         return territoriesByCode[code]
     }
 
@@ -76,7 +76,7 @@ struct MetadataManager {
     /// - parameter country: ISO 639 compliant region code (e.g "GB" for the UK).
     ///
     /// - returns: A MetadataTerritory object.
-    internal func filterTerritories(byCountry country: String) -> MetadataTerritory? {
+    func filterTerritories(byCountry country: String) -> MetadataTerritory? {
         return territoriesByCountry[country.uppercased()]
     }
 
@@ -85,7 +85,7 @@ struct MetadataManager {
     /// - parameter code: An international country code (e.g 1 for the US).
     ///
     /// - returns: A MetadataTerritory object.
-    internal func mainTerritory(forCode code: UInt64) -> MetadataTerritory? {
+    func mainTerritory(forCode code: UInt64) -> MetadataTerritory? {
         return mainTerritoryByCode[code]
     }
 }
