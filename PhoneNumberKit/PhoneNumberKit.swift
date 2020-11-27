@@ -11,8 +11,6 @@ import Foundation
 import CoreTelephony
 #endif
 
-public typealias MetadataCallback = () throws -> Data
-
 public struct PhoneNumberKit {
     // Manager objects
     let regexManager: RegexManager
@@ -21,9 +19,9 @@ public struct PhoneNumberKit {
 
     // MARK: Lifecycle
 
-    public init(metadataCallback: @escaping MetadataCallback = PhoneNumberKit.defaultMetadataCallback) {
+    public init() {
         regexManager = RegexManager()
-        metadataManager = MetadataManager(metadataCallback: metadataCallback)
+        metadataManager = MetadataManager()
         parseManager = ParseManager(regexManager: regexManager, metadataManager: metadataManager)
     }
 
@@ -312,18 +310,6 @@ public struct PhoneNumberKit {
             }
         }
         return PhoneNumberConstants.defaultCountry
-    }
-
-    /// Default metadta callback, reads metadata from PhoneNumberMetadata.json file in bundle
-    ///
-    /// - returns: an optional Data representation of the metadata.
-    public static func defaultMetadataCallback() throws -> Data {
-        let frameworkBundle = Bundle.module
-        guard let jsonPath = frameworkBundle.path(forResource: "PhoneNumberMetadata", ofType: "json") else {
-            throw PhoneNumberError.metadataNotFound
-        }
-        let data = try Data(contentsOf: URL(fileURLWithPath: jsonPath))
-        return data
     }
 }
 

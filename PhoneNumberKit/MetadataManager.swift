@@ -8,6 +8,21 @@
 
 import Foundation
 
+private func populateTerritories() -> [MetadataTerritory] {
+    do {
+        guard let url = Bundle.module.url(forResource: "PhoneNumberMetadata", withExtension: "json") else {
+          throw PhoneNumberError.metadataNotFound
+        }
+        let data = try Data(contentsOf: url)
+        let decoder = JSONDecoder()
+        let metadata = try decoder.decode(PhoneNumberMetadata.self, from: data)
+        return metadata.territories
+    } catch {
+        debugPrint("ERROR: Unable to load PhoneNumberMetadata.json resource: \(error.localizedDescription)")
+        return []
+    }
+}
+
 struct MetadataManager {
     let territories: [MetadataTerritory]
     let territoriesByCode: [UInt64: [MetadataTerritory]]
@@ -19,8 +34,8 @@ struct MetadataManager {
     /// Private init populates metadata territories and the two hashed dictionaries for faster lookup.
     ///
     /// - Parameter metadataCallback: a closure that returns metadata as JSON Data.
-    init(metadataCallback: MetadataCallback) {
-        self.territories = Self.populateTerritories(metadataCallback: metadataCallback)
+    init() {
+        self.territories = populateTerritories()
         var territoriesByCode: [UInt64: [MetadataTerritory]] = [:]
         var mainTerritoryByCode: [UInt64: MetadataTerritory] = [:]
         var territoriesByCountry: [String: MetadataTerritory] = [:]
@@ -42,22 +57,6 @@ struct MetadataManager {
         self.territoriesByCode = territoriesByCode
         self.mainTerritoryByCode = mainTerritoryByCode
         self.territoriesByCountry = territoriesByCountry
-    }
-
-    /// Populates the metadata from a metadataCallback.
-    ///
-    /// - Parameter metadataCallback: a closure that returns metadata as JSON Data.
-    /// - Returns: array of MetadataTerritory objects
-    private static func populateTerritories(metadataCallback: MetadataCallback) -> [MetadataTerritory] {
-        do {
-            let jsonData = try metadataCallback()
-            let jsonDecoder = JSONDecoder()
-            let metadata = try jsonDecoder.decode(PhoneNumberMetadata.self, from: jsonData)
-            return metadata.territories
-        } catch {
-            debugPrint("ERROR: Unable to load PhoneNumberMetadata.json resource: \(error.localizedDescription)")
-            return []
-        }
     }
 
     // MARK: Filters
