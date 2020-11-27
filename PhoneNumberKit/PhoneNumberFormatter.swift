@@ -44,6 +44,18 @@ open class PhoneNumberFormatter: Foundation.Formatter {
         partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegion: PhoneNumberKit.defaultRegionCode(), withPrefix: true)
         super.init(coder: coder)
     }
+
+    open func partialString(from string: String) -> String {
+        return partialFormatter.formatPartial(string)
+    }
+
+    open func string(from phoneNumber: PhoneNumber) -> String {
+        return phoneNumberKit.format(phoneNumber, toType: withPrefix ? .international : .national)
+    }
+
+    open func phoneNumber(from string: String) -> PhoneNumber? {
+        return try? phoneNumberKit.parse(string, withRegion: currentRegion)
+    }
 }
 
 // MARK: -
@@ -53,10 +65,10 @@ open class PhoneNumberFormatter: Foundation.Formatter {
 extension PhoneNumberFormatter {
     open override func string(for object: Any?) -> String? {
         if let phoneNumber = object as? PhoneNumber {
-            return phoneNumberKit.format(phoneNumber, toType: withPrefix ? .international : .national)
+            return string(from: phoneNumber)
         }
         if let string = object as? String {
-            return partialFormatter.formatPartial(string)
+            return partialString(from: string)
         }
         return nil
     }
