@@ -27,7 +27,6 @@ enum PhoneNumberCountryCodeSource {
  - NotANumber: The string provided is not a number
  - TooLong: The string provided is too long to be a valid number
  - TooShort: The string provided is too short to be a valid number
- - Deprecated: The method used was deprecated
  - metadataNotFound: PhoneNumberKit was unable to read the included metadata
  */
 public enum PhoneNumberError: Error {
@@ -37,7 +36,6 @@ public enum PhoneNumberError: Error {
     case unknownType
     case tooLong
     case tooShort
-    case deprecated
     case metadataNotFound
 }
 
@@ -50,7 +48,6 @@ extension PhoneNumberError: LocalizedError {
         case .unknownType: return NSLocalizedString("Phone number type is unknown.", comment: "")
         case .tooLong: return NSLocalizedString("The number provided is too long.", comment: "")
         case .tooShort: return NSLocalizedString("The number provided is too short.", comment: "")
-        case .deprecated: return NSLocalizedString("This function is deprecated.", comment: "")
         case .metadataNotFound: return NSLocalizedString("Valid metadata is missing.", comment: "")
         }
     }
