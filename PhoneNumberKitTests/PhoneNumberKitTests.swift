@@ -23,14 +23,14 @@ class PhoneNumberKitTests: XCTestCase {
     }
 
     func testMetadataMainCountryFetch() {
-        let countryMetadata = self.phoneNumberKit.metadataManager.mainTerritory(forCode: 1)
-        XCTAssertEqual(countryMetadata?.codeID, "US")
+        let countryMetadata = self.phoneNumberKit.metadataManager.mainTerritoryByCountryCodes[1]
+        XCTAssertEqual(countryMetadata?.regionCode, "US")
     }
 
     func testMetadataMainCountryFunction() {
-        let countryName = self.phoneNumberKit.mainRegionCode(forCode: 1)!
+        let countryName = self.phoneNumberKit.mainRegionCode(forCountryCode: 1)!
         XCTAssertEqual(countryName, "US")
-        let invalidCountry = self.phoneNumberKit.mainRegionCode(forCode: 992322)
+        let invalidCountry = self.phoneNumberKit.mainRegionCode(forCountryCode: 992322)
         XCTAssertNil(invalidCountry)
     }
 
@@ -322,7 +322,7 @@ class PhoneNumberKitTests: XCTestCase {
     func testValidAENumberWithMixedEasternArabicNumerals() {
         let testNumber = "+۹۷۱5۰۰5۰۰55۰"
         do {
-            let phoneNumber = try phoneNumberKit.parse(testNumber, regionCoderegionCode: "AE")
+            let phoneNumber = try phoneNumberKit.parse(testNumber, regionCode: "AE")
             XCTAssertEqual(self.phoneNumberKit.format(phoneNumber, format: .e164), "+971500500550")
             XCTAssertEqual(phoneNumber.countryCode, 971)
             XCTAssertEqual(phoneNumber.nationalNumber, 500500550)
@@ -384,29 +384,29 @@ class PhoneNumberKitTests: XCTestCase {
 
     //  Test that metadata initiates correctly by checking all countries
     func testAllCountries() {
-        let allCountries = self.phoneNumberKit.allCountries()
+        let allCountries = self.phoneNumberKit.allRegionCodes()
         XCTAssert(allCountries.count > 0)
     }
 
     //  Test code for country function -  valid country
     func testCodeForCountryValid() {
-        XCTAssertEqual(self.phoneNumberKit.countryCode(for: "FR"), 33)
+        XCTAssertEqual(self.phoneNumberKit.countryCode(forRegionCode: "FR"), 33)
     }
 
     //  Test code for country function - invalid country
     func testCodeForCountryInvalid() {
-        XCTAssertEqual(self.phoneNumberKit.countryCode(for: "FOOBAR"), nil)
+        XCTAssertEqual(self.phoneNumberKit.countryCode(forRegionCode: "FOOBAR"), nil)
     }
 
     //  Test countries for code function
     func testCountriesForCodeValid() {
-        XCTAssertEqual(self.phoneNumberKit.countries(withCode: 1)?.count, 25)
+        XCTAssertEqual(self.phoneNumberKit.regionCodes(forCountryCode: 1)?.count, 25)
     }
 
     //  Test countries for code function
     func testCountriesForCodeInvalid() {
         let phoneNumberKit = PhoneNumberKit()
-        XCTAssertEqual(phoneNumberKit.countries(withCode: 424242)?.count, nil)
+        XCTAssertEqual(phoneNumberKit.regionCodes(forCountryCode: 424242)?.count, nil)
     }
 
     //  Test region code for number function

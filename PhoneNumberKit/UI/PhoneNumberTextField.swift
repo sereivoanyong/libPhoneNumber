@@ -168,7 +168,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
     // MARK: Status
 
     public var currentRegionCode: String {
-        return self.partialFormatter.currentRegion
+        return partialFormatter.currentRegionCode
     }
 
     public var nationalNumber: String {

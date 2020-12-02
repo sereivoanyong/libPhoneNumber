@@ -27,8 +27,8 @@ open class PhoneNumberFormatter: Foundation.Formatter {
         set { partialFormatter.withPrefix = newValue }
     }
 
-    @objc public dynamic var currentRegion: String {
-        return partialFormatter.currentRegion
+    @objc public dynamic var currentRegionCode: String {
+        return partialFormatter.currentRegionCode
     }
 
     // MARK: Lifecycle
@@ -54,7 +54,7 @@ open class PhoneNumberFormatter: Foundation.Formatter {
     }
 
     open func phoneNumber(from string: String) -> PhoneNumber? {
-        return try? phoneNumberKit.parse(string, regionCode: currentRegion)
+        return try? phoneNumberKit.parse(string, regionCode: currentRegionCode)
     }
 }
 

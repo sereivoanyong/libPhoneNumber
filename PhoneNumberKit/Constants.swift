@@ -98,7 +98,7 @@ public enum PossibleLengthType: String, Codable {
 // MARK: Constants
 
 struct PhoneNumberConstants {
-    static let defaultCountry = "US"
+    static let defaultRegionCode = "US"
     static let defaultExtnPrefix = " ext. "
     static let longPhoneNumber = "999999999999999"
     static let minLengthForNSN = 2

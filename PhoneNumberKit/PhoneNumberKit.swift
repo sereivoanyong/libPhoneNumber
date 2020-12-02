@@ -105,7 +105,7 @@ public struct PhoneNumberKit {
     /// Get a list of all the countries in the metadata database
     ///
     /// - returns: An array of ISO 639 compliant region codes.
-    public func allCountries() -> [String] {
+    public func allRegionCodes() -> [String] {
         return metadataManager.territories.map { $0.regionCode }
     }
 
@@ -114,7 +114,7 @@ public struct PhoneNumberKit {
     /// - parameter countryCode: international country code (e.g 44 for the UK).
     ///
     /// - returns: optional array of ISO 639 compliant region codes.
-    public func countries(withCode countryCode: Int32) -> [String]? {
+    public func regionCodes(forCountryCode countryCode: Int32) -> [String]? {
         return metadataManager.territoriesByCountryCodes[countryCode]?.map { $0.regionCode }
     }
 
@@ -123,7 +123,7 @@ public struct PhoneNumberKit {
     /// - parameter countryCode: international country code (e.g 1 for the US).
     ///
     /// - returns: ISO 639 compliant region code string.
-    public func mainRegionCode(forCode countryCode: Int32) -> String? {
+    public func mainRegionCode(forCountryCode countryCode: Int32) -> String? {
         return metadataManager.mainTerritoryByCountryCodes[countryCode]?.regionCode
     }
 
@@ -290,7 +290,7 @@ public struct PhoneNumberKit {
     public static func defaultRegionCode() -> String {
 #if os(iOS) && !targetEnvironment(simulator) && !targetEnvironment(macCatalyst)
         let networkInfo = CTTelephonyNetworkInfo()
-        var carrier: CTCarrier? = nil
+        var carrier: CTCarrier?
         if #available(iOS 12.0, *) {
             carrier = networkInfo.serviceSubscriberCellularProviders?.values.first
         } else {
@@ -301,15 +301,7 @@ public struct PhoneNumberKit {
             return isoCountryCode.uppercased()
         }
 #endif
-        let currentLocale = Locale.current
-        if #available(iOS 10.0, *), let countryCode = currentLocale.regionCode {
-            return countryCode.uppercased()
-        } else {
-            if let countryCode = (currentLocale as NSLocale).object(forKey: .countryCode) as? String {
-                return countryCode.uppercased()
-            }
-        }
-        return PhoneNumberConstants.defaultCountry
+        return Locale.current.regionCode ?? PhoneNumberConstants.defaultRegionCode
     }
 }
 

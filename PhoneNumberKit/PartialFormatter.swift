@@ -52,7 +52,7 @@ public final class PartialFormatter {
 
     // MARK: Status
 
-    public var currentRegion: String {
+    public var currentRegionCode: String {
         if phoneNumberKit.countryCode(forRegionCode: defaultRegionCode) != 1 {
             return currentMetadata?.regionCode ?? "US"
         } else {
