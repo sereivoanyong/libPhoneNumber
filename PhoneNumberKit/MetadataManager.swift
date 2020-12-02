@@ -27,7 +27,7 @@ struct MetadataManager {
     let territories: [MetadataTerritory]
     let territoriesByCode: [UInt64: [MetadataTerritory]]
     let mainTerritoryByCode: [UInt64: MetadataTerritory]
-    let territoriesByCountry: [String: MetadataTerritory]
+    let territoriesByRegionCodes: [String: MetadataTerritory]
 
     // MARK: Lifecycle
 
@@ -56,7 +56,7 @@ struct MetadataManager {
         }
         self.territoriesByCode = territoriesByCode
         self.mainTerritoryByCode = mainTerritoryByCode
-        self.territoriesByCountry = territoriesByCountry
+        self.territoriesByRegionCodes = territoriesByCountry
     }
 
     // MARK: Filters
@@ -75,8 +75,9 @@ struct MetadataManager {
     /// - parameter country: ISO 639 compliant region code (e.g "GB" for the UK).
     ///
     /// - returns: A MetadataTerritory object.
-    func filterTerritories(byCountry country: String) -> MetadataTerritory? {
-        return territoriesByCountry[country.uppercased()]
+    func filterTerritories(byRegionCode regionCode: String) -> MetadataTerritory? {
+        assert(regionCode == regionCode.uppercased())
+        return territoriesByRegionCodes[regionCode]
     }
 
     /// Get the main MetadataTerritory objects for a given country code.

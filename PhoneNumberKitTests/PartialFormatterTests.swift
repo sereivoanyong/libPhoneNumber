@@ -451,21 +451,21 @@ class PartialFormatterTests: XCTestCase {
     func testMinimalFrenchNumber() {
         let partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegion: "US")
         _ = partialFormatter.formatPartial("+33")
-        XCTAssertEqual(partialFormatter.currentRegion, "FR")
+        XCTAssertEqual(partialFormatter.currentRegionCode, "FR")
     }
 
     func testMinimalUSNumberFromFrance() {
         let partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegion: "FR")
         _ = partialFormatter.formatPartial("+1")
-        XCTAssertEqual(partialFormatter.currentRegion, "US")
+        XCTAssertEqual(partialFormatter.currentRegionCode, "US")
     }
 
     func testRegionResetsWithEachCallToFormatPartial() {
         let partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegion: "DE")
         _ = partialFormatter.formatPartial("+1 212 555 1212")
-        XCTAssertEqual(partialFormatter.currentRegion, "US")
+        XCTAssertEqual(partialFormatter.currentRegionCode, "US")
         _ = partialFormatter.formatPartial("invalid raw number")
-        XCTAssertEqual(partialFormatter.currentRegion, "DE")
+        XCTAssertEqual(partialFormatter.currentRegionCode, "DE")
     }
 
     // MARK: max digits

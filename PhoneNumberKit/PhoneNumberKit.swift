@@ -123,26 +123,26 @@ public struct PhoneNumberKit {
     /// - parameter countryCode: international country code (e.g 1 for the US).
     ///
     /// - returns: ISO 639 compliant region code string.
-    public func mainCountry(forCode countryCode: UInt64) -> String? {
+    public func mainRegionCode(forCode countryCode: UInt64) -> String? {
         return metadataManager.mainTerritory(forCode: countryCode)?.codeID
     }
 
     /// Get an international country code for an ISO 639 compliant region code
     ///
-    /// - parameter country: ISO 639 compliant region code.
+    /// - parameter regionCode: ISO 639 compliant region code.
     ///
     /// - returns: international country code (e.g. 33 for France).
-    public func countryCode(for country: String) -> UInt64? {
-        return metadataManager.filterTerritories(byCountry: country)?.countryCode
+    public func countryCode(forRegionCode regionCode: String) -> UInt64? {
+        return metadataManager.filterTerritories(byRegionCode: regionCode)?.countryCode
     }
 
     /// Get leading digits for an ISO 639 compliant region code.
     ///
-    /// - parameter country: ISO 639 compliant region code.
+    /// - parameter regionCode: ISO 639 compliant region code.
     ///
     /// - returns: leading digits (e.g. 876 for Jamaica).
-    public func leadingDigits(for country: String) -> String? {
-        return metadataManager.filterTerritories(byCountry: country)?.leadingDigits
+    public func leadingDigits(forRegionCode regionCode: String) -> String? {
+        return metadataManager.filterTerritories(byRegionCode: regionCode)?.leadingDigits
     }
 
     /// Determine the region code of a given phone number.
@@ -156,12 +156,12 @@ public struct PhoneNumberKit {
 
     /// Get an example phone number for an ISO 639 compliant region code.
     ///
-    /// - parameter countryCode: ISO 639 compliant region code.
+    /// - parameter regionCode: ISO 639 compliant region code.
     /// - parameter type: The `PhoneNumberType` desired. default: `.mobile`
     ///
     /// - returns: An example phone number
-    public func getExampleNumber(forCountry countryCode: String, ofType type: PhoneNumberType = .mobile) -> PhoneNumber? {
-        let metadata = self.metadata(for: countryCode)
+    public func getExampleNumber(forRegionCode regionCode: String, ofType type: PhoneNumberType = .mobile) -> PhoneNumber? {
+        let metadata = self.metadata(forRegionCode: regionCode)
         let example: String?
         switch type {
         case .fixedLine: example = metadata?.fixedLine?.exampleNumber
@@ -179,36 +179,36 @@ public struct PhoneNumberKit {
         case .notParsed: return nil
         }
         do {
-            return try example.flatMap { try parse($0, regionCode: countryCode, ignoreType: false) }
+            return try example.flatMap { try parse($0, regionCode: regionCode, ignoreType: false) }
         } catch {
-            print("[PhoneNumberKit] Failed to parse example number for \(countryCode) region")
+            print("[PhoneNumberKit] Failed to parse example number for \(regionCode) region")
             return nil
         }
     }
 
     /// Get a formatted example phone number for an ISO 639 compliant region code.
     ///
-    /// - parameter countryCode: ISO 639 compliant region code.
+    /// - parameter regionCode: ISO 639 compliant region code.
     /// - parameter type: `PhoneNumberType` desired. default: `.mobile`
     /// - parameter format: `PhoneNumberFormat` to use for formatting. default: `.international`
     /// - parameter withPrefix: Whether or not to include the prefix.
     ///
     /// - returns: A formatted example phone number
     public func getFormattedExampleNumber(
-        forCountry countryCode: String, ofType type: PhoneNumberType = .mobile,
+        forRegionCode regionCode: String, ofType type: PhoneNumberType = .mobile,
         format: PhoneNumberFormat = .international, withPrefix: Bool = true
     ) -> String? {
-        return getExampleNumber(forCountry: countryCode, ofType: type)
+        return getExampleNumber(forRegionCode: regionCode, ofType: type)
             .flatMap { self.format($0, format: format, withPrefix: withPrefix) }
     }
 
     /// Get the MetadataTerritory objects for an ISO 639 compliant region code.
     ///
-    /// - parameter country: ISO 639 compliant region code (e.g "GB" for the UK).
+    /// - parameter regionCode: ISO 639 compliant region code (e.g "GB" for the UK).
     ///
     /// - returns: A MetadataTerritory object, or nil if no metadata was found for the country code
-    public func metadata(for country: String) -> MetadataTerritory? {
-        return metadataManager.filterTerritories(byCountry: country)
+    public func metadata(forRegionCode regionCode: String) -> MetadataTerritory? {
+        return metadataManager.filterTerritories(byRegionCode: regionCode)
     }
 
     /// Get an array of MetadataTerritory objects corresponding to a given country code.
@@ -225,8 +225,8 @@ public struct PhoneNumberKit {
     /// - parameter lengthType: PossibleLengthType enum.
     ///
     /// - returns: Array of possible lengths for the country. May be empty.
-    public func possiblePhoneNumberLengths(forCountry country: String, phoneNumberType: PhoneNumberType, lengthType: PossibleLengthType) -> [Int] {
-        guard let territory = metadataManager.filterTerritories(byCountry: country) else { return [] }
+    public func possiblePhoneNumberLengths(regionCode: String, phoneNumberType: PhoneNumberType, lengthType: PossibleLengthType) -> [Int] {
+        guard let territory = metadataManager.filterTerritories(byRegionCode: regionCode) else { return [] }
 
         let possibleLengths = possiblePhoneNumberLengths(forTerritory: territory, phoneNumberType: phoneNumberType)
 

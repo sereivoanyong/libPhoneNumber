@@ -28,9 +28,9 @@ class PhoneNumberKitTests: XCTestCase {
     }
 
     func testMetadataMainCountryFunction() {
-        let countryName = self.phoneNumberKit.mainCountry(forCode: 1)!
+        let countryName = self.phoneNumberKit.mainRegionCode(forCode: 1)!
         XCTAssertEqual(countryName, "US")
-        let invalidCountry = self.phoneNumberKit.mainCountry(forCode: 992322)
+        let invalidCountry = self.phoneNumberKit.mainRegionCode(forCode: 992322)
         XCTAssertNil(invalidCountry)
     }
 

@@ -38,12 +38,12 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
         super.text = newValue
     }
 
-    private lazy var _defaultRegion: String = PhoneNumberKit.defaultRegionCode()
+    private lazy var _defaultRegionCode: String = PhoneNumberKit.defaultRegionCode()
 
     /// Override region to set a custom region. Automatically uses the default region code.
-    open var defaultRegion: String {
+    open var defaultRegionCode: String {
         get {
-            return self._defaultRegion
+            return self._defaultRegionCode
         }
         @available(
             *,
@@ -54,7 +54,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
             """
         )
         set {
-            self.partialFormatter.defaultRegion = newValue
+            self.partialFormatter.defaultRegionCode = newValue
         }
     }
 
@@ -142,7 +142,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
 
     public private(set) lazy var partialFormatter: PartialFormatter = PartialFormatter(
         phoneNumberKit: phoneNumberKit,
-        defaultRegion: defaultRegion,
+        defaultRegionCode: defaultRegionCode,
         withPrefix: withPrefix
     )
 
@@ -167,7 +167,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
 
     // MARK: Status
 
-    public var currentRegion: String {
+    public var currentRegionCode: String {
         return self.partialFormatter.currentRegion
     }
 
@@ -179,7 +179,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
     public var isValidNumber: Bool {
         let rawNumber = self.text ?? String()
         do {
-            _ = try phoneNumberKit.parse(rawNumber, regionCode: currentRegion)
+            _ = try phoneNumberKit.parse(rawNumber, regionCode: currentRegionCode)
             return true
         } catch {
             return false
@@ -193,7 +193,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
     public var phoneNumber: PhoneNumber? {
         guard let rawNumber = self.text else { return nil }
         do {
-            return try phoneNumberKit.parse(rawNumber, regionCode: currentRegion)
+            return try phoneNumberKit.parse(rawNumber, regionCode: currentRegionCode)
         } catch {
             return nil
         }
@@ -269,7 +269,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
     }
 
     func internationalPrefix(for countryCode: String) -> String? {
-        guard let countryCode = phoneNumberKit.countryCode(for: currentRegion)?.description else { return nil }
+        guard let countryCode = phoneNumberKit.countryCode(forRegionCode: currentRegionCode)?.description else { return nil }
         return "+" + countryCode
     }
 
@@ -277,7 +277,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
         guard self.withFlag else { return }
         let flagBase = UnicodeScalar("🇦").value - UnicodeScalar("A").value
 
-        let flag = self.currentRegion
+        let flag = self.currentRegionCode
             .uppercased()
             .unicodeScalars
             .compactMap { UnicodeScalar(flagBase + $0.value)?.description }
@@ -293,7 +293,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
         if isEditing, !(self.text ?? "").isEmpty { return } // No need to update a placeholder while the placeholder isn't showing
 
         let format = self.withPrefix ? PhoneNumberFormat.international : .national
-        let example = self.phoneNumberKit.getFormattedExampleNumber(forCountry: self.currentRegion, format: format, withPrefix: self.withPrefix) ?? "12345678"
+        let example = self.phoneNumberKit.getFormattedExampleNumber(forRegionCode: currentRegionCode, format: format, withPrefix: self.withPrefix) ?? "12345678"
         let font = self.font ?? UIFont.preferredFont(forTextStyle: .body)
         let ph = NSMutableAttributedString(string: example, attributes: [.font: font])
 
@@ -438,8 +438,8 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
         }
 
         // we change the default region to be the one most recently typed
-        self._defaultRegion = self.currentRegion
-        self.partialFormatter.defaultRegion = self.currentRegion
+        self._defaultRegionCode = self.currentRegionCode
+        self.partialFormatter.defaultRegionCode = self.currentRegionCode
         self.updateFlag()
         self.updatePlaceholder()
 
@@ -453,7 +453,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
     }
 
     open func textFieldDidBeginEditing(_ textField: UITextField) {
-        if self.withExamplePlaceholder, self.withPrefix, let countryCode = phoneNumberKit.countryCode(for: currentRegion)?.description, (text ?? "").isEmpty {
+        if self.withExamplePlaceholder, self.withPrefix, let countryCode = phoneNumberKit.countryCode(forRegionCode: currentRegionCode)?.description, (text ?? "").isEmpty {
             text = "+" + countryCode + " "
         }
         self._delegate?.textFieldDidBeginEditing?(textField)
@@ -489,7 +489,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
     }
 
     private func updateTextFieldDidEndEditing(_ textField: UITextField) {
-        if self.withExamplePlaceholder, self.withPrefix, let countryCode = phoneNumberKit.countryCode(for: currentRegion)?.description,
+        if self.withExamplePlaceholder, self.withPrefix, let countryCode = phoneNumberKit.countryCode(forRegionCode: currentRegionCode)?.description,
             let text = textField.text,
             text == internationalPrefix(for: countryCode) {
             textField.text = ""
@@ -505,8 +505,8 @@ extension PhoneNumberTextField: CountryCodePickerDelegate {
 
     public func countryCodePickerViewControllerDidPickCountry(_ country: CountryCodePickerViewController.Country) {
         text = isEditing ? "+" + country.prefix : ""
-        _defaultRegion = country.code
-        partialFormatter.defaultRegion = country.code
+        _defaultRegionCode = country.code
+        partialFormatter.defaultRegionCode = country.code
         updateFlag()
         updatePlaceholder()
 

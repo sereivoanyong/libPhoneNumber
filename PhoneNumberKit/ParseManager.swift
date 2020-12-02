@@ -45,7 +45,7 @@ struct ParseManager {
             numberExtension = parser.normalizePhoneNumber(rawExtension)
         }
         // Country code parse (4)
-        guard var regionMetadata = metadataManager.territoriesByCountry[regionCode] else {
+        guard var regionMetadata = metadataManager.territoriesByRegionCodes[regionCode] else {
             throw PhoneNumberError.invalidCountryCode
         }
         var countryCode: UInt64
@@ -82,7 +82,7 @@ struct ParseManager {
         // Check if the number if of a known type (10)
         var type: PhoneNumberType = .unknown
         if !ignoreType {
-            if let regionCode = getRegionCode(of: finalNationalNumber, countryCode: countryCode, leadingZero: leadingZero), let foundMetadata = metadataManager.territoriesByCountry[regionCode] {
+            if let regionCode = getRegionCode(of: finalNationalNumber, countryCode: countryCode, leadingZero: leadingZero), let foundMetadata = metadataManager.territoriesByRegionCodes[regionCode] {
                 regionMetadata = foundMetadata
             }
             type = parser.checkNumberType(String(nationalNumber), metadata: regionMetadata, leadingZero: leadingZero)

@@ -17,9 +17,9 @@ open class PhoneNumberFormatter: Foundation.Formatter {
     @objc public dynamic var generatesPhoneNumber: Bool = false
 
     /// Override region to set a custom region. Automatically uses the default region code.
-    @objc public dynamic var defaultRegion: String {
-        get { return partialFormatter.defaultRegion }
-        set { partialFormatter.defaultRegion = newValue }
+    @objc public dynamic var defaultRegionCode: String {
+        get { return partialFormatter.defaultRegionCode }
+        set { partialFormatter.defaultRegionCode = newValue }
     }
 
     @objc public dynamic var withPrefix: Bool {
@@ -33,15 +33,15 @@ open class PhoneNumberFormatter: Foundation.Formatter {
 
     // MARK: Lifecycle
 
-    public init(phoneNumberKit: PhoneNumberKit = PhoneNumberKit(), defaultRegion: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true) {
+    public init(phoneNumberKit: PhoneNumberKit = PhoneNumberKit(), defaultRegionCode: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true) {
         self.phoneNumberKit = phoneNumberKit
-        self.partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegion: defaultRegion, withPrefix: withPrefix)
+        self.partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegionCode: defaultRegionCode, withPrefix: withPrefix)
         super.init()
     }
 
     public required init?(coder: NSCoder) {
         phoneNumberKit = PhoneNumberKit()
-        partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegion: PhoneNumberKit.defaultRegionCode(), withPrefix: true)
+        partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegionCode: PhoneNumberKit.defaultRegionCode(), withPrefix: true)
         super.init(coder: coder)
     }
 

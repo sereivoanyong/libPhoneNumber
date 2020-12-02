@@ -16,18 +16,18 @@ public final class PartialFormatter {
     let metadataManager: MetadataManager
     let parser: PhoneNumberParser
 
-    public init(phoneNumberKit: PhoneNumberKit, defaultRegion: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true, maxDigits: Int? = nil) {
+    public init(phoneNumberKit: PhoneNumberKit, defaultRegionCode: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true, maxDigits: Int? = nil) {
         self.phoneNumberKit = phoneNumberKit
         self.regexManager = phoneNumberKit.regexManager
         self.metadataManager = phoneNumberKit.metadataManager
         self.parser = phoneNumberKit.parseManager.parser
-        self.defaultRegion = defaultRegion
+        self.defaultRegionCode = defaultRegionCode
         self.updateMetadataForDefaultRegion()
         self.withPrefix = withPrefix
         self.maxDigits = maxDigits
     }
 
-    public var defaultRegion: String {
+    public var defaultRegionCode: String {
         didSet {
             self.updateMetadataForDefaultRegion()
         }
@@ -36,7 +36,7 @@ public final class PartialFormatter {
     public var maxDigits: Int?
 
     func updateMetadataForDefaultRegion() {
-        if let regionMetadata = metadataManager.territoriesByCountry[defaultRegion] {
+        if let regionMetadata = metadataManager.territoriesByRegionCodes[defaultRegionCode] {
             defaultMetadata = metadataManager.mainTerritory(forCode: regionMetadata.countryCode)
         } else {
             defaultMetadata = nil
@@ -53,12 +53,12 @@ public final class PartialFormatter {
     // MARK: Status
 
     public var currentRegion: String {
-        if phoneNumberKit.countryCode(for: defaultRegion) != 1 {
+        if phoneNumberKit.countryCode(forRegionCode: defaultRegionCode) != 1 {
             return currentMetadata?.codeID ?? "US"
         } else {
             return currentMetadata?.countryCode == 1
-                ? defaultRegion
-                : currentMetadata?.codeID ?? defaultRegion
+                ? defaultRegionCode
+                : currentMetadata?.codeID ?? defaultRegionCode
         }
     }
 
