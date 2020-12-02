@@ -82,10 +82,10 @@ struct ParseManager {
         // Check if the number if of a known type (10)
         var type: PhoneNumberType = .unknown
         if !ignoreType {
-            if let regionCode = getRegionCode(of: finalNationalNumber, countryCode: countryCode, leadingZero: leadingZero), let foundMetadata = metadataManager.territoriesByRegionCodes[regionCode] {
+            if let regionCode = self.regionCode(nationalNumber: finalNationalNumber, countryCode: countryCode, leadingZero: leadingZero), let foundMetadata = metadataManager.territoriesByRegionCodes[regionCode] {
                 regionMetadata = foundMetadata
             }
-            type = parser.checkNumberType(String(nationalNumber), metadata: regionMetadata, leadingZero: leadingZero)
+            type = parser.type(String(nationalNumber), metadata: regionMetadata, leadingZero: leadingZero)
             if type == .unknown {
                 throw PhoneNumberError.unknownType
             }
@@ -136,25 +136,25 @@ struct ParseManager {
     ///   - countryCode: country code.
     ///   - leadingZero: whether or not the number has a leading zero.
     /// - Returns: ISO 639 compliant region code.
-    func getRegionCode(of nationalNumber: UInt64, countryCode: Int32, leadingZero: Bool) -> String? {
-        guard let regions = metadataManager.territoriesByCountryCodes[countryCode] else { return nil }
+    func regionCode(nationalNumber: UInt64, countryCode: Int32, leadingZero: Bool) -> String? {
+        guard let territories = metadataManager.territoriesByCountryCodes[countryCode] else { return nil }
 
-        if regions.count == 1 {
-            return regions[0].regionCode
+        if territories.count == 1 {
+            return territories[0].regionCode
         }
 
         let nationalNumberString = String(nationalNumber)
-        for region in regions {
-            if let leadingDigits = region.leadingDigits {
+        for territory in territories {
+            if let leadingDigits = territory.leadingDigits {
                 if regexManager.matchesAtStart(leadingDigits, string: nationalNumberString) {
-                    return region.regionCode
+                    return territory.regionCode
                 }
             }
-            if leadingZero, parser.checkNumberType("0" + nationalNumberString, metadata: region) != .unknown {
-                return region.regionCode
+            if leadingZero && parser.type("0" + nationalNumberString, metadata: territory, leadingZero: false) != .unknown {
+                return territory.regionCode
             }
-            if parser.checkNumberType(nationalNumberString, metadata: region) != .unknown {
-                return region.regionCode
+            if parser.type(nationalNumberString, metadata: territory, leadingZero: false) != .unknown {
+                return territory.regionCode
             }
         }
         return nil

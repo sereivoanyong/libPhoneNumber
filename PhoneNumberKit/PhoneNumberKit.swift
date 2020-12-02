@@ -150,8 +150,8 @@ public struct PhoneNumberKit {
     /// - parameter phoneNumber: PhoneNumber object
     ///
     /// - returns: Region code, eg "US", or nil if the region cannot be determined.
-    public func getRegionCode(of phoneNumber: PhoneNumber) -> String? {
-        return parseManager.getRegionCode(of: phoneNumber.nationalNumber, countryCode: phoneNumber.countryCode, leadingZero: phoneNumber.leadingZero)
+    public func regionCode(of phoneNumber: PhoneNumber) -> String? {
+        return parseManager.regionCode(nationalNumber: phoneNumber.nationalNumber, countryCode: phoneNumber.countryCode, leadingZero: phoneNumber.leadingZero)
     }
 
     /// Get an example phone number for an ISO 639 compliant region code.
@@ -160,7 +160,7 @@ public struct PhoneNumberKit {
     /// - parameter type: The `PhoneNumberType` desired. default: `.mobile`
     ///
     /// - returns: An example phone number
-    public func getExampleNumber(forRegionCode regionCode: String, ofType type: PhoneNumberType = .mobile) -> PhoneNumber? {
+    public func exampleNumber(forRegionCode regionCode: String, ofType type: PhoneNumberType = .mobile) -> PhoneNumber? {
         let metadata = self.metadata(forRegionCode: regionCode)
         let example: String?
         switch type {
@@ -194,11 +194,13 @@ public struct PhoneNumberKit {
     /// - parameter withPrefix: Whether or not to include the prefix.
     ///
     /// - returns: A formatted example phone number
-    public func getFormattedExampleNumber(
-        forRegionCode regionCode: String, ofType type: PhoneNumberType = .mobile,
-        format: PhoneNumberFormat = .international, withPrefix: Bool = true
+    public func formattedExampleNumber(
+        forRegionCode regionCode: String,
+        ofType type: PhoneNumberType = .mobile,
+        format: PhoneNumberFormat = .international,
+        withPrefix: Bool = true
     ) -> String? {
-        return getExampleNumber(forRegionCode: regionCode, ofType: type)
+        return exampleNumber(forRegionCode: regionCode, ofType: type)
             .flatMap { self.format($0, format: format, withPrefix: withPrefix) }
     }
 
@@ -214,7 +216,7 @@ public struct PhoneNumberKit {
     /// Get an array of MetadataTerritory objects corresponding to a given country code.
     ///
     /// - parameter countryCode: international country code (e.g 44 for the UK)
-    public func metadata(forCode countryCode: Int32) -> [MetadataTerritory]? {
+    public func metadata(forCountryCode countryCode: Int32) -> [MetadataTerritory]? {
         return metadataManager.territoriesByCountryCodes[countryCode]
     }
 

@@ -108,9 +108,9 @@ struct PhoneNumberParser {
 
     // MARK: Validations
 
-    func checkNumberType(_ nationalNumber: String, metadata: MetadataTerritory, leadingZero: Bool = false) -> PhoneNumberType {
+    func type(_ nationalNumber: String, metadata: MetadataTerritory, leadingZero: Bool) -> PhoneNumberType {
         if leadingZero {
-            let type = checkNumberType("0" + String(nationalNumber), metadata: metadata)
+            let type = self.type("0" + nationalNumber, metadata: metadata, leadingZero: false)
             if type != .unknown {
                 return type
             }
