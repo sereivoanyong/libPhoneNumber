@@ -48,7 +48,7 @@ struct ParseManager {
         guard var regionMetadata = metadataManager.territoriesByRegionCodes[regionCode] else {
             throw PhoneNumberError.invalidCountryCode
         }
-        var countryCode: UInt64
+        var countryCode: Int32
         do {
             countryCode = try parser.extractCountryCode(nationalNumber, nationalNumber: &nationalNumber, metadata: regionMetadata)
         } catch {
@@ -63,7 +63,7 @@ struct ParseManager {
         nationalNumber = normalizedNationalNumber
 
         // If country code is not default, grab correct metadata (6)
-        if countryCode != regionMetadata.countryCode, let countryMetadata = metadataManager.mainTerritoryByCode[countryCode] {
+        if countryCode != regionMetadata.countryCode, let countryMetadata = metadataManager.mainTerritoryByCountryCodes[countryCode] {
             regionMetadata = countryMetadata
         }
         // National Prefix Strip (7)
@@ -136,8 +136,8 @@ struct ParseManager {
     ///   - countryCode: country code.
     ///   - leadingZero: whether or not the number has a leading zero.
     /// - Returns: ISO 639 compliant region code.
-    func getRegionCode(of nationalNumber: UInt64, countryCode: UInt64, leadingZero: Bool) -> String? {
-        guard let regions = metadataManager.territoriesByCode[countryCode] else { return nil }
+    func getRegionCode(of nationalNumber: UInt64, countryCode: Int32, leadingZero: Bool) -> String? {
+        guard let regions = metadataManager.territoriesByCountryCodes[countryCode] else { return nil }
 
         if regions.count == 1 {
             return regions[0].codeID

@@ -20,7 +20,7 @@ import Foundation
  */
 public struct PhoneNumber: Codable {
     public let numberString: String
-    public let countryCode: UInt64
+    public let countryCode: Int32
     public let leadingZero: Bool
     public let nationalNumber: UInt64
     public let numberExtension: String?

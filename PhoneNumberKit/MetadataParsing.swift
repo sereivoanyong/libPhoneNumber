@@ -43,7 +43,7 @@ public extension MetadataTerritory {
 
         // Custom parsing logic
         codeID = try container.decode(String.self, forKey: .codeID)
-        countryCode = try UInt64(container.decode(String.self, forKey: .countryCode))!
+        countryCode = try Int32(container.decode(String.self, forKey: .countryCode))!
         mainCountryForCode = try container.decodeIfPresent(String.self, forKey: .mainCountryForCode).flatMap(Bool.init) ?? false
         let possibleNationalPrefix = try container.decodeIfPresent(String.self, forKey: .nationalPrefix)
         nationalPrefix = possibleNationalPrefix

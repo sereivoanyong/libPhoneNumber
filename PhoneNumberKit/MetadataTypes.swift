@@ -34,7 +34,7 @@ import Foundation
  */
 public struct MetadataTerritory: Decodable {
     public let codeID: String
-    public let countryCode: UInt64
+    public let countryCode: Int32
     public let internationalPrefix: String?
     public let mainCountryForCode: Bool
     public let nationalPrefix: String?

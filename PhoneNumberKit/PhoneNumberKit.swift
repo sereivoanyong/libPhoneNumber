@@ -90,7 +90,7 @@ public struct PhoneNumberKit {
             return "+\(phoneNumber.countryCode)\(formattedNationalNumber)"
         } else {
             let formatter = Formatter(regexManager: regexManager)
-            let regionMetadata = metadataManager.mainTerritoryByCode[phoneNumber.countryCode]
+            let regionMetadata = metadataManager.mainTerritoryByCountryCodes[phoneNumber.countryCode]
             let formattedNationalNumber = formatter.format(phoneNumber: phoneNumber, format: format, regionMetadata: regionMetadata)
             if format == .international, withPrefix {
                 return "+\(phoneNumber.countryCode) \(formattedNationalNumber)"
@@ -114,8 +114,8 @@ public struct PhoneNumberKit {
     /// - parameter countryCode: international country code (e.g 44 for the UK).
     ///
     /// - returns: optional array of ISO 639 compliant region codes.
-    public func countries(withCode countryCode: UInt64) -> [String]? {
-        return metadataManager.filterTerritories(byCode: countryCode)?.map { $0.codeID }
+    public func countries(withCode countryCode: Int32) -> [String]? {
+        return metadataManager.territoriesByCountryCodes[countryCode]?.map { $0.codeID }
     }
 
     /// Get an main ISO 639 compliant region code for a given country code.
@@ -123,8 +123,8 @@ public struct PhoneNumberKit {
     /// - parameter countryCode: international country code (e.g 1 for the US).
     ///
     /// - returns: ISO 639 compliant region code string.
-    public func mainRegionCode(forCode countryCode: UInt64) -> String? {
-        return metadataManager.mainTerritory(forCode: countryCode)?.codeID
+    public func mainRegionCode(forCode countryCode: Int32) -> String? {
+        return metadataManager.mainTerritoryByCountryCodes[countryCode]?.codeID
     }
 
     /// Get an international country code for an ISO 639 compliant region code
@@ -132,8 +132,8 @@ public struct PhoneNumberKit {
     /// - parameter regionCode: ISO 639 compliant region code.
     ///
     /// - returns: international country code (e.g. 33 for France).
-    public func countryCode(forRegionCode regionCode: String) -> UInt64? {
-        return metadataManager.filterTerritories(byRegionCode: regionCode)?.countryCode
+    public func countryCode(forRegionCode regionCode: String) -> Int32? {
+        return metadataManager.territoriesByRegionCodes[regionCode]?.countryCode
     }
 
     /// Get leading digits for an ISO 639 compliant region code.
@@ -142,7 +142,7 @@ public struct PhoneNumberKit {
     ///
     /// - returns: leading digits (e.g. 876 for Jamaica).
     public func leadingDigits(forRegionCode regionCode: String) -> String? {
-        return metadataManager.filterTerritories(byRegionCode: regionCode)?.leadingDigits
+        return metadataManager.territoriesByRegionCodes[regionCode]?.leadingDigits
     }
 
     /// Determine the region code of a given phone number.
@@ -208,14 +208,14 @@ public struct PhoneNumberKit {
     ///
     /// - returns: A MetadataTerritory object, or nil if no metadata was found for the country code
     public func metadata(forRegionCode regionCode: String) -> MetadataTerritory? {
-        return metadataManager.filterTerritories(byRegionCode: regionCode)
+        return metadataManager.territoriesByRegionCodes[regionCode]
     }
 
     /// Get an array of MetadataTerritory objects corresponding to a given country code.
     ///
     /// - parameter countryCode: international country code (e.g 44 for the UK)
-    public func metadata(forCode countryCode: UInt64) -> [MetadataTerritory]? {
-        return metadataManager.filterTerritories(byCode: countryCode)
+    public func metadata(forCode countryCode: Int32) -> [MetadataTerritory]? {
+        return metadataManager.territoriesByCountryCodes[countryCode]
     }
 
     /// Get an array of possible phone number lengths for the country, as specified by the parameters.
@@ -226,7 +226,7 @@ public struct PhoneNumberKit {
     ///
     /// - returns: Array of possible lengths for the country. May be empty.
     public func possiblePhoneNumberLengths(regionCode: String, phoneNumberType: PhoneNumberType, lengthType: PossibleLengthType) -> [Int] {
-        guard let territory = metadataManager.filterTerritories(byRegionCode: regionCode) else { return [] }
+        guard let territory = metadataManager.territoriesByRegionCodes[regionCode] else { return [] }
 
         let possibleLengths = possiblePhoneNumberLengths(forTerritory: territory, phoneNumberType: phoneNumberType)
 

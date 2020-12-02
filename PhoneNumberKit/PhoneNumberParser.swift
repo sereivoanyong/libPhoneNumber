@@ -36,7 +36,7 @@ struct PhoneNumberParser {
      - Parameter metadata: Metadata territory object.
      - Returns: Country code is UInt64.
      */
-    func extractCountryCode(_ number: String, nationalNumber: inout String, metadata: MetadataTerritory) throws -> UInt64 {
+    func extractCountryCode(_ number: String, nationalNumber: inout String, metadata: MetadataTerritory) throws -> Int32 {
         var fullNumber = number
         guard let possibleCountryIddPrefix = metadata.internationalPrefix else {
             return 0
@@ -63,8 +63,8 @@ struct PhoneNumberParser {
                 let potentialNationalNumberStr = potentialNationalNumber
                 if (!regexManager.matchesEntirely(validNumberPattern, string: fullNumber) && regexManager.matchesEntirely(validNumberPattern, string: potentialNationalNumberStr)) || !regexManager.testStringLengthAgainstPattern(possibleNumberPattern, string: fullNumber as String) {
                     nationalNumber = potentialNationalNumberStr
-                    if let countryCode = UInt64(defaultCountryCode) {
-                        return UInt64(countryCode)
+                    if let countryCode = Int32(defaultCountryCode) {
+                        return countryCode
                     }
                 }
             }
@@ -78,7 +78,7 @@ struct PhoneNumberParser {
      - Parameter nationalNumber: National number string.
      - Returns: Country code is UInt64. Optional.
      */
-    func extractPotentialCountryCode(_ fullNumber: String, nationalNumber: inout String) -> UInt64? {
+    func extractPotentialCountryCode(_ fullNumber: String, nationalNumber: inout String) -> Int32? {
         let nsFullNumber = fullNumber as NSString
         if nsFullNumber.length == 0 || nsFullNumber.substring(to: 1) == "0" {
             return 0
@@ -98,7 +98,7 @@ struct PhoneNumberParser {
             }
             let stringRange = NSRange(location: startPosition, length: i)
             let subNumber = nsFullNumber.substring(with: stringRange)
-            if let potentialCountryCode = UInt64(subNumber), metadataManager.territoriesByCode[potentialCountryCode] != nil {
+            if let potentialCountryCode = Int32(subNumber), metadataManager.territoriesByCountryCodes[potentialCountryCode] != nil {
                 nationalNumber = nsFullNumber.substring(from: i)
                 return potentialCountryCode
             }
