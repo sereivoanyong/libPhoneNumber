@@ -52,7 +52,7 @@ struct MetadataManager {
             if mainTerritoryByCountryCodes[item.countryCode] == nil || item.mainCountryForCode {
               mainTerritoryByCountryCodes[item.countryCode] = item
             }
-            territoriesByCountry[item.codeID] = item
+            territoriesByCountry[item.regionCode] = item
         }
         self.territoriesByCountryCodes = territoriesByCountryCodes
         self.mainTerritoryByCountryCodes = mainTerritoryByCountryCodes

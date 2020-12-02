@@ -12,7 +12,7 @@ import Foundation
 
 public extension MetadataTerritory {
     private enum CodingKeys: String, CodingKey {
-        case codeID = "id"
+        case regionCode = "id"
         case countryCode
         case internationalPrefix
         case mainCountryForCode
@@ -42,7 +42,7 @@ public extension MetadataTerritory {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         // Custom parsing logic
-        codeID = try container.decode(String.self, forKey: .codeID)
+        regionCode = try container.decode(String.self, forKey: .regionCode)
         countryCode = try Int32(container.decode(String.self, forKey: .countryCode))!
         mainCountryForCode = try container.decodeIfPresent(String.self, forKey: .mainCountryForCode).flatMap(Bool.init) ?? false
         let possibleNationalPrefix = try container.decodeIfPresent(String.self, forKey: .nationalPrefix)

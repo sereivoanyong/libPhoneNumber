@@ -91,7 +91,7 @@ struct ParseManager {
             }
         }
 
-        let phoneNumber = PhoneNumber(numberString: numberString, countryCode: countryCode, leadingZero: leadingZero, nationalNumber: finalNationalNumber, numberExtension: numberExtension, type: type, regionID: regionMetadata.codeID)
+        let phoneNumber = PhoneNumber(numberString: numberString, countryCode: countryCode, leadingZero: leadingZero, nationalNumber: finalNationalNumber, numberExtension: numberExtension, type: type, regionID: regionMetadata.regionCode)
         return phoneNumber
     }
 
@@ -140,21 +140,21 @@ struct ParseManager {
         guard let regions = metadataManager.territoriesByCountryCodes[countryCode] else { return nil }
 
         if regions.count == 1 {
-            return regions[0].codeID
+            return regions[0].regionCode
         }
 
         let nationalNumberString = String(nationalNumber)
         for region in regions {
             if let leadingDigits = region.leadingDigits {
                 if regexManager.matchesAtStart(leadingDigits, string: nationalNumberString) {
-                    return region.codeID
+                    return region.regionCode
                 }
             }
             if leadingZero, parser.checkNumberType("0" + nationalNumberString, metadata: region) != .unknown {
-                return region.codeID
+                return region.regionCode
             }
             if parser.checkNumberType(nationalNumberString, metadata: region) != .unknown {
-                return region.codeID
+                return region.regionCode
             }
         }
         return nil

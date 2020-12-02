@@ -54,11 +54,11 @@ public final class PartialFormatter {
 
     public var currentRegion: String {
         if phoneNumberKit.countryCode(forRegionCode: defaultRegionCode) != 1 {
-            return currentMetadata?.codeID ?? "US"
+            return currentMetadata?.regionCode ?? "US"
         } else {
             return currentMetadata?.countryCode == 1
                 ? defaultRegionCode
-                : currentMetadata?.codeID ?? defaultRegionCode
+                : currentMetadata?.regionCode ?? defaultRegionCode
         }
     }
 

@@ -10,7 +10,7 @@ import Foundation
 
 /**
  MetadataTerritory object
- - Parameter codeID: ISO 639 compliant region code
+ - Parameter code: ISO 639 compliant region code
  - Parameter countryCode: International country code
  - Parameter internationalPrefix: International prefix. Optional.
  - Parameter mainCountryForCode: Whether the current metadata is the main country for its country code.
@@ -33,7 +33,7 @@ import Foundation
  - Parameter leadingDigits: Optional leading digits for the territory
  */
 public struct MetadataTerritory: Decodable {
-    public let codeID: String
+    public let regionCode: String
     public let countryCode: Int32
     public let internationalPrefix: String?
     public let mainCountryForCode: Bool

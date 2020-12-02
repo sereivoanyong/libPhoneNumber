@@ -106,7 +106,7 @@ public struct PhoneNumberKit {
     ///
     /// - returns: An array of ISO 639 compliant region codes.
     public func allCountries() -> [String] {
-        return metadataManager.territories.map { $0.codeID }
+        return metadataManager.territories.map { $0.regionCode }
     }
 
     /// Get an array of ISO 639 compliant region codes corresponding to a given country code.
@@ -115,7 +115,7 @@ public struct PhoneNumberKit {
     ///
     /// - returns: optional array of ISO 639 compliant region codes.
     public func countries(withCode countryCode: Int32) -> [String]? {
-        return metadataManager.territoriesByCountryCodes[countryCode]?.map { $0.codeID }
+        return metadataManager.territoriesByCountryCodes[countryCode]?.map { $0.regionCode }
     }
 
     /// Get an main ISO 639 compliant region code for a given country code.
@@ -124,7 +124,7 @@ public struct PhoneNumberKit {
     ///
     /// - returns: ISO 639 compliant region code string.
     public func mainRegionCode(forCode countryCode: Int32) -> String? {
-        return metadataManager.mainTerritoryByCountryCodes[countryCode]?.codeID
+        return metadataManager.mainTerritoryByCountryCodes[countryCode]?.regionCode
     }
 
     /// Get an international country code for an ISO 639 compliant region code

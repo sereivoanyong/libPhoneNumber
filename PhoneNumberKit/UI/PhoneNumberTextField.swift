@@ -505,8 +505,8 @@ extension PhoneNumberTextField: CountryCodePickerDelegate {
 
     public func countryCodePickerViewControllerDidPickCountry(_ country: CountryCodePickerViewController.Country) {
         text = isEditing ? "+" + country.prefix : ""
-        _defaultRegionCode = country.code
-        partialFormatter.defaultRegionCode = country.code
+        _defaultRegionCode = country.regionCode
+        partialFormatter.defaultRegionCode = country.regionCode
         updateFlag()
         updatePlaceholder()
 

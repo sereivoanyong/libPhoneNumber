@@ -195,7 +195,7 @@ extension CountryCodePickerViewController: UISearchResultsUpdating {
         let searchText = searchController.searchBar.text ?? ""
         filteredCountries = allCountries.filter { country in
             country.name.lowercased().contains(searchText.lowercased()) ||
-                country.code.lowercased().contains(searchText.lowercased()) ||
+                country.regionCode.lowercased().contains(searchText.lowercased()) ||
                 country.prefix.lowercased().contains(searchText.lowercased())
         }
         tableView.reloadData()
@@ -209,7 +209,7 @@ extension CountryCodePickerViewController: UISearchResultsUpdating {
 public extension CountryCodePickerViewController {
 
     struct Country {
-        public var code: String
+        public var regionCode: String
         public var flag: String
         public var name: String
         public var prefix: String
@@ -223,7 +223,7 @@ public extension CountryCodePickerViewController {
                 return nil
             }
 
-            self.code = countryCode
+            self.regionCode = countryCode
             self.name = name
             self.prefix = "+" + prefix
             self.flag = ""
