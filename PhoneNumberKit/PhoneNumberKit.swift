@@ -77,12 +77,12 @@ public struct PhoneNumberKit {
     /// Formats a PhoneNumber object for dispaly.
     ///
     /// - parameter phoneNumber: PhoneNumber object.
-    /// - parameter formatType:  PhoneNumberFormat enum.
+    /// - parameter format: PhoneNumberFormat enum.
     /// - parameter prefix:      whether or not to include the prefix.
     ///
     /// - returns: Formatted representation of the PhoneNumber.
-    public func format(_ phoneNumber: PhoneNumber, toType formatType: PhoneNumberFormat, withPrefix prefix: Bool = true) -> String {
-        if formatType == .e164 {
+    public func format(_ phoneNumber: PhoneNumber, format: PhoneNumberFormat, withPrefix prefix: Bool = true) -> String {
+        if format == .e164 {
             let formattedNationalNumber = phoneNumber.adjustedNationalNumber()
             if !prefix {
                 return formattedNationalNumber
@@ -91,8 +91,8 @@ public struct PhoneNumberKit {
         } else {
             let formatter = Formatter(regexManager: regexManager)
             let regionMetadata = metadataManager.mainTerritoryByCode[phoneNumber.countryCode]
-            let formattedNationalNumber = formatter.format(phoneNumber: phoneNumber, formatType: formatType, regionMetadata: regionMetadata)
-            if formatType == .international, prefix {
+            let formattedNationalNumber = formatter.format(phoneNumber: phoneNumber, format: format, regionMetadata: regionMetadata)
+            if format == .international, prefix {
                 return "+\(phoneNumber.countryCode) \(formattedNationalNumber)"
             } else {
                 return formattedNationalNumber
@@ -196,10 +196,10 @@ public struct PhoneNumberKit {
     /// - returns: A formatted example phone number
     public func getFormattedExampleNumber(
         forCountry countryCode: String, ofType type: PhoneNumberType = .mobile,
-        withFormat format: PhoneNumberFormat = .international, withPrefix prefix: Bool = true
+        format: PhoneNumberFormat = .international, withPrefix prefix: Bool = true
     ) -> String? {
         return getExampleNumber(forCountry: countryCode, ofType: type)
-            .flatMap { self.format($0, toType: format, withPrefix: prefix) }
+            .flatMap { self.format($0, format: format, withPrefix: prefix) }
     }
 
     /// Get the MetadataTerritory objects for an ISO 639 compliant region code.

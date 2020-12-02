@@ -50,7 +50,7 @@ open class PhoneNumberFormatter: Foundation.Formatter {
     }
 
     open func string(from phoneNumber: PhoneNumber) -> String {
-        return phoneNumberKit.format(phoneNumber, toType: withPrefix ? .international : .national)
+        return phoneNumberKit.format(phoneNumber, format: withPrefix ? .international : .national)
     }
 
     open func phoneNumber(from string: String) -> PhoneNumber? {

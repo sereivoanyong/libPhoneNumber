@@ -26,7 +26,7 @@ catch {
 let phoneNumberKit = PhoneNumberKit()
 do {
     let phoneNumber = try phoneNumberKit.parse("+44 20 7031 3000", regionCode: "GB")
-    let formattedNumber: String = phoneNumberKit.format(phoneNumber, toType: .international)
+    let formattedNumber: String = phoneNumberKit.format(phoneNumber, format: .international)
 }
 catch {
     print("Generic parser error")

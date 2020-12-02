@@ -55,7 +55,7 @@ class ViewController: UIViewController, CNContactPickerDelegate {
     func parseNumber(_ number: String) {
         do {
             let phoneNumber = try phoneNumberKit.parse(number, ignoreType: true)
-            self.parsedNumberLabel.text = self.phoneNumberKit.format(phoneNumber, toType: .international)
+            self.parsedNumberLabel.text = self.phoneNumberKit.format(phoneNumber, format: .international)
             self.parsedCountryCodeLabel.text = String(phoneNumber.countryCode)
             if let regionCode = phoneNumberKit.mainCountry(forCode: phoneNumber.countryCode) {
                 let country = Locale.current.localizedString(forRegionCode: regionCode)

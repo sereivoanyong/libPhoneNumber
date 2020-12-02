@@ -17,13 +17,13 @@ struct Formatter {
     ///
     /// - Parameters:
     ///   - phoneNumber: Phone number object.
-    ///   - formatType: Format type.
+    ///   - format: Format.
     ///   - regionMetadata: Region meta data.
     /// - Returns: Formatted Modified national number ready for display.
-    func format(phoneNumber: PhoneNumber, formatType: PhoneNumberFormat, regionMetadata: MetadataTerritory?) -> String {
+    func format(phoneNumber: PhoneNumber, format: PhoneNumberFormat, regionMetadata: MetadataTerritory?) -> String {
         var formattedNationalNumber = phoneNumber.adjustedNationalNumber()
         if let regionMetadata = regionMetadata {
-            formattedNationalNumber = formatNationalNumber(formattedNationalNumber, regionMetadata: regionMetadata, formatType: formatType)
+            formattedNationalNumber = formatNationalNumber(formattedNationalNumber, regionMetadata: regionMetadata, format: format)
             if let formattedExtension = formatExtension(phoneNumber.numberExtension, regionMetadata: regionMetadata) {
                 formattedNationalNumber = formattedNationalNumber + formattedExtension
             }
@@ -53,9 +53,9 @@ struct Formatter {
     /// - Parameters:
     ///   - nationalNumber: National number string.
     ///   - regionMetadata: Region meta data.
-    ///   - formatType: Format type.
+    ///   - format: Format.
     /// - Returns: Modified nationalNumber for display.
-    func formatNationalNumber(_ nationalNumber: String, regionMetadata: MetadataTerritory, formatType: PhoneNumberFormat) -> String {
+    func formatNationalNumber(_ nationalNumber: String, regionMetadata: MetadataTerritory, format: PhoneNumberFormat) -> String {
         let formats = regionMetadata.numberFormats
         var selectedFormat: MetadataPhoneNumberFormat?
         for format in formats {
@@ -74,7 +74,7 @@ struct Formatter {
             }
         }
         if let formatPattern = selectedFormat {
-            guard let numberFormatRule = (formatType == PhoneNumberFormat.international && formatPattern.intlFormat != nil) ? formatPattern.intlFormat : formatPattern.format, let pattern = formatPattern.pattern else {
+            guard let numberFormatRule = (format == PhoneNumberFormat.international && formatPattern.intlFormat != nil) ? formatPattern.intlFormat : formatPattern.format, let pattern = formatPattern.pattern else {
                 return nationalNumber
             }
             var formattedNationalNumber = String()
@@ -83,7 +83,7 @@ struct Formatter {
                 prefixFormattingRule = regexManager.replaceStringByRegex(PhoneNumberPatterns.npPattern, string: nationalPrefixFormattingRule, template: nationalPrefix)
                 prefixFormattingRule = regexManager.replaceStringByRegex(PhoneNumberPatterns.fgPattern, string: prefixFormattingRule, template: "\\$1")
             }
-            if formatType == PhoneNumberFormat.national, regexManager.hasValue(prefixFormattingRule) {
+            if format == PhoneNumberFormat.national, regexManager.hasValue(prefixFormattingRule) {
                 let replacePattern = regexManager.replaceFirstStringByRegex(PhoneNumberPatterns.firstGroupPattern, string: numberFormatRule, templateString: prefixFormattingRule)
                 formattedNationalNumber = regexManager.replaceStringByRegex(pattern, string: nationalNumber, template: replacePattern)
             } else {
