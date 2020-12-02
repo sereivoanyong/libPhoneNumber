@@ -94,7 +94,7 @@ public struct MetadataPhoneNumberFormat: Decodable {
     public let intlFormat: String?
     public let leadingDigitsPatterns: [String]?
     public var nationalPrefixFormattingRule: String?
-    public let nationalPrefixOptionalWhenFormatting: Bool?
+    public let nationalPrefixOptionalWhenFormatting: Bool
     public let domesticCarrierCodeFormattingRule: String?
 }
 

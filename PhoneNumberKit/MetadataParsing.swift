@@ -44,14 +44,18 @@ public extension MetadataTerritory {
         // Custom parsing logic
         regionCode = try container.decode(String.self, forKey: .regionCode)
         countryCode = try Int32(container.decode(String.self, forKey: .countryCode))!
-        mainCountryForCode = try container.decodeIfPresent(String.self, forKey: .mainCountryForCode).flatMap(Bool.init) ?? false
+        mainCountryForCode = try container.decodeStringBoolIfPresent(forKey: .mainCountryForCode) ?? false
         let possibleNationalPrefix = try container.decodeIfPresent(String.self, forKey: .nationalPrefix)
         nationalPrefix = possibleNationalPrefix
         nationalPrefixForParsing = try container.decodeIfPresent(String.self, forKey: .nationalPrefixForParsing) ?? possibleNationalPrefix
         nationalPrefixFormattingRule = try container.decodeIfPresent(String.self, forKey: .nationalPrefixFormattingRule)
-        let availableFormats = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .availableFormats)
-        let temporaryFormatList = availableFormats.decodeArrayOrObject(forKey: .numberFormats) as [MetadataPhoneNumberFormat]
-        numberFormats = temporaryFormatList.withDefaultNationalPrefixFormattingRule(nationalPrefixFormattingRule)
+        if container.allKeys.contains(.availableFormats) {
+            let availableFormats = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .availableFormats)
+            let temporaryFormatList = availableFormats.decodeArrayOrObject(forKey: .numberFormats) as [MetadataPhoneNumberFormat]
+            numberFormats = temporaryFormatList.withDefaultNationalPrefixFormattingRule(nationalPrefixFormattingRule)
+        } else {
+            numberFormats = []
+        }
 
         // Default parsing logic
         internationalPrefix = try container.decodeIfPresent(String.self, forKey: .internationalPrefix)
@@ -91,7 +95,7 @@ public extension MetadataPhoneNumberFormat {
 
         // Custom parsing logic
         leadingDigitsPatterns = container.decodeArrayOrObject(forKey: .leadingDigitsPatterns)
-        nationalPrefixOptionalWhenFormatting = try container.decodeIfPresent(String.self, forKey: .nationalPrefixOptionalWhenFormatting).flatMap(Bool.init)
+        nationalPrefixOptionalWhenFormatting = try container.decodeStringBoolIfPresent(forKey: .nationalPrefixOptionalWhenFormatting) ?? false
 
         // Default parsing logic
         pattern = try container.decodeIfPresent(String.self, forKey: .pattern)
@@ -122,6 +126,20 @@ extension PhoneNumberMetadata {
 // MARK: - Parsing helpers
 
 private extension KeyedDecodingContainer {
+  
+    /// Decodes a string to a boolean. Returns false if empty.
+    ///
+    /// - Parameter key: Coding key to decode
+    func decodeStringBoolIfPresent(forKey key: Key) throws -> Bool? {
+        if let string = try decodeIfPresent(String.self, forKey: key) {
+            switch string {
+            case "true":  return true
+            case "false": return false
+            default:      return nil
+            }
+        }
+        return nil
+    }
 
     /// Decodes either a single object or an array into an array. Returns an empty array if empty.
     ///

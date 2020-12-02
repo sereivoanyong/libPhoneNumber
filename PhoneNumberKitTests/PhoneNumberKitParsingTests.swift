@@ -78,7 +78,7 @@ class PhoneNumberKitParsingTests: XCTestCase {
         let firstLeadingDigits = firstNumberFormat.leadingDigitsPatterns!.first
         XCTAssertEqual(firstLeadingDigits, "[2-9]")
         XCTAssertNil(firstNumberFormat.nationalPrefixFormattingRule)
-        XCTAssertFalse(firstNumberFormat.nationalPrefixOptionalWhenFormatting!)
+        XCTAssertFalse(firstNumberFormat.nationalPrefixOptionalWhenFormatting)
         XCTAssertNil(firstNumberFormat.domesticCarrierCodeFormattingRule)
         let secondNumberFormat: MetadataPhoneNumberFormat = numberFormats[1]
         XCTAssertEqual(secondNumberFormat.pattern, "(\\d{3})(\\d{3})(\\d{4})")
@@ -87,7 +87,7 @@ class PhoneNumberKitParsingTests: XCTestCase {
         let secondLeadingDigits = secondNumberFormat.leadingDigitsPatterns!.first
         XCTAssertEqual(secondLeadingDigits, "[2-9]")
         XCTAssertNil(secondNumberFormat.nationalPrefixFormattingRule)
-        XCTAssertTrue(secondNumberFormat.nationalPrefixOptionalWhenFormatting!)
+        XCTAssertTrue(secondNumberFormat.nationalPrefixOptionalWhenFormatting)
         XCTAssertNil(secondNumberFormat.domesticCarrierCodeFormattingRule)
         XCTAssertNil(sut.leadingDigits)
     }
