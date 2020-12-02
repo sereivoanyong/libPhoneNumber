@@ -84,7 +84,6 @@ public enum PhoneNumberType: String, Codable {
     case voip
     case uan
     case unknown
-    case notParsed
 }
 
 public enum PossibleLengthType: String, Codable {

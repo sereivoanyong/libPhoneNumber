@@ -47,17 +47,6 @@ public struct PhoneNumberKit {
 
         return try parseManager.parse(numberStringWithPlus, regionCode: regionCode, ignoreType: ignoreType)
     }
-
-    /// Parses an array of number strings. Optimised for performance. Invalid numbers are ignored in the resulting array
-    ///
-    /// - parameter numberStrings:               array of raw number strings.
-    /// - parameter regionCode:                      ISO 639 compliant region code.
-    /// - parameter ignoreType:   Avoids number type checking for faster performance.
-    ///
-    /// - returns: array of PhoneNumber objects.
-    public func parse(_ numberStrings: [String], regionCode: String = PhoneNumberKit.defaultRegionCode(), ignoreType: Bool = false, shouldReturnFailedEmptyNumbers: Bool = false) -> [PhoneNumber] {
-        return parseManager.parseMultiple(numberStrings, regionCode: regionCode, ignoreType: ignoreType, shouldReturnFailedEmptyNumbers: shouldReturnFailedEmptyNumbers)
-    }
     
     // MARK: Checking
     
@@ -176,7 +165,6 @@ public struct PhoneNumberKit {
         case .voip: example = metadata?.voip?.exampleNumber
         case .uan: example = metadata?.uan?.exampleNumber
         case .unknown: return nil
-        case .notParsed: return nil
         }
         do {
             return try example.flatMap { try parse($0, regionCode: regionCode, ignoreType: false) }
@@ -252,7 +240,6 @@ public struct PhoneNumberKit {
         case .uan:              return territory.uan?.possibleLengths
         case .fixedOrMobile:    return nil // caller needs to combine results for .fixedLine and .mobile
         case .unknown:          return nil
-        case .notParsed:        return nil
         }
     }
 

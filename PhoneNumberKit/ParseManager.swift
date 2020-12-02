@@ -91,43 +91,11 @@ struct ParseManager {
             }
         }
 
-        let phoneNumber = PhoneNumber(numberString: numberString, countryCode: countryCode, leadingZero: leadingZero, nationalNumber: finalNationalNumber, numberExtension: numberExtension, type: type, regionID: regionMetadata.regionCode)
+        let phoneNumber = PhoneNumber(string: numberString, countryCode: countryCode, leadingZero: leadingZero, nationalNumber: finalNationalNumber, numberExtension: numberExtension, type: type, regionCode: regionMetadata.regionCode)
         return phoneNumber
     }
 
     // Parse task
-
-    /**
-     Fastest way to parse an array of phone numbers. Uses custom region code.
-     - Parameter numberStrings: An array of raw number strings.
-     - Parameter regionCode: ISO 639 compliant region code.
-     - parameter ignoreType:   Avoids number type checking for faster performance.
-     - Returns: An array of valid PhoneNumber objects.
-     */
-    func parseMultiple(_ numberStrings: [String], regionCode: String, ignoreType: Bool, shouldReturnFailedEmptyNumbers: Bool = false, testCallback: (() -> Void)? = nil) -> [PhoneNumber] {
-        var multiParseArray = [PhoneNumber]()
-        let group = DispatchGroup()
-        let queue = DispatchQueue(label: "com.phonenumberkit.multipleparse", qos: .default)
-        for (index, numberString) in numberStrings.enumerated() {
-            group.enter()
-            queue.async(group: group) {
-                do {
-                    let phoneNumber = try parse(numberString, regionCode: regionCode, ignoreType: ignoreType)
-                    multiParseArray.append(phoneNumber)
-                } catch {
-                    if shouldReturnFailedEmptyNumbers {
-                        multiParseArray.append(PhoneNumber.notPhoneNumber())
-                    }
-                }
-                group.leave()
-            }
-            if index == numberStrings.count / 2 {
-                testCallback?()
-            }
-        }
-        group.wait()
-        return multiParseArray
-    }
 
     /// Get correct ISO 639 compliant region code for a number.
     ///

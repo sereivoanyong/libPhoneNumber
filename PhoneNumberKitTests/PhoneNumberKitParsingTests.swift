@@ -415,38 +415,6 @@ class PhoneNumberKitParsingTests: XCTestCase {
             XCTFail()
         }
     }
-    
-    func testPerformanceSimple() {
-        let numberOfParses = 1000
-        let startTime = Date()
-        var endTime = Date()
-        var numberArray: [String] = []
-        for _ in 0..<numberOfParses {
-            numberArray.append("+5491187654321")
-        }
-        _ = self.phoneNumberKit.parse(numberArray, regionCode: "AR", ignoreType: true)
-        endTime = Date()
-        let timeInterval = endTime.timeIntervalSince(startTime)
-        print("time to parse \(numberOfParses) phone numbers, \(timeInterval) seconds")
-        XCTAssertTrue(timeInterval < 5)
-    }
-
-    func testMultipleMutated() {
-        let numberOfParses = 500
-        let startTime = Date()
-        var endTime = Date()
-        var numberArray: [String] = []
-        for _ in 0..<numberOfParses {
-            numberArray.append("+5491187654321")
-        }
-        let phoneNumbers = self.phoneNumberKit.parseManager.parseMultiple(numberArray, regionCode: "AR", ignoreType: true) {
-            numberArray.remove(at: 100)
-        }
-        XCTAssertTrue(phoneNumbers.count == numberOfParses)
-        endTime = Date()
-        let timeInterval = endTime.timeIntervalSince(startTime)
-        print("time to parse \(numberOfParses) phone numbers, \(timeInterval) seconds")
-    }
 
     func testUANumber() {
         do {
