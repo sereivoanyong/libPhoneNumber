@@ -31,32 +31,32 @@ public struct PhoneNumberKit {
     ///
     /// - Parameters:
     ///   - numberString: the raw number string.
-    ///   - region: ISO 639 compliant region code.
+    ///   - regionCode: ISO 639 compliant region code.
     ///   - ignoreType: Avoids number type checking for faster performance.
     /// - Returns: PhoneNumber object.
-    public func parse(_ numberString: String, withRegion region: String = PhoneNumberKit.defaultRegionCode(), ignoreType: Bool = false) throws -> PhoneNumber {
+    public func parse(_ numberString: String, regionCode: String = PhoneNumberKit.defaultRegionCode(), ignoreType: Bool = false) throws -> PhoneNumber {
         var numberStringWithPlus = numberString
 
         do {
-            return try parseManager.parse(numberString, withRegion: region, ignoreType: ignoreType)
+            return try parseManager.parse(numberString, regionCode: regionCode, ignoreType: ignoreType)
         } catch {
             if numberStringWithPlus.first != "+" {
                 numberStringWithPlus = "+" + numberStringWithPlus
             }
         }
 
-        return try parseManager.parse(numberStringWithPlus, withRegion: region, ignoreType: ignoreType)
+        return try parseManager.parse(numberStringWithPlus, regionCode: regionCode, ignoreType: ignoreType)
     }
 
     /// Parses an array of number strings. Optimised for performance. Invalid numbers are ignored in the resulting array
     ///
     /// - parameter numberStrings:               array of raw number strings.
-    /// - parameter region:                      ISO 639 compliant region code.
+    /// - parameter regionCode:                      ISO 639 compliant region code.
     /// - parameter ignoreType:   Avoids number type checking for faster performance.
     ///
     /// - returns: array of PhoneNumber objects.
-    public func parse(_ numberStrings: [String], withRegion region: String = PhoneNumberKit.defaultRegionCode(), ignoreType: Bool = false, shouldReturnFailedEmptyNumbers: Bool = false) -> [PhoneNumber] {
-        return parseManager.parseMultiple(numberStrings, withRegion: region, ignoreType: ignoreType, shouldReturnFailedEmptyNumbers: shouldReturnFailedEmptyNumbers)
+    public func parse(_ numberStrings: [String], regionCode: String = PhoneNumberKit.defaultRegionCode(), ignoreType: Bool = false, shouldReturnFailedEmptyNumbers: Bool = false) -> [PhoneNumber] {
+        return parseManager.parseMultiple(numberStrings, regionCode: regionCode, ignoreType: ignoreType, shouldReturnFailedEmptyNumbers: shouldReturnFailedEmptyNumbers)
     }
     
     // MARK: Checking
@@ -68,8 +68,8 @@ public struct PhoneNumberKit {
     ///   - region: ISO 639 compliant region code.
     ///   - ignoreType: Avoids number type checking for faster performance.
     /// - Returns: Bool
-    public func isValidPhoneNumber(_ numberString: String, withRegion region: String = PhoneNumberKit.defaultRegionCode(), ignoreType: Bool = false) -> Bool {
-        return (try? parse(numberString, withRegion: region, ignoreType: ignoreType)) != nil
+    public func isValidPhoneNumber(_ numberString: String, regionCode: String = PhoneNumberKit.defaultRegionCode(), ignoreType: Bool = false) -> Bool {
+        return (try? parse(numberString, regionCode: regionCode, ignoreType: ignoreType)) != nil
     }
 
     // MARK: Formatting
@@ -179,7 +179,7 @@ public struct PhoneNumberKit {
         case .notParsed: return nil
         }
         do {
-            return try example.flatMap { try parse($0, withRegion: countryCode, ignoreType: false) }
+            return try example.flatMap { try parse($0, regionCode: countryCode, ignoreType: false) }
         } catch {
             print("[PhoneNumberKit] Failed to parse example number for \(countryCode) region")
             return nil

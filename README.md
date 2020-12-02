@@ -42,7 +42,7 @@ To parse a string, use the parse function. The region code is automatically comp
 ```swift
 do {
     let phoneNumber = try phoneNumberKit.parse("+33 6 89 017383")
-    let phoneNumberCustomDefaultRegion = try phoneNumberKit.parse("+44 20 7031 3000", withRegion: "GB", ignoreType: true)
+    let phoneNumberCustomDefaultRegion = try phoneNumberKit.parse("+44 20 7031 3000", regionCode: "GB", ignoreType: true)
 }
 catch {
     print("Generic parser error")
@@ -54,7 +54,7 @@ If you need to parse and validate a large amount of numbers at once, PhoneNumber
 ```swift
 let rawNumberArray = ["0291 12345678", "+49 291 12345678", "04134 1234", "09123 12345"]
 let phoneNumbers = phoneNumberKit.parse(rawNumberArray)
-let phoneNumbersCustomDefaultRegion = phoneNumberKit.parse(rawNumberArray, withRegion: "DE",  ignoreType: true)
+let phoneNumbersCustomDefaultRegion = phoneNumberKit.parse(rawNumberArray, regionCode "DE",  ignoreType: true)
 ```
 
 PhoneNumber objects are immutable Swift structs with the following properties:

@@ -179,7 +179,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
     public var isValidNumber: Bool {
         let rawNumber = self.text ?? String()
         do {
-            _ = try phoneNumberKit.parse(rawNumber, withRegion: currentRegion)
+            _ = try phoneNumberKit.parse(rawNumber, regionCode: currentRegion)
             return true
         } catch {
             return false
@@ -193,7 +193,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
     public var phoneNumber: PhoneNumber? {
         guard let rawNumber = self.text else { return nil }
         do {
-            return try phoneNumberKit.parse(rawNumber, withRegion: currentRegion)
+            return try phoneNumberKit.parse(rawNumber, regionCode: currentRegion)
         } catch {
             return nil
         }

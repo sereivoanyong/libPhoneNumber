@@ -54,7 +54,7 @@ open class PhoneNumberFormatter: Foundation.Formatter {
     }
 
     open func phoneNumber(from string: String) -> PhoneNumber? {
-        return try? phoneNumberKit.parse(string, withRegion: currentRegion)
+        return try? phoneNumberKit.parse(string, regionCode: currentRegion)
     }
 }
 

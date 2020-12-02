@@ -25,7 +25,7 @@ catch {
 ```swift
 let phoneNumberKit = PhoneNumberKit()
 do {
-    let phoneNumber = try phoneNumberKit.parse("+44 20 7031 3000", withRegion: "GB")
+    let phoneNumber = try phoneNumberKit.parse("+44 20 7031 3000", regionCode: "GB")
     let formattedNumber: String = phoneNumberKit.format(phoneNumber, toType: .international)
 }
 catch {

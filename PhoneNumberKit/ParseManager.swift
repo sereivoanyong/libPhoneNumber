@@ -25,12 +25,11 @@ struct ParseManager {
     /**
      Parse a string into a phone number object with a custom region. Can throw.
      - Parameter numberString: String to be parsed to phone number struct.
-     - Parameter region: ISO 639 compliant region code.
+     - Parameter regionCode: ISO 639 compliant region code.
      - parameter ignoreType:   Avoids number type checking for faster performance.
      */
-    func parse(_ numberString: String, withRegion region: String, ignoreType: Bool) throws -> PhoneNumber {
-        // Make sure region is in uppercase so that it matches metadata (1)
-        let region = region.uppercased()
+    func parse(_ numberString: String, regionCode: String, ignoreType: Bool) throws -> PhoneNumber {
+        assert(regionCode == regionCode.uppercased())
         // Extract number (2)
 
         var nationalNumber = numberString
@@ -46,7 +45,7 @@ struct ParseManager {
             numberExtension = parser.normalizePhoneNumber(rawExtension)
         }
         // Country code parse (4)
-        guard var regionMetadata = metadataManager.territoriesByCountry[region] else {
+        guard var regionMetadata = metadataManager.territoriesByCountry[regionCode] else {
             throw PhoneNumberError.invalidCountryCode
         }
         var countryCode: UInt64
@@ -101,11 +100,11 @@ struct ParseManager {
     /**
      Fastest way to parse an array of phone numbers. Uses custom region code.
      - Parameter numberStrings: An array of raw number strings.
-     - Parameter region: ISO 639 compliant region code.
+     - Parameter regionCode: ISO 639 compliant region code.
      - parameter ignoreType:   Avoids number type checking for faster performance.
      - Returns: An array of valid PhoneNumber objects.
      */
-    func parseMultiple(_ numberStrings: [String], withRegion region: String, ignoreType: Bool, shouldReturnFailedEmptyNumbers: Bool = false, testCallback: (() -> Void)? = nil) -> [PhoneNumber] {
+    func parseMultiple(_ numberStrings: [String], regionCode: String, ignoreType: Bool, shouldReturnFailedEmptyNumbers: Bool = false, testCallback: (() -> Void)? = nil) -> [PhoneNumber] {
         var multiParseArray = [PhoneNumber]()
         let group = DispatchGroup()
         let queue = DispatchQueue(label: "com.phonenumberkit.multipleparse", qos: .default)
@@ -113,7 +112,7 @@ struct ParseManager {
             group.enter()
             queue.async(group: group) {
                 do {
-                    let phoneNumber = try parse(numberString, withRegion: region, ignoreType: ignoreType)
+                    let phoneNumber = try parse(numberString, regionCode: regionCode, ignoreType: ignoreType)
                     multiParseArray.append(phoneNumber)
                 } catch {
                     if shouldReturnFailedEmptyNumbers {
