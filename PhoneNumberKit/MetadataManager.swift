@@ -11,7 +11,8 @@ import Foundation
 private func populateTerritories() -> [MetadataTerritory] {
     do {
         guard let url = Bundle.module.url(forResource: "PhoneNumberMetadata", withExtension: "json") else {
-          throw PhoneNumberError.metadataNotFound
+            debugPrint("PhoneNumberKit was unable to read the included metadata")
+            return []
         }
         let data = try Data(contentsOf: url)
         let decoder = JSONDecoder()
