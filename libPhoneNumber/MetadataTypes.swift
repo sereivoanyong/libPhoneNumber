@@ -67,9 +67,3 @@ public struct MetadataPhoneNumberFormat: Decodable {
     public let nationalPrefixOptionalWhenFormatting: Bool
     public let domesticCarrierCodeFormattingRule: String?
 }
-
-/// Internal object for metadata parsing
-struct PhoneNumberMetadata: Decodable {
-    
-    let territories: [PhoneMetadata]
-}
