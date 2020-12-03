@@ -6,31 +6,8 @@
 
 import Foundation
 
-/**
- MetadataTerritory object
- - Parameter code: ISO 639 compliant region code
- - Parameter countryCode: International country code
- - Parameter internationalPrefix: International prefix. Optional.
- - Parameter mainCountryForCode: Whether the current metadata is the main country for its country code.
- - Parameter nationalPrefix: National prefix
- - Parameter nationalPrefixFormattingRule: National prefix formatting rule
- - Parameter nationalPrefixForParsing: National prefix for parsing
- - Parameter nationalPrefixTransformRule: National prefix transform rule
- - Parameter emergency: MetadataPhoneNumberDesc for emergency numbers
- - Parameter fixedLine: MetadataPhoneNumberDesc for fixed line numbers
- - Parameter generalDesc: MetadataPhoneNumberDesc for general numbers
- - Parameter mobile: MetadataPhoneNumberDesc for mobile numbers
- - Parameter pager: MetadataPhoneNumberDesc for pager numbers
- - Parameter personalNumber: MetadataPhoneNumberDesc for personal number numbers
- - Parameter premiumRate: MetadataPhoneNumberDesc for premium rate numbers
- - Parameter sharedCost: MetadataPhoneNumberDesc for shared cost numbers
- - Parameter tollFree: MetadataPhoneNumberDesc for toll free numbers
- - Parameter voicemail: MetadataPhoneNumberDesc for voice mail numbers
- - Parameter voip: MetadataPhoneNumberDesc for voip numbers
- - Parameter uan: MetadataPhoneNumberDesc for uan numbers
- - Parameter leadingDigits: Optional leading digits for the territory
- */
 public struct MetadataTerritory: Decodable {
+    
     public let regionCode: String
     public let countryCode: Int32
     public let internationalPrefix: String?
@@ -40,30 +17,24 @@ public struct MetadataTerritory: Decodable {
     public let nationalPrefixForParsing: String?
     public let nationalPrefixTransformRule: String?
     public let preferredExtnPrefix: String?
-    public let emergency: MetadataPhoneNumberDesc?
-    public let fixedLine: MetadataPhoneNumberDesc?
-    public let generalDesc: MetadataPhoneNumberDesc?
-    public let mobile: MetadataPhoneNumberDesc?
-    public let pager: MetadataPhoneNumberDesc?
-    public let personalNumber: MetadataPhoneNumberDesc?
-    public let premiumRate: MetadataPhoneNumberDesc?
-    public let sharedCost: MetadataPhoneNumberDesc?
-    public let tollFree: MetadataPhoneNumberDesc?
-    public let voicemail: MetadataPhoneNumberDesc?
-    public let voip: MetadataPhoneNumberDesc?
-    public let uan: MetadataPhoneNumberDesc?
+    public let emergency: PhoneNumberDesc?
+    public let fixedLine: PhoneNumberDesc?
+    public let generalDesc: PhoneNumberDesc?
+    public let mobile: PhoneNumberDesc?
+    public let pager: PhoneNumberDesc?
+    public let personalNumber: PhoneNumberDesc?
+    public let premiumRate: PhoneNumberDesc?
+    public let sharedCost: PhoneNumberDesc?
+    public let tollFree: PhoneNumberDesc?
+    public let voicemail: PhoneNumberDesc?
+    public let voip: PhoneNumberDesc?
+    public let uan: PhoneNumberDesc?
     public let numberFormats: [MetadataPhoneNumberFormat]
     public let leadingDigits: String?
 }
 
-/**
- MetadataPhoneNumberDesc object
- - Parameter exampleNumber: An example phone number for the given type. Optional.
- - Parameter nationalNumberPattern:  National number regex pattern. Optional.
- - Parameter possibleNumberPattern:  Possible number regex pattern. Optional.
- - Parameter possibleLengths: Possible phone number lengths. Optional.
- */
-public struct MetadataPhoneNumberDesc: Decodable {
+public struct PhoneNumberDesc: Decodable {
+    
     public let exampleNumber: String?
     public let nationalNumberPattern: String?
     public let possibleNumberPattern: String?
@@ -71,6 +42,7 @@ public struct MetadataPhoneNumberDesc: Decodable {
 }
 
 public struct MetadataPossibleLengths: Decodable {
+    
     let national: String?
     let localOnly: String?
 }

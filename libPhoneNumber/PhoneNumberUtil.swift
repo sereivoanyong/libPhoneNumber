@@ -549,10 +549,10 @@ extension PhoneNumberUtil {
     /**
      Checks if number matches description.
      - Parameter nationalNumber: National number string.
-     - Parameter numberDesc:  MetadataPhoneNumberDesc of a given phone number type.
+     - Parameter numberDesc:  PhoneNumberDesc of a given phone number type.
      - Returns: True or false.
      */
-    func isNumberMatchingDesc(_ nationalNumber: String, numberDesc: MetadataPhoneNumberDesc?) -> Bool {
+    func isNumberMatchingDesc(_ nationalNumber: String, numberDesc: PhoneNumberDesc?) -> Bool {
         return regexCache.matchesEntirely(numberDesc?.nationalNumberPattern, string: nationalNumber)
     }
 
