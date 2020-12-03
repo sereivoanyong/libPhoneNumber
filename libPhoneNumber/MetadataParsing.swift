@@ -6,35 +6,6 @@
 
 import Foundation
 
-// MARK: - MetadataPhoneNumberFormat
-
-public extension NumberFormat {
-    private enum CodingKeys: String, CodingKey {
-        case pattern
-        case format
-        case intlFormat
-        case leadingDigitsPatterns = "leadingDigits"
-        case nationalPrefixFormattingRule
-        case nationalPrefixOptionalWhenFormatting
-        case domesticCarrierCodeFormattingRule = "carrierCodeFormattingRule"
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        // Custom parsing logic
-        leadingDigitsPatterns = container.decodeArrayOrObject(forKey: .leadingDigitsPatterns)
-        nationalPrefixOptionalWhenFormatting = try container.decodeStringBoolIfPresent(forKey: .nationalPrefixOptionalWhenFormatting) ?? false
-
-        // Default parsing logic
-        pattern = try container.decodeIfPresent(String.self, forKey: .pattern)
-        format = try container.decodeIfPresent(String.self, forKey: .format)
-        intlFormat = try container.decodeIfPresent(String.self, forKey: .intlFormat)
-        nationalPrefixFormattingRule = try container.decodeIfPresent(String.self, forKey: .nationalPrefixFormattingRule)
-        domesticCarrierCodeFormattingRule = try container.decodeIfPresent(String.self, forKey: .domesticCarrierCodeFormattingRule)
-    }
-}
-
 // MARK: - Parsing helpers
 
 extension KeyedDecodingContainer {

@@ -19,14 +19,3 @@ public struct MetadataPossibleLengths: Decodable {
     let national: String?
     let localOnly: String?
 }
-
-public struct NumberFormat: Decodable {
-    
-    public let pattern: String?
-    public let format: String?
-    public let intlFormat: String?
-    public let leadingDigitsPatterns: [String]?
-    public var nationalPrefixFormattingRule: String?
-    public let nationalPrefixOptionalWhenFormatting: Bool
-    public let domesticCarrierCodeFormattingRule: String?
-}
