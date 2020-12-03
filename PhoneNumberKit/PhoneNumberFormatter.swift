@@ -11,7 +11,7 @@ import Foundation
 open class PhoneNumberFormatter: Foundation.Formatter {
     public let phoneNumberKit: PhoneNumberKit
 
-    private let partialFormatter: PartialFormatter
+    private let partialFormatter: AsYouTypeFormatter
 
     // We declare all properties as @objc, so we can configure them though IB (using custom property)
     @objc public dynamic var generatesPhoneNumber: Bool = false
@@ -35,13 +35,13 @@ open class PhoneNumberFormatter: Foundation.Formatter {
 
     public init(phoneNumberKit: PhoneNumberKit, defaultRegionCode: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true) {
         self.phoneNumberKit = phoneNumberKit
-        self.partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegionCode: defaultRegionCode, withPrefix: withPrefix)
+        self.partialFormatter = AsYouTypeFormatter(phoneNumberKit: phoneNumberKit, defaultRegionCode: defaultRegionCode, withPrefix: withPrefix)
         super.init()
     }
 
     public required init?(coder: NSCoder) {
         phoneNumberKit = PhoneNumberKit()
-        partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegionCode: PhoneNumberKit.defaultRegionCode(), withPrefix: true)
+        partialFormatter = AsYouTypeFormatter(phoneNumberKit: phoneNumberKit, defaultRegionCode: PhoneNumberKit.defaultRegionCode(), withPrefix: true)
         super.init(coder: coder)
     }
 

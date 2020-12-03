@@ -1,15 +1,14 @@
 //
-//  PartialFormatter.swift
-//  PhoneNumberKit
+//  AsYouTypeFormatter.swift
 //
-//  Created by Roy Marmelstein on 29/11/2015.
-//  Copyright © 2020 Roy Marmelstein. All rights reserved.
+//  Created by Sereivoan Yong on 12/3/20.
 //
 
 import Foundation
 
 /// Partial formatter
-public final class PartialFormatter {
+final public class AsYouTypeFormatter {
+
     private let phoneNumberKit: PhoneNumberKit
 
     let regexManager: RegexManager
