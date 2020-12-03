@@ -6,14 +6,6 @@
 
 import Foundation
 
-public struct PhoneNumberDesc: Decodable {
-    
-    public let exampleNumber: String?
-    public let nationalNumberPattern: String?
-    public let possibleNumberPattern: String?
-    public let possibleLengths: MetadataPossibleLengths?
-}
-
 public struct MetadataPossibleLengths: Decodable {
     
     let national: String?
