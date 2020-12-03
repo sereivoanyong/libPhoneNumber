@@ -14,13 +14,11 @@ public final class PartialFormatter {
 
     let regexManager: RegexManager
     let metadataManager: MetadataManager
-    let parser: PhoneNumberParser
 
     public init(phoneNumberKit: PhoneNumberKit, defaultRegionCode: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true, maxDigits: Int? = nil) {
         self.phoneNumberKit = phoneNumberKit
         self.regexManager = phoneNumberKit.regexManager
         self.metadataManager = phoneNumberKit.metadataManager
-        self.parser = phoneNumberKit.parseManager.parser
         self.defaultRegionCode = defaultRegionCode
         self.updateMetadataForDefaultRegion()
         self.withPrefix = withPrefix
@@ -64,7 +62,7 @@ public final class PartialFormatter {
 
     public func nationalNumber(from rawNumber: String) -> String {
         let iddFreeNumber = extractIDD(rawNumber)
-        var nationalNumber = parser.normalizePhoneNumber(iddFreeNumber)
+        var nationalNumber = phoneNumberKit.normalizePhoneNumber(iddFreeNumber)
         if prefixBeforeNationalNumber.count > 0 {
             nationalNumber = extractCountryCallingCode(nationalNumber)
         }
@@ -224,7 +222,7 @@ public final class PartialFormatter {
         if !prefixBeforeNationalNumber.isEmpty && prefixBeforeNationalNumber.first != "+" {
             prefixBeforeNationalNumber.append(PhoneNumberConstants.separatorBeforeNationalNumber)
         }
-        if let potentialCountryCode = parser.extractPotentialCountryCode(rawNumber, nationalNumber: &numberWithoutCountryCallingCode), potentialCountryCode != 0 {
+        if let potentialCountryCode = phoneNumberKit.extractPotentialCountryCode(rawNumber, nationalNumber: &numberWithoutCountryCallingCode), potentialCountryCode != 0 {
             processedNumber = numberWithoutCountryCallingCode
             currentMetadata = metadataManager.mainTerritoryByCountryCodes[potentialCountryCode]
             let potentialCountryCodeString = String(potentialCountryCode)
