@@ -8,8 +8,25 @@ import Foundation
 
 final class RegexCache {
 
+    final private class Key: Hashable {
+
+        let pattern: String
+
+        init(pattern: String) {
+          self.pattern = pattern
+        }
+
+        static func == (lhs: RegexCache.Key, rhs: RegexCache.Key) -> Bool {
+          return lhs.pattern == rhs.pattern
+        }
+
+        func hash(into hasher: inout Hasher) {
+          hasher.combine(pattern)
+        }
+    }
+
     private let queue = DispatchQueue(label: "com.phonenumberkit.regexpool", attributes: .concurrent)
-    private let cache = NSCache<NSString, NSRegularExpression>()
+    private let cache = NSCache<Key, NSRegularExpression>()
 
     let spaceCharacterSet = CharacterSet(charactersIn: PhoneNumberConstants.nonBreakingSpace).union(.whitespacesAndNewlines)
 
@@ -17,7 +34,7 @@ final class RegexCache {
 
     func regex(pattern: String) throws -> NSRegularExpression {
       try queue.sync {
-        let key = pattern as NSString
+        let key = Key(pattern: pattern)
         if let cachedObject = cache.object(forKey: key) {
           return cachedObject
         }
