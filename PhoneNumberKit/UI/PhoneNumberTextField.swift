@@ -256,9 +256,9 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
 
      - returns: UITextfield
      */
-    public required init(coder aDecoder: NSCoder) {
+    public required init(coder: NSCoder) {
         self.phoneNumberKit = PhoneNumberKit()
-        super.init(coder: aDecoder)!
+        super.init(coder: coder)!
         self.setup()
     }
 

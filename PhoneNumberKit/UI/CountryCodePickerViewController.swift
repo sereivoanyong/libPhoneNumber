@@ -79,10 +79,10 @@ public class CountryCodePickerViewController: UITableViewController {
         self.commonInit()
     }
 
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder: NSCoder) {
         self.phoneNumberKit = PhoneNumberKit()
         self.commonCountryCodes = PhoneNumberKit.CountryCodePicker.commonCountryCodes
-        super.init(coder: aDecoder)
+        super.init(coder: coder)
         self.commonInit()
     }
 

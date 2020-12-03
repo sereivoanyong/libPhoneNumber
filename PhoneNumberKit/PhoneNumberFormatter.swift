@@ -33,7 +33,7 @@ open class PhoneNumberFormatter: Foundation.Formatter {
 
     // MARK: Lifecycle
 
-    public init(phoneNumberKit: PhoneNumberKit = PhoneNumberKit(), defaultRegionCode: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true) {
+    public init(phoneNumberKit: PhoneNumberKit, defaultRegionCode: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true) {
         self.phoneNumberKit = phoneNumberKit
         self.partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegionCode: defaultRegionCode, withPrefix: withPrefix)
         super.init()

@@ -22,14 +22,12 @@ enum PhoneNumberCountryCodeSource {
 /**
  Enumeration for parsing error types
 
- - GeneralError: A general error occured.
  - InvalidCountryCode: A country code could not be found or the one found was invalid
  - NotANumber: The string provided is not a number
  - TooLong: The string provided is too long to be a valid number
  - TooShort: The string provided is too short to be a valid number
  */
 public enum PhoneNumberError: Error {
-    case generalError
     case invalidCountryCode
     case notANumber
     case unknownType
@@ -40,7 +38,6 @@ public enum PhoneNumberError: Error {
 extension PhoneNumberError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .generalError: return NSLocalizedString("An error occured whilst validating the phone number.", comment: "")
         case .invalidCountryCode: return NSLocalizedString("The country code is invalid.", comment: "")
         case .notANumber: return NSLocalizedString("The number provided is invalid.", comment: "")
         case .unknownType: return NSLocalizedString("Phone number type is unknown.", comment: "")

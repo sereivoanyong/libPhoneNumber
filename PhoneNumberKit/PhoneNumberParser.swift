@@ -180,7 +180,7 @@ struct PhoneNumberParser {
     func parsePrefixAsIdd(_ number: inout String, iddPattern: String) -> Bool {
         if regexManager.stringPositionByRegex(iddPattern, string: number) == 0 {
             do {
-                guard let matched = try regexManager.regexMatches(iddPattern as String, string: number as String).first else {
+                guard let matched = try regexManager.matchesByRegex(pattern: iddPattern, string: number as String).first else {
                     return false
                 }
                 let matchedString = number.substring(with: matched.range)
@@ -215,7 +215,7 @@ struct PhoneNumberParser {
      */
     func stripExtension(_ number: inout String) -> String? {
         do {
-            let matches = try regexManager.regexMatches(PhoneNumberPatterns.extnPattern, string: number)
+            let matches = try regexManager.matchesByRegex(pattern: PhoneNumberPatterns.extnPattern, string: number)
             if let match = matches.first {
                 let adjustedRange = NSRange(location: match.range.location + 1, length: match.range.length - 1)
                 let matchString = number.substring(with: adjustedRange)
@@ -264,7 +264,7 @@ struct PhoneNumberParser {
         }
         let prefixPattern = String(format: "^(?:%@)", possibleNationalPrefix)
         do {
-            let matches = try regexManager.regexMatches(prefixPattern, string: number)
+            let matches = try regexManager.matchesByRegex(pattern: prefixPattern, string: number)
             if let firstMatch = matches.first {
                 let nationalNumberRule = metadata.generalDesc?.nationalNumberPattern
                 let firstMatchString = number.substring(with: firstMatch.range)
