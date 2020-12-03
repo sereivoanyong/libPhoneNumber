@@ -54,14 +54,13 @@ struct PhoneNumberParser {
         } else {
             let defaultCountryCode = String(metadata.countryCode)
             if fullNumber.hasPrefix(defaultCountryCode) {
-                let nsFullNumber = fullNumber as NSString
-                var potentialNationalNumber = nsFullNumber.substring(from: defaultCountryCode.count)
+                var potentialNationalNumber = (fullNumber as NSString).substring(from: defaultCountryCode.utf16.count)
                 guard let validNumberPattern = metadata.generalDesc?.nationalNumberPattern, let possibleNumberPattern = metadata.generalDesc?.possibleNumberPattern else {
                     return 0
                 }
                 stripNationalPrefix(&potentialNationalNumber, metadata: metadata)
                 let potentialNationalNumberStr = potentialNationalNumber
-                if (!regexManager.matchesEntirely(validNumberPattern, string: fullNumber) && regexManager.matchesEntirely(validNumberPattern, string: potentialNationalNumberStr)) || !regexManager.testStringLengthAgainstPattern(possibleNumberPattern, string: fullNumber as String) {
+                if (!regexManager.matchesEntirely(validNumberPattern, string: fullNumber) && regexManager.matchesEntirely(validNumberPattern, string: potentialNationalNumberStr)) || !regexManager.testStringLengthAgainstPattern(possibleNumberPattern, string: fullNumber) {
                     nationalNumber = potentialNationalNumberStr
                     if let countryCode = Int32(defaultCountryCode) {
                         return countryCode
@@ -79,15 +78,15 @@ struct PhoneNumberParser {
      - Returns: Country code is UInt64. Optional.
      */
     func extractPotentialCountryCode(_ fullNumber: String, nationalNumber: inout String) -> Int32? {
-        let nsFullNumber = fullNumber as NSString
-        if nsFullNumber.length == 0 || nsFullNumber.substring(to: 1) == "0" {
+        let fullNumber = fullNumber as NSString
+        if fullNumber.length == 0 || fullNumber.substring(to: 1) == "0" {
             return 0
         }
-        let numberLength = nsFullNumber.length
+        let numberLength = fullNumber.length
         let maxCountryCode = PhoneNumberConstants.maxLengthCountryCode
         var startPosition = 0
         if fullNumber.hasPrefix("+") {
-            if nsFullNumber.length == 1 {
+            if fullNumber.length == 1 {
                 return 0
             }
             startPosition = 1
@@ -97,9 +96,9 @@ struct PhoneNumberParser {
                 break
             }
             let stringRange = NSRange(location: startPosition, length: i)
-            let subNumber = nsFullNumber.substring(with: stringRange)
+            let subNumber = fullNumber.substring(with: stringRange)
             if let potentialCountryCode = Int32(subNumber), metadataManager.territoriesByCountryCodes[potentialCountryCode] != nil {
-                nationalNumber = nsFullNumber.substring(from: i)
+                nationalNumber = fullNumber.substring(from: i)
                 return potentialCountryCode
             }
         }
@@ -180,7 +179,7 @@ struct PhoneNumberParser {
     func parsePrefixAsIdd(_ number: inout String, iddPattern: String) -> Bool {
         if regexManager.stringPositionByRegex(iddPattern, string: number) == 0 {
             do {
-                guard let matched = try regexManager.matchesByRegex(pattern: iddPattern, string: number as String).first else {
+                guard let matched = try regexManager.matchesByRegex(pattern: iddPattern, string: number).first else {
                     return false
                 }
                 let matchedString = number.substring(with: matched.range)
@@ -188,15 +187,15 @@ struct PhoneNumberParser {
                 let remainString = (number as NSString).substring(from: matchEnd)
                 let capturingDigitPatterns = try NSRegularExpression(pattern: PhoneNumberPatterns.capturingDigitPattern, options: NSRegularExpression.Options.caseInsensitive)
                 if let firstMatch = capturingDigitPatterns.firstMatch(in: remainString, options: [], range: NSRange(location: 0, length: remainString.utf16.count)) {
-                    let digitMatched = remainString.substring(with: firstMatch.range) as NSString
-                    if digitMatched.length > 0 {
-                        let normalizedGroup = regexManager.stringByReplacingOccurrences(digitMatched as String, map: PhoneNumberPatterns.allNormalizationMappings)
+                    let digitMatched = remainString.substring(with: firstMatch.range)
+                    if !digitMatched.isEmpty {
+                        let normalizedGroup = regexManager.stringByReplacingOccurrences(digitMatched, map: PhoneNumberPatterns.allNormalizationMappings)
                         if normalizedGroup == "0" {
                             return false
                         }
                     }
                 }
-                number = remainString as String
+                number = remainString
                 return true
             } catch {
                 return false
@@ -235,11 +234,11 @@ struct PhoneNumberParser {
      - Returns: Modified normalized number without international prefix and a PNCountryCodeSource enumeration.
      */
     func stripInternationalPrefixAndNormalize(_ number: inout String, possibleIddPrefix: String?) -> PhoneNumberCountryCodeSource {
-        if regexManager.matchesAtStart(PhoneNumberPatterns.leadingPlusCharsPattern, string: number as String) {
-            number = regexManager.replaceStringByRegex(PhoneNumberPatterns.leadingPlusCharsPattern, string: number as String)
+        if regexManager.matchesAtStart(PhoneNumberPatterns.leadingPlusCharsPattern, string: number) {
+            number = regexManager.replaceStringByRegex(PhoneNumberPatterns.leadingPlusCharsPattern, string: number)
             return .numberWithPlusSign
         }
-        number = normalizePhoneNumber(number as String)
+        number = normalizePhoneNumber(number)
         guard let possibleIddPrefix = possibleIddPrefix else {
             return .numberWithoutPlusSign
         }

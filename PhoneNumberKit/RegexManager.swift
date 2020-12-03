@@ -200,8 +200,7 @@ final class RegexManager {
 // MARK: Extensions
 
 extension String {
-    func substring(with range: NSRange) -> String {
-        let nsString = self as NSString
-        return nsString.substring(with: range)
+    @inlinable func substring(with range: NSRange) -> String {
+        return (self as NSString).substring(with: range)
     }
 }

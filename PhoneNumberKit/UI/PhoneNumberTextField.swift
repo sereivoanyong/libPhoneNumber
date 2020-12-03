@@ -418,9 +418,9 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
         let filteredCharacters = modifiedTextField.filter {
             String($0).rangeOfCharacter(from: (textField as! PhoneNumberTextField).nonNumericSet) == nil
         }
-        let rawNumberString = String(filteredCharacters)
+        let rawNumberString = filteredCharacters
 
-        let formattedNationalNumber = self.partialFormatter.formatPartial(rawNumberString as String)
+        let formattedNationalNumber = self.partialFormatter.formatPartial(rawNumberString)
         var selectedTextRange: NSRange?
 
         let nonNumericRange = (changedRange.rangeOfCharacter(from: nonNumericSet).location != NSNotFound)
