@@ -135,7 +135,7 @@ final public class PhoneNumberUtil {
     ///
     /// - returns: Region code, eg "US", or nil if the region cannot be determined.
     public func regionCode(of phoneNumber: PhoneNumber) -> String? {
-        return regionCodeHelper(nationalNumber: phoneNumber.nationalNumber, countryCode: phoneNumber.countryCode, leadingZero: phoneNumber.leadingZero)
+        return regionCodeHelper(nationalNumber: phoneNumber.nationalNumber, countryCode: phoneNumber.countryCode, leadingZero: phoneNumber.italianLeadingZero)
     }
 
     /// Get an example phone number for an ISO 639 compliant region code.
@@ -150,7 +150,7 @@ final public class PhoneNumberUtil {
         switch type {
         case .fixedLine: example = metadata?.fixedLine?.exampleNumber
         case .mobile: example = metadata?.mobile?.exampleNumber
-        case .fixedOrMobile: example = metadata?.mobile?.exampleNumber
+        case .fixedLineOrMobile: example = metadata?.mobile?.exampleNumber
         case .pager: example = metadata?.pager?.exampleNumber
         case .personalNumber: example = metadata?.personalNumber?.exampleNumber
         case .premiumRate: example = metadata?.premiumRate?.exampleNumber
@@ -210,7 +210,7 @@ final public class PhoneNumberUtil {
     /// - parameter lengthType: PossibleLengthType enum.
     ///
     /// - returns: Array of possible lengths for the country. May be empty.
-    public func possiblePhoneNumberLengths(regionCode: String, phoneNumberType: PhoneNumberType, lengthType: PossibleLengthType) -> [Int] {
+    public func possiblePhoneNumberLengths(regionCode: String, phoneNumberType: PhoneNumberType, lengthType: PhoneNumberPossibleLengthType) -> [Int] {
         guard let territory = metadataManager.territoriesByRegionCodes[regionCode] else { return [] }
 
         let possibleLengths = possiblePhoneNumberLengths(forTerritory: territory, phoneNumberType: phoneNumberType)
@@ -233,7 +233,7 @@ final public class PhoneNumberUtil {
         case .voicemail:        return territory.voicemail?.possibleLengths
         case .voip:             return territory.voip?.possibleLengths
         case .uan:              return territory.uan?.possibleLengths
-        case .fixedOrMobile:    return nil // caller needs to combine results for .fixedLine and .mobile
+        case .fixedLineOrMobile:    return nil // caller needs to combine results for .fixedLine and .mobile
         case .unknown:          return nil
         }
     }
@@ -360,8 +360,7 @@ extension PhoneNumberUtil {
             }
         }
 
-        let phoneNumber = PhoneNumber(string: numberString, countryCode: countryCode, leadingZero: leadingZero, nationalNumber: finalNationalNumber, numberExtension: numberExtension, type: type, regionCode: regionMetadata.regionCode)
-        return phoneNumber
+        return PhoneNumber(countryCode: countryCode, nationalNumber: finalNationalNumber, extension: numberExtension, italianLeadingZero: leadingZero, numberOfLeadingZeros: 0, rawInput: numberString, countryCodeSource: .unspecified, preferredDomesticCarrierCode: nil, type: type)
     }
 
     // Parse task
@@ -428,7 +427,7 @@ extension PhoneNumberUtil {
             return 0
         }
         let countryCodeSource = stripInternationalPrefixAndNormalize(&fullNumber, possibleIddPrefix: possibleCountryIddPrefix)
-        if countryCodeSource != .defaultCountry {
+        if countryCodeSource != .fromDefaultCountry {
             if fullNumber.count <= PhoneNumberConstants.minLengthForNSN {
                 throw PhoneNumberError.tooShort
             }
@@ -533,9 +532,9 @@ extension PhoneNumberUtil {
         }
         if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.fixedLine) {
             if metadata.fixedLine?.nationalNumberPattern == metadata.mobile?.nationalNumberPattern {
-                return .fixedOrMobile
+                return .fixedLineOrMobile
             } else if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.mobile) {
-                return .fixedOrMobile
+                return .fixedLineOrMobile
             } else {
                 return .fixedLine
             }
@@ -619,20 +618,20 @@ extension PhoneNumberUtil {
      - Parameter possibleIddPrefix:  Possible idd prefix for a given country.
      - Returns: Modified normalized number without international prefix and a PNCountryCodeSource enumeration.
      */
-    func stripInternationalPrefixAndNormalize(_ number: inout String, possibleIddPrefix: String?) -> PhoneNumberCountryCodeSource {
+    func stripInternationalPrefixAndNormalize(_ number: inout String, possibleIddPrefix: String?) -> PhoneNumber.CountryCodeSource {
         if regexCache.matchesAtStart(PhoneNumberPatterns.leadingPlusCharsPattern, string: number) {
             number = regexCache.replaceStringByRegex(PhoneNumberPatterns.leadingPlusCharsPattern, string: number)
-            return .numberWithPlusSign
+            return .fromNumberWithPlusSign
         }
         number = normalizePhoneNumber(number)
         guard let possibleIddPrefix = possibleIddPrefix else {
-            return .numberWithoutPlusSign
+            return .fromNumberWithoutPlusSign
         }
         let prefixResult = parsePrefixAsIdd(&number, iddPattern: possibleIddPrefix)
         if prefixResult {
-            return .numberWithIDD
+            return .fromNumberWithIDD
         } else {
-            return .defaultCountry
+            return .fromDefaultCountry
         }
     }
 
@@ -690,7 +689,7 @@ extension PhoneNumberUtil {
         var formattedNationalNumber = phoneNumber.adjustedNationalNumber()
         if let regionMetadata = regionMetadata {
             formattedNationalNumber = formatNationalNumber(formattedNationalNumber, regionMetadata: regionMetadata, format: format)
-            if let formattedExtension = formatExtension(phoneNumber.numberExtension, regionMetadata: regionMetadata) {
+            if let formattedExtension = formatExtension(phoneNumber.extension, regionMetadata: regionMetadata) {
                 formattedNationalNumber = formattedNationalNumber + formattedExtension
             }
         }

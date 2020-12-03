@@ -65,7 +65,7 @@ class PhoneNumberUtilTests: XCTestCase {
             let phoneNumber = try util.parse("+16307792428", regionCode: "US")
             print(util.format(phoneNumber, format: .e164))
             let type = phoneNumber.type
-            XCTAssertEqual(type, PhoneNumberType.fixedOrMobile)
+            XCTAssertEqual(type, PhoneNumberType.fixedLineOrMobile)
         } catch {
             XCTFail()
         }
@@ -157,7 +157,7 @@ class PhoneNumberUtilTests: XCTestCase {
 //            XCTAssertEqual(phoneNumber.toInternational(), testNumber)
             XCTAssertEqual(phoneNumber.countryCode, 39)
             XCTAssertEqual(phoneNumber.nationalNumber, 549555555)
-            XCTAssertEqual(phoneNumber.leadingZero, true)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, true)
         } catch {
             XCTFail()
         }
@@ -169,9 +169,9 @@ class PhoneNumberUtilTests: XCTestCase {
         do {
             let phoneNumber = try util.parse(testNumber)
             XCTAssertEqual(phoneNumber.countryCode, 33)
-            XCTAssertEqual(phoneNumber.numberExtension, "84")
+            XCTAssertEqual(phoneNumber.extension, "84")
             XCTAssertEqual(phoneNumber.nationalNumber, 689555555)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
         } catch {
             XCTFail()
         }
@@ -183,9 +183,9 @@ class PhoneNumberUtilTests: XCTestCase {
         do {
             let phoneNumber = try util.parse(testNumber, regionCode: "US", ignoreType: false)
             XCTAssertEqual(phoneNumber.countryCode, 1)
-            XCTAssertEqual(phoneNumber.numberExtension, "28")
+            XCTAssertEqual(phoneNumber.extension, "28")
             XCTAssertEqual(phoneNumber.nationalNumber, 2129316760)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
         } catch {
             XCTFail()
         }
@@ -200,7 +200,7 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTAssertEqual(util.format(phoneNumber, format: .international, withPrefix: false), "6 89 55 55 55")
             XCTAssertEqual(phoneNumber.countryCode, 33)
             XCTAssertEqual(phoneNumber.nationalNumber, 689555555)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
             // XCTAssertEqual(phoneNumber.type, PhoneNumberType.mobile)
         } catch {
             XCTFail()
@@ -215,7 +215,7 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTAssertEqual(util.format(phoneNumber, format: .e164), "+81601555555")
             XCTAssertEqual(phoneNumber.countryCode, 81)
             XCTAssertEqual(phoneNumber.nationalNumber, 601555555)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
         } catch {
             XCTFail()
         }
@@ -229,7 +229,7 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTAssertEqual(util.format(phoneNumber, format: .e164), "+447739555555")
             XCTAssertEqual(phoneNumber.countryCode, 44)
             XCTAssertEqual(phoneNumber.nationalNumber, 7739555555)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
         } catch {
             XCTFail()
         }
@@ -243,7 +243,7 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTAssertEqual(util.format(phoneNumber, format: .e164), "+5511965555555")
             XCTAssertEqual(phoneNumber.countryCode, 55)
             XCTAssertEqual(phoneNumber.nationalNumber, 11965555555)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
         } catch {
             XCTFail()
         }
@@ -257,7 +257,7 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTAssertEqual(util.format(phoneNumber, format: .e164), "+12015555555")
             XCTAssertEqual(phoneNumber.countryCode, 1)
             XCTAssertEqual(phoneNumber.nationalNumber, 2015555555)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
         } catch {
             XCTFail()
         }
@@ -271,7 +271,7 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTAssertEqual(util.format(phoneNumber, format: .e164), "+15002555555")
             XCTAssertEqual(phoneNumber.countryCode, 1)
             XCTAssertEqual(phoneNumber.nationalNumber, 5002555555)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
         } catch {
             XCTFail()
         }
@@ -284,7 +284,7 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTAssertEqual(util.format(phoneNumber, format: .e164), "+971500500550")
             XCTAssertEqual(phoneNumber.countryCode, 971)
             XCTAssertEqual(phoneNumber.nationalNumber, 500500550)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
         } catch {
             XCTFail()
         }
@@ -297,7 +297,7 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTAssertEqual(util.format(phoneNumber, format: .e164), "+971500500550")
             XCTAssertEqual(phoneNumber.countryCode, 971)
             XCTAssertEqual(phoneNumber.nationalNumber, 500500550)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
         } catch {
             XCTFail()
         }
@@ -310,7 +310,7 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTAssertEqual(util.format(phoneNumber, format: .e164), "+971500500550")
             XCTAssertEqual(phoneNumber.countryCode, 971)
             XCTAssertEqual(phoneNumber.nationalNumber, 500500550)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
         } catch {
             XCTFail()
         }
@@ -323,7 +323,7 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTAssertEqual(util.format(phoneNumber, format: .e164), "+971500500550")
             XCTAssertEqual(phoneNumber.countryCode, 971)
             XCTAssertEqual(phoneNumber.nationalNumber, 500500550)
-            XCTAssertEqual(phoneNumber.leadingZero, false)
+            XCTAssertEqual(phoneNumber.italianLeadingZero, false)
         } catch {
             XCTFail()
         }

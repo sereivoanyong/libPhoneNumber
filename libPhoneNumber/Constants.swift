@@ -6,15 +6,6 @@
 
 import Foundation
 
-// MARK: Private Enums
-
-enum PhoneNumberCountryCodeSource {
-    case numberWithPlusSign
-    case numberWithIDD
-    case numberWithoutPlusSign
-    case defaultCountry
-}
-
 // MARK: Public Enums
 
 /**
@@ -46,42 +37,31 @@ extension PhoneNumberError: LocalizedError {
 }
 
 public enum PhoneNumberFormat {
-    case e164 // +33689123456
-    case international // +33 6 89 12 34 56
-    case national // 06 89 12 34 56
+  
+  case e164 // +33689123456
+  case international // +33 6 89 12 34 56
+  case national // 06 89 12 34 56
+  case rfc3966
 }
 
-/**
- Phone number type enumeration
- - fixedLine: Fixed line numbers
- - mobile: Mobile numbers
- - fixedOrMobile: Either fixed or mobile numbers if we can't tell conclusively.
- - pager: Pager numbers
- - personalNumber: Personal number numbers
- - premiumRate: Premium rate numbers
- - sharedCost: Shared cost numbers
- - tollFree: Toll free numbers
- - voicemail: Voice mail numbers
- - vOIP: Voip numbers
- - uan: UAN numbers
- - unknown: Unknown number type
- */
-public enum PhoneNumberType: String, Codable {
-    case fixedLine
-    case mobile
-    case fixedOrMobile
-    case pager
-    case personalNumber
-    case premiumRate
-    case sharedCost
-    case tollFree
-    case voicemail
-    case voip
-    case uan
-    case unknown
+public enum PhoneNumberType {
+  
+  case fixedLine
+  case mobile
+  case fixedLineOrMobile
+  case tollFree
+  case premiumRate
+  case sharedCost
+  case voip
+  case personalNumber
+  case pager
+  case uan
+  case voicemail
+  case unknown
 }
 
-public enum PossibleLengthType: String, Codable {
+public enum PhoneNumberPossibleLengthType {
+  
   case national
   case localOnly
 }

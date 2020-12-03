@@ -274,7 +274,7 @@ class PhoneNumberUtilParsingTests: XCTestCase {
                             let phoneNumber = try util.parse(exampleNumber, regionCode: codeID)
                             XCTAssertNotNil(phoneNumber)
                             if let type = record.1 {
-                                if phoneNumber.type == .fixedOrMobile {
+                                if phoneNumber.type == .fixedLineOrMobile {
                                     XCTAssert(type == .fixedLine || type == .mobile)
                                 } else {
                                     XCTAssertEqual(phoneNumber.type, type, "Expected type \(type) for number \(phoneNumber)")
@@ -449,7 +449,7 @@ class PhoneNumberUtilParsingTests: XCTestCase {
             return
         }
         XCTAssertEqual(number.type, PhoneNumberType.mobile)
-        XCTAssertEqual(number.numberExtension, "22")
+        XCTAssertEqual(number.extension, "22")
     }
     
     func testExtensionWithSemiColonParsing() {
@@ -458,6 +458,6 @@ class PhoneNumberUtilParsingTests: XCTestCase {
             return
         }
         XCTAssertEqual(number.type, PhoneNumberType.mobile)
-        XCTAssertEqual(number.numberExtension, "22")
+        XCTAssertEqual(number.extension, "22")
     }
 }
