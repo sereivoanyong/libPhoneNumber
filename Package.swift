@@ -14,18 +14,10 @@ let package = Package(
     targets: [
         .target(name: "PhoneNumberKit",
                 path: "PhoneNumberKit",
-                exclude: ["Resources/Original",
-                          "Resources/README.md",
-                          "Resources/update.sh",
-                          "Info.plist", 
-                          "Bundle+Resources.swift",
-                          "PhoneNumberKit.h"],
-                resources: [
-                    .process("Resources/PhoneNumberMetadata.json")
-                ]),
+                exclude: ["Resources/Original", "Resources/README.md", "Resources/update.sh"],
+                resources: [.process("Resources/PhoneNumberMetadata.json")]),
         .testTarget(name: "PhoneNumberKitTests",
                     dependencies: ["PhoneNumberKit"],
-                    path: "PhoneNumberKitTests",
-                    exclude: ["Info.plist"])
+                    path: "PhoneNumberKitTests")
     ]
 )
