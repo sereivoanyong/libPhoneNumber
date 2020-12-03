@@ -49,3 +49,17 @@ extension PhoneNumber: Hashable {
         }
     }
 }
+
+public extension PhoneNumber {
+    /**
+     Adjust national number for display by adding leading zero if needed. Used for basic formatting functions.
+     - Returns: A string representing the adjusted national number.
+     */
+    func adjustedNationalNumber() -> String {
+        if leadingZero {
+            return "0" + String(nationalNumber)
+        } else {
+            return String(nationalNumber)
+        }
+    }
+}
