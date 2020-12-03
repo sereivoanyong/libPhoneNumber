@@ -187,8 +187,7 @@ struct PhoneNumberParser {
                 let matchEnd = matchedString.count
                 let remainString = (number as NSString).substring(from: matchEnd)
                 let capturingDigitPatterns = try NSRegularExpression(pattern: PhoneNumberPatterns.capturingDigitPattern, options: NSRegularExpression.Options.caseInsensitive)
-                let matchedGroups = capturingDigitPatterns.matches(in: remainString as String)
-                if let firstMatch = matchedGroups.first {
+                if let firstMatch = capturingDigitPatterns.firstMatch(in: remainString, options: [], range: NSRange(location: 0, length: remainString.utf16.count)) {
                     let digitMatched = remainString.substring(with: firstMatch.range) as NSString
                     if digitMatched.length > 0 {
                         let normalizedGroup = regexManager.stringByReplacingOccurrences(digitMatched as String, map: PhoneNumberPatterns.allNormalizationMappings)

@@ -326,10 +326,10 @@ public final class PartialFormatter {
         }
         do {
             let characterClassRegex = try regexManager.regex(pattern: PhoneNumberPatterns.characterClassPattern)
-            numberPattern = characterClassRegex.stringByReplacingMatches(in: numberPattern, withTemplate: "\\\\d")
+            numberPattern = characterClassRegex.stringByReplacingMatches(in: numberPattern, options: [], range: NSRange(location: 0, length: numberPattern.utf16.count), withTemplate: "\\\\d")
 
             let standaloneDigitRegex = try regexManager.regex(pattern: PhoneNumberPatterns.standaloneDigitPattern)
-            numberPattern = standaloneDigitRegex.stringByReplacingMatches(in: numberPattern, withTemplate: "\\\\d")
+            numberPattern = standaloneDigitRegex.stringByReplacingMatches(in: numberPattern, options: [], range: NSRange(location: 0, length: numberPattern.utf16.count), withTemplate: "\\\\d")
 
             if let tempTemplate = getFormattingTemplate(numberPattern, numberFormat: numberFormat, rawNumber: rawNumber) {
                 if let nationalPrefixFormattingRule = format.nationalPrefixFormattingRule {

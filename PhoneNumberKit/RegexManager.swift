@@ -112,15 +112,15 @@ final class RegexManager {
         do {
             var replacementResult = string
             let regex = try self.regex(pattern: pattern)
-            let matches = regex.matches(in: string)
+            let matches = regex.matches(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count))
             if matches.count == 1 {
-                let range = regex.rangeOfFirstMatch(in: string)
-                if range != nil {
+                let range = regex.rangeOfFirstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count))
+                if range.length > 0 {
                     replacementResult = regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
                 }
                 return replacementResult
             } else if matches.count > 1 {
-                replacementResult = regex.stringByReplacingMatches(in: string, withTemplate: "")
+                replacementResult = regex.stringByReplacingMatches(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count), withTemplate: "")
             }
             return replacementResult
         } catch {
@@ -132,15 +132,15 @@ final class RegexManager {
         do {
             var replacementResult = string
             let regex = try self.regex(pattern: pattern)
-            let matches = regex.matches(in: string)
+            let matches = regex.matches(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count))
             if matches.count == 1 {
-                let range = regex.rangeOfFirstMatch(in: string)
-                if range != nil {
+                let range = regex.rangeOfFirstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count))
+                if range.length > 0 {
                     replacementResult = regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: template)
                 }
                 return replacementResult
             } else if matches.count > 1 {
-                replacementResult = regex.stringByReplacingMatches(in: string, withTemplate: template)
+                replacementResult = regex.stringByReplacingMatches(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count), withTemplate: template)
             }
             return replacementResult
         } catch {
@@ -151,8 +151,8 @@ final class RegexManager {
     func replaceFirstStringByRegex(_ pattern: String, string: String, templateString: String) -> String {
         do {
             let regex = try self.regex(pattern: pattern)
-            let range = regex.rangeOfFirstMatch(in: string)
-            if range != nil {
+            let range = regex.rangeOfFirstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count))
+            if range.length > 0 {
                 return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: templateString)
             }
             return string
