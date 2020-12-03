@@ -1,9 +1,7 @@
 //
-//  PhoneNumberKit.swift
-//  PhoneNumberKit
+//  PhoneNumberUtil.swift
 //
-//  Created by Roy Marmelstein on 03/10/2015.
-//  Copyright © 2020 Roy Marmelstein. All rights reserved.
+//  Created by Sereivoan Yong on 12/3/20.
 //
 
 import Foundation
@@ -11,7 +9,7 @@ import Foundation
 import CoreTelephony
 #endif
 
-final public class PhoneNumberKit {
+final public class PhoneNumberUtil {
     // Manager objects
     let regexCache: RegexCache
     let metadataManager: MetadataManager
@@ -32,7 +30,7 @@ final public class PhoneNumberKit {
     ///   - regionCode: ISO 639 compliant region code.
     ///   - ignoreType: Avoids number type checking for faster performance.
     /// - Returns: PhoneNumber object.
-    public func parse(_ numberString: String, regionCode: String = PhoneNumberKit.defaultRegionCode(), ignoreType: Bool = false) throws -> PhoneNumber {
+    public func parse(_ numberString: String, regionCode: String = PhoneNumberUtil.defaultRegionCode(), ignoreType: Bool = false) throws -> PhoneNumber {
         var numberStringWithPlus = numberString
 
         do {
@@ -55,7 +53,7 @@ final public class PhoneNumberKit {
     ///   - region: ISO 639 compliant region code.
     ///   - ignoreType: Avoids number type checking for faster performance.
     /// - Returns: Bool
-    public func isValidPhoneNumber(_ numberString: String, regionCode: String = PhoneNumberKit.defaultRegionCode(), ignoreType: Bool = false) -> Bool {
+    public func isValidPhoneNumber(_ numberString: String, regionCode: String = PhoneNumberUtil.defaultRegionCode(), ignoreType: Bool = false) -> Bool {
         return (try? parse(numberString, regionCode: regionCode, ignoreType: ignoreType)) != nil
     }
 
@@ -166,7 +164,7 @@ final public class PhoneNumberKit {
         do {
             return try example.flatMap { try parse($0, regionCode: regionCode, ignoreType: false) }
         } catch {
-            print("[PhoneNumberKit] Failed to parse example number for \(regionCode) region")
+            print("[PhoneNumberUtil] Failed to parse example number for \(regionCode) region")
             return nil
         }
     }
@@ -292,7 +290,7 @@ final public class PhoneNumberKit {
 }
 
 // MARK: - Manager for parsing flow.
-extension PhoneNumberKit {
+extension PhoneNumberUtil {
     /**
      Parse a string into a phone number object with a custom region. Can throw.
      - Parameter numberString: String to be parsed to phone number struct.
@@ -402,7 +400,7 @@ extension PhoneNumberKit {
 
 
 // MARK: - Parser. Contains parsing functions.
-extension PhoneNumberKit {
+extension PhoneNumberUtil {
     // MARK: Normalizations
 
     /**
@@ -678,7 +676,7 @@ extension PhoneNumberKit {
 }
 
 // MARK: - Formatter
-extension PhoneNumberKit {
+extension PhoneNumberUtil {
     // MARK: Formatting functions
 
     /// Formats phone numbers for display
@@ -766,7 +764,7 @@ extension PhoneNumberKit {
 
 
 #if canImport(UIKit)
-extension PhoneNumberKit {
+extension PhoneNumberUtil {
 
     /// Configuration for the CountryCodePicker presented from PhoneNumberTextField if `withDefaultPickerUI` is `true`
     public enum CountryCodePicker {

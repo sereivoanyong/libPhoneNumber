@@ -1,9 +1,9 @@
-![PhoneNumberKit](https://cloud.githubusercontent.com/assets/889949/20864386/a1307950-b9ef-11e6-8a58-e9c5103738e7.png)
-[![Platform](https://img.shields.io/cocoapods/p/PhoneNumberKit.svg?maxAge=2592000)](http://cocoapods.org/?q=PhoneNumberKit)
-[![Build Status](https://travis-ci.org/marmelroy/PhoneNumberKit.svg?branch=master)](https://travis-ci.org/marmelroy/PhoneNumberKit) [![Version](http://img.shields.io/cocoapods/v/PhoneNumberKit.svg)](http://cocoapods.org/?q=PhoneNumberKit)
+![libPhoneNumber](https://cloud.githubusercontent.com/assets/889949/20864386/a1307950-b9ef-11e6-8a58-e9c5103738e7.png)
+[![Platform](https://img.shields.io/cocoapods/p/libPhoneNumber.svg?maxAge=2592000)](http://cocoapods.org/?q=libPhoneNumber)
+[![Build Status](https://travis-ci.org/marmelroy/libPhoneNumber.svg?branch=master)](https://travis-ci.org/sereivoanyong/libPhoneNumber) [![Version](http://img.shields.io/cocoapods/v/libPhoneNumber.svg)](http://cocoapods.org/?q=libPhoneNumber)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
-# PhoneNumberKit
+# libPhoneNumber
 
 Swift 5.3 framework for parsing, formatting and validating international phone numbers.
 Inspired by Google's libphonenumber.
@@ -23,38 +23,30 @@ Inspired by Google's libphonenumber.
 
 ## Usage
 
-Import PhoneNumberKit at the top of the Swift file that will interact with a phone number.
+Import libPhoneNumber at the top of the Swift file that will interact with a phone number.
 
 ```swift
-import PhoneNumberKit
+import libPhoneNumber
 ```
 
-All of your interactions with PhoneNumberKit happen through a PhoneNumberKit object. The first step you should take is to allocate one.
+All of your interactions with libPhoneNumber happen through a PhoneNumberUtil object. The first step you should take is to allocate one.
 
-A PhoneNumberKit instance is relatively expensive to allocate (it parses the metadata and keeps it in memory for the object's lifecycle), you should try and make sure PhoneNumberKit is allocated once and deallocated when no longer needed.
+A PhoneNumberUtil instance is relatively expensive to allocate (it parses the metadata and keeps it in memory for the object's lifecycle), you should try and make sure PhoneNumberUtil is allocated once and deallocated when no longer needed.
 
 ```swift
-let phoneNumberKit = PhoneNumberKit()
+let phoneNumberUtil = PhoneNumberUtil()
 ```
 
-To parse a string, use the parse function. The region code is automatically computed but can be overridden if needed. PhoneNumberKit automatically does a hard type validation to ensure that the object created is valid, this can be quite costly performance-wise and can be turned off if needed.
+To parse a string, use the parse function. The region code is automatically computed but can be overridden if needed. PhoneNumberUtil automatically does a hard type validation to ensure that the object created is valid, this can be quite costly performance-wise and can be turned off if needed.
 
 ```swift
 do {
-    let phoneNumber = try phoneNumberKit.parse("+33 6 89 017383")
-    let phoneNumberCustomDefaultRegion = try phoneNumberKit.parse("+44 20 7031 3000", regionCode: "GB", ignoreType: true)
+    let phoneNumber = try phoneNumberUtil.parse("+33 6 89 017383")
+    let phoneNumberCustomDefaultRegion = try phoneNumberUtil.parse("+44 20 7031 3000", regionCode: "GB", ignoreType: true)
 }
 catch {
     print("Generic parser error")
 }
-```
-
-If you need to parse and validate a large amount of numbers at once, PhoneNumberKit has a special, lightning fast array parsing function. The default region code is automatically computed but can be overridden if needed. Here you can also ignore hard type validation if it is not necessary. Invalid numbers are ignored in the resulting array.
-
-```swift
-let rawNumberArray = ["0291 12345678", "+49 291 12345678", "04134 1234", "09123 12345"]
-let phoneNumbers = phoneNumberKit.parse(rawNumberArray)
-let phoneNumbersCustomDefaultRegion = phoneNumberKit.parse(rawNumberArray, regionCode "DE",  ignoreType: true)
 ```
 
 PhoneNumber objects are immutable Swift structs with the following properties:
@@ -70,16 +62,16 @@ phoneNumber.type // e.g Mobile or Fixed
 Formatting a PhoneNumber object into a string is also very easy
 
 ```swift
-phoneNumberKit.format(phoneNumber, format: .e164) // +61236618300
-phoneNumberKit.format(phoneNumber, format: .international) // +61 2 3661 8300
-phoneNumberKit.format(phoneNumber, format: .national) // (02) 3661 8300
+phoneNumberUtil.format(phoneNumber, format: .e164) // +61236618300
+phoneNumberUtil.format(phoneNumber, format: .international) // +61 2 3661 8300
+phoneNumberUtil.format(phoneNumber, format: .national) // (02) 3661 8300
 ```
 
 ## PhoneNumberTextField
 
 ![AsYouTypeFormatter](https://user-images.githubusercontent.com/7651280/67554038-e6512500-f751-11e9-93c9-9111e899a2ef.gif)
 
-To use the AsYouTypeFormatter, just replace your UITextField with a PhoneNumberTextField (if you are using Interface Builder make sure the module field is set to PhoneNumberKit).
+To use the AsYouTypeFormatter, just replace your UITextField with a PhoneNumberTextField (if you are using Interface Builder make sure the module field is set to libPhoneNumber).
 
 You can customize your TextField UI in the following ways
 
@@ -108,58 +100,34 @@ PartialFormatter().formatPartial("+336895555") // +33 6 89 55 55
 You can also query countries for a dialing code or the dialing code for a given country
 
 ```swift
-phoneNumberKit.countries(withCode: 33)
-phoneNumberKit.countryCode(for: "FR")
+phoneNumberUtil.regionCodes(forCountryCode: 33)
+phoneNumberUtil.countryCode(forRegionCode: "FR")
 ```
 
 ## Need more customization?
 
-You can access the metadata powering PhoneNumberKit yourself, this enables you to program any behaviours as they may be implemented in PhoneNumberKit itself. It does mean you are exposed to the less polished interface of the underlying file format. If you program something you find useful please push it upstream!
+You can access the metadata powering libPhoneNumber yourself, this enables you to program any behaviours as they may be implemented in PhoneNumberUtil itself. It does mean you are exposed to the less polished interface of the underlying file format. If you program something you find useful please push it upstream!
 
 ```swift
-phoneNumberKit.metadata(for: "AU")?.mobile?.exampleNumber // 412345678
+phoneNumberUtil.metadata(for: "AU")?.mobile?.exampleNumber // 412345678
 ```
 
-### [Preferrred] Setting up with [Swift Package Manager](https://swiftpm.co/?query=PhoneNumberKit)
+### [Preferrred] Setting up with [Swift Package Manager](https://swiftpm.co/?query=libPhoneNumber)
 
-The [Swift Package Manager](https://swift.org/package-manager/) is now the preferred tool for distributing PhoneNumberKit. 
+The [Swift Package Manager](https://swift.org/package-manager/) is now the preferred tool for distributing libPhoneNumber. 
 
 From Xcode 11+ :
 
-1. Select File > Swift Packages > Add Package Dependency. Enter `https://github.com/marmelroy/PhoneNumberKit.git` in the "Choose Package Repository" dialog.
+1. Select File > Swift Packages > Add Package Dependency. Enter `https://github.com/sereivoanyong/libPhoneNumber` in the "Choose Package Repository" dialog.
 2. In the next page, specify the version resolving rule as "Up to Next Major" with "3.3.0".
-3. After Xcode checked out the source and resolving the version, you can choose the "PhoneNumberKit" library and add it to your app target.
+3. After Xcode checked out the source and resolving the version, you can choose the "libPhoneNumber" library and add it to your app target.
 
 For more info, read [Adding Package Dependencies to Your App](https://developer.apple.com/documentation/xcode/adding_package_dependencies_to_your_app) from Apple.
 
-Alternatively, you can also add PhoneNumberKit to your `Package.swift` file:
+Alternatively, you can also add libPhoneNumber to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/marmelroy/PhoneNumberKit", .upToNextMajor(from: "3.3.1"))
+    .package(url: "https://github.com/sereivoanyong/libPhoneNumber", .upToNextMajor(from: "3.3.1"))
 ]
-```
-
-### Setting up with Carthage
-
-[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that automates the process of adding frameworks to your Cocoa application.
-
-You can install Carthage with [Homebrew](http://brew.sh/) using the following command:
-
-```bash
-$ brew update
-$ brew install carthage
-```
-
-To integrate PhoneNumberKit into your Xcode project using Carthage, specify it in your `Cartfile`:
-
-```ogdl
-github "marmelroy/PhoneNumberKit"
-```
-
-### Setting up with [CocoaPods](http://cocoapods.org/?q=PhoneNumberKit)
-
-```ruby
-source 'https://github.com/CocoaPods/Specs.git'
-pod 'PhoneNumberKit', '~> 3.3'
 ```

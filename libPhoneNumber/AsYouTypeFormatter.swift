@@ -9,15 +9,15 @@ import Foundation
 /// Partial formatter
 final public class AsYouTypeFormatter {
 
-    private let phoneNumberKit: PhoneNumberKit
+    private let util: PhoneNumberUtil
 
     let regexCache: RegexCache
     let metadataManager: MetadataManager
 
-    public init(phoneNumberKit: PhoneNumberKit, defaultRegionCode: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true, maxDigits: Int? = nil) {
-        self.phoneNumberKit = phoneNumberKit
-        self.regexCache = phoneNumberKit.regexCache
-        self.metadataManager = phoneNumberKit.metadataManager
+    public init(util: PhoneNumberUtil, defaultRegionCode: String = PhoneNumberUtil.defaultRegionCode(), withPrefix: Bool = true, maxDigits: Int? = nil) {
+        self.util = util
+        self.regexCache = util.regexCache
+        self.metadataManager = util.metadataManager
         self.defaultRegionCode = defaultRegionCode
         self.updateMetadataForDefaultRegion()
         self.withPrefix = withPrefix
@@ -50,7 +50,7 @@ final public class AsYouTypeFormatter {
     // MARK: Status
 
     public var currentRegionCode: String {
-        if phoneNumberKit.countryCode(forRegionCode: defaultRegionCode) != 1 {
+        if util.countryCode(forRegionCode: defaultRegionCode) != 1 {
             return currentMetadata?.regionCode ?? "US"
         } else {
             return currentMetadata?.countryCode == 1
@@ -61,7 +61,7 @@ final public class AsYouTypeFormatter {
 
     public func nationalNumber(from rawNumber: String) -> String {
         let iddFreeNumber = extractIDD(rawNumber)
-        var nationalNumber = phoneNumberKit.normalizePhoneNumber(iddFreeNumber)
+        var nationalNumber = util.normalizePhoneNumber(iddFreeNumber)
         if prefixBeforeNationalNumber.count > 0 {
             nationalNumber = extractCountryCallingCode(nationalNumber)
         }
@@ -221,7 +221,7 @@ final public class AsYouTypeFormatter {
         if !prefixBeforeNationalNumber.isEmpty && prefixBeforeNationalNumber.first != "+" {
             prefixBeforeNationalNumber.append(PhoneNumberConstants.separatorBeforeNationalNumber)
         }
-        if let potentialCountryCode = phoneNumberKit.extractPotentialCountryCode(rawNumber, nationalNumber: &numberWithoutCountryCallingCode), potentialCountryCode != 0 {
+        if let potentialCountryCode = util.extractPotentialCountryCode(rawNumber, nationalNumber: &numberWithoutCountryCallingCode), potentialCountryCode != 0 {
             processedNumber = numberWithoutCountryCallingCode
             currentMetadata = metadataManager.mainTerritoryByCountryCodes[potentialCountryCode]
             let potentialCountryCodeString = String(potentialCountryCode)

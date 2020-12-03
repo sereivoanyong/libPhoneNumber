@@ -25,7 +25,7 @@ final class RegexCache {
         }
     }
 
-    private let queue = DispatchQueue(label: "com.phonenumberkit.regexpool", attributes: .concurrent)
+    private let queue = DispatchQueue(label: "com.libphonenumber.regexcache.pool", attributes: .concurrent)
     private let cache = NSCache<Key, NSRegularExpression>()
 
     let spaceCharacterSet = CharacterSet(charactersIn: PhoneNumberConstants.nonBreakingSpace).union(.whitespacesAndNewlines)

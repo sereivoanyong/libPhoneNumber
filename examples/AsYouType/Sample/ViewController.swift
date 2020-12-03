@@ -8,7 +8,7 @@
 
 import ContactsUI
 import Foundation
-import PhoneNumberKit
+import libPhoneNumber
 import UIKit
 
 class ViewController: UIViewController, CNContactPickerDelegate {
@@ -23,7 +23,7 @@ class ViewController: UIViewController, CNContactPickerDelegate {
 
         // Country picker is only available on >iOS 11.0
         if #available(iOS 11.0, *) {
-            PhoneNumberKit.CountryCodePicker.commonCountryCodes = ["US", "CA", "MX", "AU", "GB", "DE"]
+            PhoneNumberUtil.CountryCodePicker.commonCountryCodes = ["US", "CA", "MX", "AU", "GB", "DE"]
         }
         self.textField.becomeFirstResponder()
         self.withPrefixSwitch.isOn = self.textField.withPrefix

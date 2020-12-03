@@ -1,10 +1,14 @@
+//
+//  CountryCodePickerViewController.swift
+//
+//  Created by Sereivoan Yong on 12/3/20.
+//
 
 #if canImport(UIKit)
-
 import UIKit
 
 @available(iOS 11.0, *)
-public protocol CountryCodePickerDelegate: class {
+public protocol CountryCodePickerDelegate: AnyObject {
     func countryCodePickerViewControllerDidPickCountry(_ country: CountryCodePickerViewController.Country)
 }
 
@@ -13,7 +17,7 @@ public class CountryCodePickerViewController: UITableViewController {
 
     lazy var searchController = UISearchController(searchResultsController: nil)
 
-    public let phoneNumberKit: PhoneNumberKit
+    public let util: PhoneNumberUtil
 
     let commonCountryCodes: [String]
 
@@ -22,9 +26,9 @@ public class CountryCodePickerViewController: UITableViewController {
     var hasCurrent = true
     var hasCommon = true
 
-    lazy var allRegionCodes = phoneNumberKit
+    lazy var allRegionCodes = util
         .allRegionCodes()
-        .compactMap({ Country(for: $0, with: self.phoneNumberKit) })
+        .compactMap({ Country(for: $0, with: self.util) })
         .sorted(by: { $0.name.caseInsensitiveCompare($1.name) == .orderedAscending })
 
     lazy var regionCodes: [[Country]] = {
@@ -43,11 +47,11 @@ public class CountryCodePickerViewController: UITableViewController {
                 return collection
             }
 
-        let popular = commonCountryCodes.compactMap({ Country(for: $0, with: phoneNumberKit) })
+        let popular = commonCountryCodes.compactMap({ Country(for: $0, with: util) })
 
         var result: [[Country]] = []
         // Note we should maybe use the user's current carrier's country code?
-        if hasCurrent, let current = Country(for: PhoneNumberKit.defaultRegionCode(), with: phoneNumberKit) {
+        if hasCurrent, let current = Country(for: PhoneNumberUtil.defaultRegionCode(), with: util) {
             result.append([current])
         }
         hasCommon = hasCommon && !popular.isEmpty
@@ -64,30 +68,30 @@ public class CountryCodePickerViewController: UITableViewController {
     lazy var cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissAnimated))
 
     /**
-     Init with a phone number kit instance. Because a PhoneNumberKit initialization is expensive you can must pass a pre-initialized instance to avoid incurring perf penalties.
+     Init with a phone number kit instance. Because a PhoneNumberUtil initialization is expensive you can must pass a pre-initialized instance to avoid incurring perf penalties.
 
-     - parameter phoneNumberKit: A PhoneNumberKit instance to be used by the text field.
-     - parameter commonCountryCodes: An array of country codes to display in the section below the current region section. defaults to `PhoneNumberKit.CountryCodePicker.commonCountryCodes`
+     - parameter util: A PhoneNumberUtil instance to be used by the text field.
+     - parameter commonCountryCodes: An array of country codes to display in the section below the current region section. defaults to `PhoneNumberUtil.CountryCodePicker.commonCountryCodes`
      */
     public init(
-        phoneNumberKit: PhoneNumberKit,
-        commonCountryCodes: [String] = PhoneNumberKit.CountryCodePicker.commonCountryCodes)
+        util: PhoneNumberUtil,
+        commonCountryCodes: [String] = PhoneNumberUtil.CountryCodePicker.commonCountryCodes)
     {
-        self.phoneNumberKit = phoneNumberKit
+        self.util = util
         self.commonCountryCodes = commonCountryCodes
         super.init(style: .grouped)
         self.commonInit()
     }
 
     required init?(coder: NSCoder) {
-        self.phoneNumberKit = PhoneNumberKit()
-        self.commonCountryCodes = PhoneNumberKit.CountryCodePicker.commonCountryCodes
+        self.util = PhoneNumberUtil()
+        self.commonCountryCodes = PhoneNumberUtil.CountryCodePicker.commonCountryCodes
         super.init(coder: coder)
         self.commonInit()
     }
 
     func commonInit() {
-        self.title = NSLocalizedString("PhoneNumberKit.CountryCodePicker.Title", value: "Choose your country", comment: "Title of CountryCodePicker ViewController")
+        self.title = NSLocalizedString("PhoneNumberUtil.CountryCodePicker.Title", value: "Choose your country", comment: "Title of CountryCodePicker ViewController")
 
         tableView.register(Cell.self, forCellReuseIdentifier: Cell.reuseIdentifier)
         searchController.searchResultsUpdater = self
@@ -146,11 +150,11 @@ public class CountryCodePickerViewController: UITableViewController {
         if isFiltering {
             return nil
         } else if section == 0, hasCurrent {
-            return NSLocalizedString("PhoneNumberKit.CountryCodePicker.Current", value: "Current", comment: "Name of \"Current\" section")
+            return NSLocalizedString("PhoneNumberUtil.CountryCodePicker.Current", value: "Current", comment: "Name of \"Current\" section")
         } else if section == 0, !hasCurrent, hasCommon {
-            return NSLocalizedString("PhoneNumberKit.CountryCodePicker.Common", value: "Common", comment: "Name of \"Common\" section")
+            return NSLocalizedString("PhoneNumberUtil.CountryCodePicker.Common", value: "Common", comment: "Name of \"Common\" section")
         } else if section == 1, hasCurrent, hasCommon {
-            return NSLocalizedString("PhoneNumberKit.CountryCodePicker.Common", value: "Common", comment: "Name of \"Common\" section")
+            return NSLocalizedString("PhoneNumberUtil.CountryCodePicker.Common", value: "Common", comment: "Name of \"Common\" section")
         }
         return regionCodes[section].first?.name.first.map(String.init)
     }
@@ -214,11 +218,11 @@ public extension CountryCodePickerViewController {
         public var name: String
         public var prefix: String
 
-        public init?(for countryCode: String, with phoneNumberKit: PhoneNumberKit) {
+        public init?(for countryCode: String, with util: PhoneNumberUtil) {
             let flagBase = UnicodeScalar("🇦").value - UnicodeScalar("A").value
             guard
                 let name = (Locale.current as NSLocale).localizedString(forCountryCode: countryCode),
-                let prefix = phoneNumberKit.countryCode(forRegionCode: countryCode)?.description
+                let prefix = util.countryCode(forRegionCode: countryCode)?.description
             else {
                 return nil
             }
@@ -251,5 +255,4 @@ public extension CountryCodePickerViewController {
         }
     }
 }
-
 #endif

@@ -1,17 +1,15 @@
 //
 //  PhoneNumberFormatter.swift
-//  PhoneNumberKit
 //
-//  Created by Jean-Daniel.
-//  Copyright © 2019 Xenonium. All rights reserved.
+//  Created by Sereivoan Yong on 12/3/20.
 //
 
 import Foundation
 
-open class PhoneNumberFormatter: Foundation.Formatter {
-    public let phoneNumberKit: PhoneNumberKit
+open class PhoneNumberFormatter: Formatter {
 
     private let partialFormatter: AsYouTypeFormatter
+    public let util: PhoneNumberUtil
 
     // We declare all properties as @objc, so we can configure them though IB (using custom property)
     @objc public dynamic var generatesPhoneNumber: Bool = false
@@ -33,15 +31,15 @@ open class PhoneNumberFormatter: Foundation.Formatter {
 
     // MARK: Lifecycle
 
-    public init(phoneNumberKit: PhoneNumberKit, defaultRegionCode: String = PhoneNumberKit.defaultRegionCode(), withPrefix: Bool = true) {
-        self.phoneNumberKit = phoneNumberKit
-        self.partialFormatter = AsYouTypeFormatter(phoneNumberKit: phoneNumberKit, defaultRegionCode: defaultRegionCode, withPrefix: withPrefix)
+    public init(util: PhoneNumberUtil, defaultRegionCode: String = PhoneNumberUtil.defaultRegionCode(), withPrefix: Bool = true) {
+        self.util = util
+        self.partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: defaultRegionCode, withPrefix: withPrefix)
         super.init()
     }
 
     public required init?(coder: NSCoder) {
-        phoneNumberKit = PhoneNumberKit()
-        partialFormatter = AsYouTypeFormatter(phoneNumberKit: phoneNumberKit, defaultRegionCode: PhoneNumberKit.defaultRegionCode(), withPrefix: true)
+        util = PhoneNumberUtil()
+        partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: PhoneNumberUtil.defaultRegionCode(), withPrefix: true)
         super.init(coder: coder)
     }
 
@@ -50,11 +48,11 @@ open class PhoneNumberFormatter: Foundation.Formatter {
     }
 
     open func string(from phoneNumber: PhoneNumber) -> String {
-        return phoneNumberKit.format(phoneNumber, format: withPrefix ? .international : .national)
+        return util.format(phoneNumber, format: withPrefix ? .international : .national)
     }
 
     open func phoneNumber(from string: String) -> PhoneNumber? {
-        return try? phoneNumberKit.parse(string, regionCode: currentRegionCode)
+        return try? util.parse(string, regionCode: currentRegionCode)
     }
 }
 
@@ -76,7 +74,7 @@ extension PhoneNumberFormatter {
     open override func getObjectValue(_ object: AutoreleasingUnsafeMutablePointer<AnyObject?>?, for string: String, errorDescription: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
         if generatesPhoneNumber {
             do {
-                object?.pointee = try phoneNumberKit.parse(string) as AnyObject?
+                object?.pointee = try util.parse(string) as AnyObject?
                 return true
             } catch {
                 errorDescription?.pointee = error.localizedDescription as NSString

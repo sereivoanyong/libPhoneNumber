@@ -1,9 +1,7 @@
 //
 //  MetadataParsing.swift
-//  PhoneNumberKit
 //
-//  Created by Roy Marmelstein on 2019-02-10.
-//  Copyright © 2019 Roy Marmelstein. All rights reserved.
+//  Created by Sereivoan Yong on 12/3/20.
 //
 
 import Foundation

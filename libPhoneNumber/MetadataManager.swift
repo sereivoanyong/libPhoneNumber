@@ -1,9 +1,7 @@
 //
 //  Metadata.swift
-//  PhoneNumberKit
 //
-//  Created by Roy Marmelstein on 03/10/2015.
-//  Copyright © 2020 Roy Marmelstein. All rights reserved.
+//  Created by Sereivoan Yong on 12/3/20.
 //
 
 import Foundation
@@ -11,7 +9,7 @@ import Foundation
 private func populateTerritories() -> [MetadataTerritory] {
     do {
         guard let url = Bundle.module.url(forResource: "PhoneNumberMetadata", withExtension: "json") else {
-            debugPrint("PhoneNumberKit was unable to read the included metadata")
+            debugPrint("PhoneNumberUtil was unable to read the included metadata")
             return []
         }
         let data = try Data(contentsOf: url)

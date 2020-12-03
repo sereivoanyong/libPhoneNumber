@@ -18,10 +18,10 @@ trap trap_handler INT TERM EXIT
 MODE="$1"
 
 if [ "$MODE" = "build" ]; then
-    echo "Building PhoneNumberKit."
+    echo "Building libPhoneNumber."
     xcodebuild \
-        -project PhoneNumberKit.xcodeproj \
-        -scheme PhoneNumberKit \
+        -project libPhoneNumber.xcodeproj \
+        -scheme libPhoneNumber \
         -sdk "$SDK" \
         -destination "$PLATFORM" \
         build test
@@ -30,7 +30,7 @@ if [ "$MODE" = "build" ]; then
 fi
 
 if [ "$MODE" = "examples" ]; then
-    echo "Building and testing all PhoneNumberKit examples."
+    echo "Building and testing all libPhoneNumber examples."
 
     for example in examples/*/; do
         echo "Building $example."

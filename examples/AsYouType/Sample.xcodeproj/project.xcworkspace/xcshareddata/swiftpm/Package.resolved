@@ -2,12 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "PhoneNumberKit",
-        "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
+        "package": "libPhoneNumber",
+        "repositoryURL": "https://github.com/sereivoanyong/libPhoneNumber",
         "state": {
-          "branch": null,
-          "revision": "edbd0b43e914083c3b8af9403f64ac80f8270e47",
-          "version": "3.3.0"
+          "branch": "master",
+          "revision": "8531b9c58de3d274a64aeb2facc5cc6f591ba234",
+          "version": null
         }
       }
     ]
