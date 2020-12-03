@@ -182,19 +182,15 @@ public final class PartialFormatter {
 
     func extractIDD(_ rawNumber: String) -> String {
         var processedNumber = rawNumber
-        do {
-            if let internationalPrefix = currentMetadata?.internationalPrefix {
-                let prefixPattern = String(format: PhoneNumberPatterns.iddPattern, arguments: [internationalPrefix])
-                let matches = try regexManager.matchedStringByRegex(prefixPattern, string: rawNumber)
-                if let m = matches.first {
-                    let startCallingCode = m.count
-                    let index = rawNumber.index(rawNumber.startIndex, offsetBy: startCallingCode)
-                    processedNumber = String(rawNumber[index...])
-                    prefixBeforeNationalNumber = String(rawNumber[..<index])
-                }
+        if let internationalPrefix = currentMetadata?.internationalPrefix {
+            let prefixPattern = String(format: PhoneNumberPatterns.iddPattern, arguments: [internationalPrefix])
+            let matches = regexManager.matchedStringByRegex(prefixPattern, string: rawNumber)
+            if let m = matches.first {
+                let startCallingCode = m.count
+                let index = rawNumber.index(rawNumber.startIndex, offsetBy: startCallingCode)
+                processedNumber = String(rawNumber[index...])
+                prefixBeforeNationalNumber = String(rawNumber[..<index])
             }
-        } catch {
-            return processedNumber
         }
         return processedNumber
     }
@@ -205,16 +201,12 @@ public final class PartialFormatter {
         if isNanpaNumberWithNationalPrefix(rawNumber) {
             prefixBeforeNationalNumber.append("1 ")
         } else {
-            do {
-                if let nationalPrefix = currentMetadata?.nationalPrefixForParsing {
-                    let nationalPrefixPattern = String(format: PhoneNumberPatterns.nationalPrefixParsingPattern, arguments: [nationalPrefix])
-                    let matches = try regexManager.matchedStringByRegex(nationalPrefixPattern, string: rawNumber)
-                    if let m = matches.first {
-                        startOfNationalNumber = m.count
-                    }
+            if let nationalPrefix = currentMetadata?.nationalPrefixForParsing {
+                let nationalPrefixPattern = String(format: PhoneNumberPatterns.nationalPrefixParsingPattern, arguments: [nationalPrefix])
+                let matches = regexManager.matchedStringByRegex(nationalPrefixPattern, string: rawNumber)
+                if let m = matches.first {
+                    startOfNationalNumber = m.count
                 }
-            } catch {
-                return processedNumber
             }
         }
         let index = rawNumber.index(rawNumber.startIndex, offsetBy: startOfNationalNumber)
@@ -346,17 +338,15 @@ public final class PartialFormatter {
     }
 
     func getFormattingTemplate(_ numberPattern: String, numberFormat: String, rawNumber: String) -> String? {
-        do {
-            let matches = try regexManager.matchedStringByRegex(numberPattern, string: PhoneNumberConstants.longPhoneNumber)
-            if let match = matches.first {
-                if match.count < rawNumber.count {
-                    return nil
-                }
-                var template = regexManager.replaceStringByRegex(numberPattern, string: match, template: numberFormat)
-                template = regexManager.replaceStringByRegex("9", string: template, template: PhoneNumberConstants.digitPlaceholder)
-                return template
+        let matches = regexManager.matchedStringByRegex(numberPattern, string: PhoneNumberConstants.longPhoneNumber)
+        if let match = matches.first {
+            if match.count < rawNumber.count {
+                return nil
             }
-        } catch {}
+            var template = regexManager.replaceStringByRegex(numberPattern, string: match, template: numberFormat)
+            template = regexManager.replaceStringByRegex("9", string: template, template: PhoneNumberConstants.digitPlaceholder)
+            return template
+        }
         return nil
     }
 
