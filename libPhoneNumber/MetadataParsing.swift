@@ -8,7 +8,7 @@ import Foundation
 
 // MARK: - MetadataTerritory
 
-public extension MetadataTerritory {
+public extension PhoneMetadata {
     private enum CodingKeys: String, CodingKey {
         case regionCode = "id"
         case countryCode
@@ -117,7 +117,7 @@ extension PhoneNumberMetadata {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let metadataObject = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .phoneNumberMetadata)
         let territoryObject = try metadataObject.nestedContainer(keyedBy: CodingKeys.self, forKey: .territories)
-        territories = try territoryObject.decode([MetadataTerritory].self, forKey: .territory)
+        territories = try territoryObject.decode([PhoneMetadata].self, forKey: .territory)
     }
 }
 

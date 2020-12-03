@@ -41,8 +41,8 @@ final public class AsYouTypeFormatter {
         currentMetadata = defaultMetadata
     }
 
-    var defaultMetadata: MetadataTerritory?
-    var currentMetadata: MetadataTerritory?
+    var defaultMetadata: PhoneMetadata?
+    var currentMetadata: PhoneMetadata?
     var prefixBeforeNationalNumber = String()
     var shouldAddSpaceAfterNationalPrefix = false
     var withPrefix = true

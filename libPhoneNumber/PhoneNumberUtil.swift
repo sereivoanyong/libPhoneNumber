@@ -192,14 +192,14 @@ final public class PhoneNumberUtil {
     /// - parameter regionCode: ISO 639 compliant region code (e.g "GB" for the UK).
     ///
     /// - returns: A MetadataTerritory object, or nil if no metadata was found for the country code
-    public func metadata(forRegionCode regionCode: String) -> MetadataTerritory? {
+    public func metadata(forRegionCode regionCode: String) -> PhoneMetadata? {
         return metadataManager.territoriesByRegionCodes[regionCode]
     }
 
     /// Get an array of MetadataTerritory objects corresponding to a given country code.
     ///
     /// - parameter countryCode: international country code (e.g 44 for the UK)
-    public func metadata(forCountryCode countryCode: Int32) -> [MetadataTerritory]? {
+    public func metadata(forCountryCode countryCode: Int32) -> [PhoneMetadata]? {
         return metadataManager.territoriesByCountryCodes[countryCode]
     }
 
@@ -221,7 +221,7 @@ final public class PhoneNumberUtil {
         }
     }
 
-    private func possiblePhoneNumberLengths(forTerritory territory: MetadataTerritory, phoneNumberType: PhoneNumberType) -> MetadataPossibleLengths? {
+    private func possiblePhoneNumberLengths(forTerritory territory: PhoneMetadata, phoneNumberType: PhoneNumberType) -> MetadataPossibleLengths? {
         switch phoneNumberType {
         case .fixedLine:        return territory.fixedLine?.possibleLengths
         case .mobile:           return territory.mobile?.possibleLengths
@@ -422,7 +422,7 @@ extension PhoneNumberUtil {
      - Parameter metadata: Metadata territory object.
      - Returns: Country code is UInt64.
      */
-    func extractCountryCode(_ number: String, nationalNumber: inout String, metadata: MetadataTerritory) throws -> Int32 {
+    func extractCountryCode(_ number: String, nationalNumber: inout String, metadata: PhoneMetadata) throws -> Int32 {
         var fullNumber = number
         guard let possibleCountryIddPrefix = metadata.internationalPrefix else {
             return 0
@@ -493,7 +493,7 @@ extension PhoneNumberUtil {
 
     // MARK: Validations
 
-    func type(_ nationalNumber: String, metadata: MetadataTerritory, leadingZero: Bool) -> PhoneNumberType {
+    func type(_ nationalNumber: String, metadata: PhoneMetadata, leadingZero: Bool) -> PhoneNumberType {
         if leadingZero {
             let type = self.type("0" + nationalNumber, metadata: metadata, leadingZero: false)
             if type != .unknown {
@@ -642,7 +642,7 @@ extension PhoneNumberUtil {
      - Parameter metadata:  Final country's metadata.
      - Returns: Modified number without national prefix.
      */
-    func stripNationalPrefix(_ number: inout String, metadata: MetadataTerritory) {
+    func stripNationalPrefix(_ number: inout String, metadata: PhoneMetadata) {
         guard let possibleNationalPrefix = metadata.nationalPrefixForParsing else {
             return
         }
@@ -686,7 +686,7 @@ extension PhoneNumberUtil {
     ///   - format: Format.
     ///   - regionMetadata: Region meta data.
     /// - Returns: Formatted Modified national number ready for display.
-    func format(phoneNumber: PhoneNumber, format: PhoneNumberFormat, regionMetadata: MetadataTerritory?) -> String {
+    func format(phoneNumber: PhoneNumber, format: PhoneNumberFormat, regionMetadata: PhoneMetadata?) -> String {
         var formattedNationalNumber = phoneNumber.adjustedNationalNumber()
         if let regionMetadata = regionMetadata {
             formattedNationalNumber = formatNationalNumber(formattedNationalNumber, regionMetadata: regionMetadata, format: format)
@@ -703,7 +703,7 @@ extension PhoneNumberUtil {
     ///   - numberExtension: Number extension string.
     ///   - regionMetadata: Region meta data.
     /// - Returns: Modified number extension with either a preferred extension prefix or the default one.
-    func formatExtension(_ numberExtension: String?, regionMetadata: MetadataTerritory) -> String? {
+    func formatExtension(_ numberExtension: String?, regionMetadata: PhoneMetadata) -> String? {
         if let extns = numberExtension {
             if let preferredExtnPrefix = regionMetadata.preferredExtnPrefix {
                 return "\(preferredExtnPrefix)\(extns)"
@@ -721,7 +721,7 @@ extension PhoneNumberUtil {
     ///   - regionMetadata: Region meta data.
     ///   - format: Format.
     /// - Returns: Modified nationalNumber for display.
-    func formatNationalNumber(_ nationalNumber: String, regionMetadata: MetadataTerritory, format: PhoneNumberFormat) -> String {
+    func formatNationalNumber(_ nationalNumber: String, regionMetadata: PhoneMetadata, format: PhoneNumberFormat) -> String {
         let formats = regionMetadata.numberFormats
         var selectedFormat: MetadataPhoneNumberFormat?
         for format in formats {

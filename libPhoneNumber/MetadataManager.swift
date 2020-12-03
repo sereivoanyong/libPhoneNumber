@@ -6,7 +6,7 @@
 
 import Foundation
 
-private func populateTerritories() -> [MetadataTerritory] {
+private func populateTerritories() -> [PhoneMetadata] {
     do {
         guard let url = Bundle.module.url(forResource: "PhoneNumberMetadata", withExtension: "json") else {
             debugPrint("PhoneNumberUtil was unable to read the included metadata")
@@ -23,10 +23,11 @@ private func populateTerritories() -> [MetadataTerritory] {
 }
 
 struct MetadataManager {
-    let territories: [MetadataTerritory]
-    let territoriesByCountryCodes: [Int32: [MetadataTerritory]]
-    let mainTerritoryByCountryCodes: [Int32: MetadataTerritory]
-    let territoriesByRegionCodes: [String: MetadataTerritory]
+    
+    let territories: [PhoneMetadata]
+    let territoriesByCountryCodes: [Int32: [PhoneMetadata]]
+    let mainTerritoryByCountryCodes: [Int32: PhoneMetadata]
+    let territoriesByRegionCodes: [String: PhoneMetadata]
 
     // MARK: Lifecycle
 
@@ -35,9 +36,9 @@ struct MetadataManager {
     /// - Parameter metadataCallback: a closure that returns metadata as JSON Data.
     init() {
         self.territories = populateTerritories()
-        var territoriesByCountryCodes: [Int32: [MetadataTerritory]] = [:]
-        var mainTerritoryByCountryCodes: [Int32: MetadataTerritory] = [:]
-        var territoriesByCountry: [String: MetadataTerritory] = [:]
+        var territoriesByCountryCodes: [Int32: [PhoneMetadata]] = [:]
+        var mainTerritoryByCountryCodes: [Int32: PhoneMetadata] = [:]
+        var territoriesByCountry: [String: PhoneMetadata] = [:]
         for item in self.territories {
             var currentTerritories = territoriesByCountryCodes[item.countryCode] ?? []
             // In the case of multiple countries sharing a calling code, such as the NANPA countries,

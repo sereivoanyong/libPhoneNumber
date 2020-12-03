@@ -6,7 +6,7 @@
 
 import Foundation
 
-public struct MetadataTerritory: Decodable {
+public struct PhoneMetadata: Decodable {
     
     public let regionCode: String
     public let countryCode: Int32
@@ -69,6 +69,7 @@ public struct MetadataPhoneNumberFormat: Decodable {
 }
 
 /// Internal object for metadata parsing
-internal struct PhoneNumberMetadata: Decodable {
-    var territories: [MetadataTerritory]
+struct PhoneNumberMetadata: Decodable {
+    
+    let territories: [PhoneMetadata]
 }
