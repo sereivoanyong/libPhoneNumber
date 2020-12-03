@@ -68,7 +68,7 @@ class PhoneNumberUtilParsingTests: XCTestCase {
 //        XCTAssertEqual(uan.nationalNumberPattern, "710[2-9]\\d{6}")
 //        XCTAssertNil(uan.possibleNumberPattern)
         let numberFormats = sut.numberFormats
-        let firstNumberFormat: MetadataPhoneNumberFormat = numberFormats[0]
+        let firstNumberFormat: NumberFormat = numberFormats[0]
         XCTAssertEqual(firstNumberFormat.pattern, "(\\d{3})(\\d{4})")
         XCTAssertEqual(firstNumberFormat.format, "$1-$2")
         XCTAssertEqual(firstNumberFormat.intlFormat, "NA")
@@ -77,7 +77,7 @@ class PhoneNumberUtilParsingTests: XCTestCase {
         XCTAssertNil(firstNumberFormat.nationalPrefixFormattingRule)
         XCTAssertFalse(firstNumberFormat.nationalPrefixOptionalWhenFormatting)
         XCTAssertNil(firstNumberFormat.domesticCarrierCodeFormattingRule)
-        let secondNumberFormat: MetadataPhoneNumberFormat = numberFormats[1]
+        let secondNumberFormat: NumberFormat = numberFormats[1]
         XCTAssertEqual(secondNumberFormat.pattern, "(\\d{3})(\\d{3})(\\d{4})")
         XCTAssertEqual(secondNumberFormat.format, "($1) $2-$3")
         XCTAssertEqual(secondNumberFormat.intlFormat, "$1-$2-$3")

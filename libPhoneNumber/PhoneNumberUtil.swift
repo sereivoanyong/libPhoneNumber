@@ -723,7 +723,7 @@ extension PhoneNumberUtil {
     /// - Returns: Modified nationalNumber for display.
     func formatNationalNumber(_ nationalNumber: String, regionMetadata: PhoneMetadata, format: PhoneNumberFormat) -> String {
         let formats = regionMetadata.numberFormats
-        var selectedFormat: MetadataPhoneNumberFormat?
+        var selectedFormat: NumberFormat?
         for format in formats {
             if let leadingDigitPattern = format.leadingDigitsPatterns?.last {
                 if regexCache.stringPositionByRegex(leadingDigitPattern, string: String(nationalNumber)) == 0 {

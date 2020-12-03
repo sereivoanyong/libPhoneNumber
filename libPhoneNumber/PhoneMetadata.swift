@@ -29,7 +29,7 @@ public struct PhoneMetadata: Decodable {
   public let voicemail: PhoneNumberDesc?
   public let voip: PhoneNumberDesc?
   public let uan: PhoneNumberDesc?
-  public let numberFormats: [MetadataPhoneNumberFormat]
+  public let numberFormats: [NumberFormat]
   public let leadingDigits: String?
   
   private enum CodingKeys: String, CodingKey {
@@ -73,7 +73,7 @@ public struct PhoneMetadata: Decodable {
     nationalPrefixFormattingRule = try container.decodeIfPresent(String.self, forKey: .nationalPrefixFormattingRule)
     if container.allKeys.contains(.availableFormats) {
       let availableFormats = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .availableFormats)
-      let temporaryFormatList = availableFormats.decodeArrayOrObject(forKey: .numberFormats) as [MetadataPhoneNumberFormat]
+      let temporaryFormatList = availableFormats.decodeArrayOrObject(forKey: .numberFormats) as [NumberFormat]
       numberFormats = temporaryFormatList.withDefaultNationalPrefixFormattingRule(nationalPrefixFormattingRule)
     } else {
       numberFormats = []
@@ -101,8 +101,8 @@ public struct PhoneMetadata: Decodable {
 
 extension Collection {
   
-  fileprivate func withDefaultNationalPrefixFormattingRule(_ nationalPrefixFormattingRule: String?) -> [Element] where Element == MetadataPhoneNumberFormat {
-    return map { format -> MetadataPhoneNumberFormat in
+  fileprivate func withDefaultNationalPrefixFormattingRule(_ nationalPrefixFormattingRule: String?) -> [Element] where Element == NumberFormat {
+    return map { format -> NumberFormat in
       var modifiedFormat = format
       if modifiedFormat.nationalPrefixFormattingRule == nil {
         modifiedFormat.nationalPrefixFormattingRule = nationalPrefixFormattingRule

@@ -20,18 +20,8 @@ public struct MetadataPossibleLengths: Decodable {
     let localOnly: String?
 }
 
-/**
- MetadataPhoneNumberFormat object
- - Parameter pattern: Regex pattern. Optional.
- - Parameter format: Formatting template. Optional.
- - Parameter intlFormat: International formatting template. Optional.
-
- - Parameter leadingDigitsPatterns: Leading digits regex pattern. Optional.
- - Parameter nationalPrefixFormattingRule: National prefix formatting rule. Optional.
- - Parameter nationalPrefixOptionalWhenFormatting: National prefix optional bool. Optional.
- - Parameter domesticCarrierCodeFormattingRule: Domestic carrier code formatting rule. Optional.
- */
-public struct MetadataPhoneNumberFormat: Decodable {
+public struct NumberFormat: Decodable {
+    
     public let pattern: String?
     public let format: String?
     public let intlFormat: String?

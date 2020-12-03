@@ -162,7 +162,7 @@ final public class AsYouTypeFormatter {
         return (firstCharacter == "1" && secondCharacter != "0" && secondCharacter != "1")
     }
 
-    func isFormatEligible(_ format: MetadataPhoneNumberFormat) -> Bool {
+    func isFormatEligible(_ format: NumberFormat) -> Bool {
         guard let phoneFormat = format.format else {
             return false
         }
@@ -256,9 +256,9 @@ final public class AsYouTypeFormatter {
         return (rawNumber, "")
     }
     
-    func availableFormats(_ rawNumber: String) -> [MetadataPhoneNumberFormat]? {
-        var tempPossibleFormats = [MetadataPhoneNumberFormat]()
-        var possibleFormats = [MetadataPhoneNumberFormat]()
+    func availableFormats(_ rawNumber: String) -> [NumberFormat]? {
+        var tempPossibleFormats = [NumberFormat]()
+        var possibleFormats = [NumberFormat]()
         if let metadata = currentMetadata {
             let formatList = metadata.numberFormats
             for format in formatList {
@@ -283,7 +283,7 @@ final public class AsYouTypeFormatter {
         return nil
     }
 
-    func applyFormat(_ rawNumber: String, formats: [MetadataPhoneNumberFormat]) -> String? {
+    func applyFormat(_ rawNumber: String, formats: [NumberFormat]) -> String? {
         for format in formats {
             if let pattern = format.pattern, let formatTemplate = format.format {
                 let patternRegExp = String(format: PhoneNumberPatterns.formatPattern, arguments: [pattern])
@@ -306,7 +306,7 @@ final public class AsYouTypeFormatter {
         return nil
     }
 
-    func createFormattingTemplate(_ format: MetadataPhoneNumberFormat, rawNumber: String) -> String? {
+    func createFormattingTemplate(_ format: NumberFormat, rawNumber: String) -> String? {
         guard var numberPattern = format.pattern, let numberFormat = format.format else {
             return nil
         }

@@ -8,7 +8,7 @@ import Foundation
 
 // MARK: - MetadataPhoneNumberFormat
 
-public extension MetadataPhoneNumberFormat {
+public extension NumberFormat {
     private enum CodingKeys: String, CodingKey {
         case pattern
         case format
