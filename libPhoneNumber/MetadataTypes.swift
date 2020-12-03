@@ -6,33 +6,6 @@
 
 import Foundation
 
-public struct PhoneMetadata: Decodable {
-    
-    public let regionCode: String
-    public let countryCode: Int32
-    public let internationalPrefix: String?
-    public let mainCountryForCode: Bool
-    public let nationalPrefix: String?
-    public let nationalPrefixFormattingRule: String?
-    public let nationalPrefixForParsing: String?
-    public let nationalPrefixTransformRule: String?
-    public let preferredExtnPrefix: String?
-    public let emergency: PhoneNumberDesc?
-    public let fixedLine: PhoneNumberDesc?
-    public let generalDesc: PhoneNumberDesc?
-    public let mobile: PhoneNumberDesc?
-    public let pager: PhoneNumberDesc?
-    public let personalNumber: PhoneNumberDesc?
-    public let premiumRate: PhoneNumberDesc?
-    public let sharedCost: PhoneNumberDesc?
-    public let tollFree: PhoneNumberDesc?
-    public let voicemail: PhoneNumberDesc?
-    public let voip: PhoneNumberDesc?
-    public let uan: PhoneNumberDesc?
-    public let numberFormats: [MetadataPhoneNumberFormat]
-    public let leadingDigits: String?
-}
-
 public struct PhoneNumberDesc: Decodable {
     
     public let exampleNumber: String?
