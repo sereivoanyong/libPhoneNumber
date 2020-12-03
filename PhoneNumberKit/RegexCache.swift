@@ -1,14 +1,12 @@
 //
-//  RegexManager.swift
-//  PhoneNumberKit
+//  RegexCache.swift
 //
-//  Created by Roy Marmelstein on 04/10/2015.
-//  Copyright © 2020 Roy Marmelstein. All rights reserved.
+//  Created by Sereivoan Yong on 12/3/20.
 //
 
 import Foundation
 
-final class RegexManager {
+final class RegexCache {
 
     private let queue = DispatchQueue(label: "com.phonenumberkit.regexpool", attributes: .concurrent)
     private let cache = NSCache<NSString, NSRegularExpression>()

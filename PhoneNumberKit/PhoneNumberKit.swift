@@ -13,13 +13,13 @@ import CoreTelephony
 
 final public class PhoneNumberKit {
     // Manager objects
-    let regexManager: RegexManager
+    let regexCache: RegexCache
     let metadataManager: MetadataManager
 
     // MARK: Lifecycle
 
     public init() {
-        regexManager = RegexManager()
+        regexCache = RegexCache()
         metadataManager = MetadataManager()
     }
 
@@ -305,10 +305,10 @@ extension PhoneNumberKit {
 
         var nationalNumber = numberString
 
-        let match = try regexManager.phoneDataDetectorMatch(numberString)
+        let match = try regexCache.phoneDataDetectorMatch(numberString)
         let matchedNumber = nationalNumber.substring(with: match.range)
         // Replace Arabic and Persian numerals and let the rest unchanged
-        nationalNumber = regexManager.stringByReplacingOccurrences(matchedNumber, map: PhoneNumberPatterns.allNormalizationMappings, keepUnmapped: true)
+        nationalNumber = regexCache.stringByReplacingOccurrences(matchedNumber, map: PhoneNumberPatterns.allNormalizationMappings, keepUnmapped: true)
 
         // Strip and extract extension (3)
         var numberExtension: String?
@@ -323,7 +323,7 @@ extension PhoneNumberKit {
         do {
             countryCode = try extractCountryCode(nationalNumber, nationalNumber: &nationalNumber, metadata: regionMetadata)
         } catch {
-            let plusRemovedNumberString = regexManager.replaceStringByRegex(PhoneNumberPatterns.leadingPlusCharsPattern, string: nationalNumber)
+            let plusRemovedNumberString = regexCache.replaceStringByRegex(PhoneNumberPatterns.leadingPlusCharsPattern, string: nationalNumber)
             countryCode = try extractCountryCode(plusRemovedNumberString, nationalNumber: &nationalNumber, metadata: regionMetadata)
         }
         if countryCode == 0 {
@@ -341,7 +341,7 @@ extension PhoneNumberKit {
         stripNationalPrefix(&nationalNumber, metadata: regionMetadata)
 
         // Test number against general number description for correct metadata (8)
-        if let generalNumberDesc = regionMetadata.generalDesc, !regexManager.hasValue(generalNumberDesc.nationalNumberPattern) || !isNumberMatchingDesc(nationalNumber, numberDesc: generalNumberDesc) {
+        if let generalNumberDesc = regionMetadata.generalDesc, !regexCache.hasValue(generalNumberDesc.nationalNumberPattern) || !isNumberMatchingDesc(nationalNumber, numberDesc: generalNumberDesc) {
             throw PhoneNumberError.notANumber
         }
         // Finalize remaining parameters and create phone number object (9)
@@ -385,7 +385,7 @@ extension PhoneNumberKit {
         let nationalNumberString = String(nationalNumber)
         for territory in territories {
             if let leadingDigits = territory.leadingDigits {
-                if regexManager.matchesAtStart(leadingDigits, string: nationalNumberString) {
+                if regexCache.matchesAtStart(leadingDigits, string: nationalNumberString) {
                     return territory.regionCode
                 }
             }
@@ -412,7 +412,7 @@ extension PhoneNumberKit {
      */
     func normalizePhoneNumber(_ number: String) -> String {
         let normalizationMappings = PhoneNumberPatterns.allNormalizationMappings
-        return regexManager.stringByReplacingOccurrences(number, map: normalizationMappings)
+        return regexCache.stringByReplacingOccurrences(number, map: normalizationMappings)
     }
 
     // MARK: Extractions
@@ -448,7 +448,7 @@ extension PhoneNumberKit {
                 }
                 stripNationalPrefix(&potentialNationalNumber, metadata: metadata)
                 let potentialNationalNumberStr = potentialNationalNumber
-                if (!regexManager.matchesEntirely(validNumberPattern, string: fullNumber) && regexManager.matchesEntirely(validNumberPattern, string: potentialNationalNumberStr)) || !regexManager.testStringLengthAgainstPattern(possibleNumberPattern, string: fullNumber) {
+                if (!regexCache.matchesEntirely(validNumberPattern, string: fullNumber) && regexCache.matchesEntirely(validNumberPattern, string: potentialNationalNumberStr)) || !regexCache.testStringLengthAgainstPattern(possibleNumberPattern, string: fullNumber) {
                     nationalNumber = potentialNationalNumberStr
                     if let countryCode = Int32(defaultCountryCode) {
                         return countryCode
@@ -506,7 +506,7 @@ extension PhoneNumberKit {
         guard let generalNumberDesc = metadata.generalDesc else {
             return .unknown
         }
-        if !regexManager.hasValue(generalNumberDesc.nationalNumberPattern) || !isNumberMatchingDesc(nationalNumber, numberDesc: generalNumberDesc) {
+        if !regexCache.hasValue(generalNumberDesc.nationalNumberPattern) || !isNumberMatchingDesc(nationalNumber, numberDesc: generalNumberDesc) {
             return .unknown
         }
         if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.pager) {
@@ -555,7 +555,7 @@ extension PhoneNumberKit {
      - Returns: True or false.
      */
     func isNumberMatchingDesc(_ nationalNumber: String, numberDesc: MetadataPhoneNumberDesc?) -> Bool {
-        return regexManager.matchesEntirely(numberDesc?.nationalNumberPattern, string: nationalNumber)
+        return regexCache.matchesEntirely(numberDesc?.nationalNumberPattern, string: nationalNumber)
     }
 
     /**
@@ -565,9 +565,9 @@ extension PhoneNumberKit {
      - Returns: True or false and modifies the number accordingly.
      */
     func parsePrefixAsIdd(_ number: inout String, iddPattern: String) -> Bool {
-        if regexManager.stringPositionByRegex(iddPattern, string: number) == 0 {
+        if regexCache.stringPositionByRegex(iddPattern, string: number) == 0 {
             do {
-                guard let matched = try regexManager.matchesByRegex(pattern: iddPattern, string: number).first else {
+                guard let matched = try regexCache.matchesByRegex(pattern: iddPattern, string: number).first else {
                     return false
                 }
                 let matchedString = number.substring(with: matched.range)
@@ -577,7 +577,7 @@ extension PhoneNumberKit {
                 if let firstMatch = capturingDigitPatterns.firstMatch(in: remainString, options: [], range: NSRange(location: 0, length: remainString.utf16.count)) {
                     let digitMatched = remainString.substring(with: firstMatch.range)
                     if !digitMatched.isEmpty {
-                        let normalizedGroup = regexManager.stringByReplacingOccurrences(digitMatched, map: PhoneNumberPatterns.allNormalizationMappings)
+                        let normalizedGroup = regexCache.stringByReplacingOccurrences(digitMatched, map: PhoneNumberPatterns.allNormalizationMappings)
                         if normalizedGroup == "0" {
                             return false
                         }
@@ -601,7 +601,7 @@ extension PhoneNumberKit {
      */
     func stripExtension(_ number: inout String) -> String? {
         do {
-            let matches = try regexManager.matchesByRegex(pattern: PhoneNumberPatterns.extnPattern, string: number)
+            let matches = try regexCache.matchesByRegex(pattern: PhoneNumberPatterns.extnPattern, string: number)
             if let match = matches.first {
                 let adjustedRange = NSRange(location: match.range.location + 1, length: match.range.length - 1)
                 let matchString = number.substring(with: adjustedRange)
@@ -622,8 +622,8 @@ extension PhoneNumberKit {
      - Returns: Modified normalized number without international prefix and a PNCountryCodeSource enumeration.
      */
     func stripInternationalPrefixAndNormalize(_ number: inout String, possibleIddPrefix: String?) -> PhoneNumberCountryCodeSource {
-        if regexManager.matchesAtStart(PhoneNumberPatterns.leadingPlusCharsPattern, string: number) {
-            number = regexManager.replaceStringByRegex(PhoneNumberPatterns.leadingPlusCharsPattern, string: number)
+        if regexCache.matchesAtStart(PhoneNumberPatterns.leadingPlusCharsPattern, string: number) {
+            number = regexCache.replaceStringByRegex(PhoneNumberPatterns.leadingPlusCharsPattern, string: number)
             return .numberWithPlusSign
         }
         number = normalizePhoneNumber(number)
@@ -650,7 +650,7 @@ extension PhoneNumberKit {
         }
         let prefixPattern = String(format: "^(?:%@)", possibleNationalPrefix)
         do {
-            let matches = try regexManager.matchesByRegex(pattern: prefixPattern, string: number)
+            let matches = try regexCache.matchesByRegex(pattern: prefixPattern, string: number)
             if let firstMatch = matches.first {
                 let nationalNumberRule = metadata.generalDesc?.nationalNumberPattern
                 let firstMatchString = number.substring(with: firstMatch.range)
@@ -658,14 +658,14 @@ extension PhoneNumberKit {
                 var transformedNumber: String = String()
                 let firstRange = firstMatch.range(at: numOfGroups)
                 let firstMatchStringWithGroup = (firstRange.location != NSNotFound && firstRange.location < number.count) ? number.substring(with: firstRange) : String()
-                let firstMatchStringWithGroupHasValue = regexManager.hasValue(firstMatchStringWithGroup)
+                let firstMatchStringWithGroupHasValue = regexCache.hasValue(firstMatchStringWithGroup)
                 if let transformRule = metadata.nationalPrefixTransformRule, firstMatchStringWithGroupHasValue {
-                    transformedNumber = regexManager.replaceFirstStringByRegex(prefixPattern, string: number, templateString: transformRule)
+                    transformedNumber = regexCache.replaceFirstStringByRegex(prefixPattern, string: number, templateString: transformRule)
                 } else {
                     let index = number.index(number.startIndex, offsetBy: firstMatchString.count)
                     transformedNumber = String(number[index...])
                 }
-                if regexManager.hasValue(nationalNumberRule), regexManager.matchesEntirely(nationalNumberRule, string: number), self.regexManager.matchesEntirely(nationalNumberRule, string: transformedNumber) == false {
+                if regexCache.hasValue(nationalNumberRule), regexCache.matchesEntirely(nationalNumberRule, string: number), self.regexCache.matchesEntirely(nationalNumberRule, string: transformedNumber) == false {
                     return
                 }
                 number = transformedNumber
@@ -728,14 +728,14 @@ extension PhoneNumberKit {
         var selectedFormat: MetadataPhoneNumberFormat?
         for format in formats {
             if let leadingDigitPattern = format.leadingDigitsPatterns?.last {
-                if regexManager.stringPositionByRegex(leadingDigitPattern, string: String(nationalNumber)) == 0 {
-                    if regexManager.matchesEntirely(format.pattern, string: String(nationalNumber)) {
+                if regexCache.stringPositionByRegex(leadingDigitPattern, string: String(nationalNumber)) == 0 {
+                    if regexCache.matchesEntirely(format.pattern, string: String(nationalNumber)) {
                         selectedFormat = format
                         break
                     }
                 }
             } else {
-                if regexManager.matchesEntirely(format.pattern, string: String(nationalNumber)) {
+                if regexCache.matchesEntirely(format.pattern, string: String(nationalNumber)) {
                     selectedFormat = format
                     break
                 }
@@ -748,14 +748,14 @@ extension PhoneNumberKit {
             var formattedNationalNumber = String()
             var prefixFormattingRule = String()
             if let nationalPrefixFormattingRule = formatPattern.nationalPrefixFormattingRule, let nationalPrefix = regionMetadata.nationalPrefix {
-                prefixFormattingRule = regexManager.replaceStringByRegex(PhoneNumberPatterns.npPattern, string: nationalPrefixFormattingRule, template: nationalPrefix)
-                prefixFormattingRule = regexManager.replaceStringByRegex(PhoneNumberPatterns.fgPattern, string: prefixFormattingRule, template: "\\$1")
+                prefixFormattingRule = regexCache.replaceStringByRegex(PhoneNumberPatterns.npPattern, string: nationalPrefixFormattingRule, template: nationalPrefix)
+                prefixFormattingRule = regexCache.replaceStringByRegex(PhoneNumberPatterns.fgPattern, string: prefixFormattingRule, template: "\\$1")
             }
-            if format == PhoneNumberFormat.national, regexManager.hasValue(prefixFormattingRule) {
-                let replacePattern = regexManager.replaceFirstStringByRegex(PhoneNumberPatterns.firstGroupPattern, string: numberFormatRule, templateString: prefixFormattingRule)
-                formattedNationalNumber = regexManager.replaceStringByRegex(pattern, string: nationalNumber, template: replacePattern)
+            if format == PhoneNumberFormat.national, regexCache.hasValue(prefixFormattingRule) {
+                let replacePattern = regexCache.replaceFirstStringByRegex(PhoneNumberPatterns.firstGroupPattern, string: numberFormatRule, templateString: prefixFormattingRule)
+                formattedNationalNumber = regexCache.replaceStringByRegex(pattern, string: nationalNumber, template: replacePattern)
             } else {
-                formattedNationalNumber = regexManager.replaceStringByRegex(pattern, string: nationalNumber, template: numberFormatRule)
+                formattedNationalNumber = regexCache.replaceStringByRegex(pattern, string: nationalNumber, template: numberFormatRule)
             }
             return formattedNationalNumber
         } else {
