@@ -221,7 +221,7 @@ final public class PhoneNumberUtil {
         }
     }
 
-    private func possiblePhoneNumberLengths(forTerritory territory: PhoneMetadata, phoneNumberType: PhoneNumberType) -> MetadataPossibleLengths? {
+    private func possiblePhoneNumberLengths(forTerritory territory: PhoneMetadata, phoneNumberType: PhoneNumberType) -> PhoneNumberPossibleLengths? {
         switch phoneNumberType {
         case .fixedLine:        return territory.fixedLine?.possibleLengths
         case .mobile:           return territory.mobile?.possibleLengths
