@@ -10,6 +10,9 @@ import CoreTelephony
 #endif
 
 final public class PhoneNumberUtil {
+  
+  static let regionCodeForNonGeoEntity: String = "001"
+  
     // Manager objects
     let regexCache: RegexCache
     let metadataManager: MetadataManager
@@ -74,7 +77,7 @@ final public class PhoneNumberUtil {
             }
             return "+\(phoneNumber.countryCode)\(formattedNationalNumber)"
         } else {
-            let regionMetadata = metadataManager.mainTerritoryByCountryCodes[phoneNumber.countryCode]
+            let regionMetadata = metadataManager.metadataByCountryCode[phoneNumber.countryCode]
             let formattedNationalNumber = self.format(phoneNumber: phoneNumber, format: format, regionMetadata: regionMetadata)
             if format == .international, withPrefix {
                 return "+\(phoneNumber.countryCode) \(formattedNationalNumber)"
@@ -90,7 +93,7 @@ final public class PhoneNumberUtil {
     ///
     /// - returns: An array of ISO 639 compliant region codes.
     public func allRegionCodes() -> [String] {
-        return metadataManager.territories.map { $0.regionCode }
+        return metadataManager.metadatas.map { $0.regionCode }
     }
 
     /// Get an array of ISO 639 compliant region codes corresponding to a given country code.
@@ -99,7 +102,7 @@ final public class PhoneNumberUtil {
     ///
     /// - returns: optional array of ISO 639 compliant region codes.
     public func regionCodes(forCountryCode countryCode: Int32) -> [String]? {
-        return metadataManager.territoriesByCountryCodes[countryCode]?.map { $0.regionCode }
+        return metadataManager.metadatasByCountryCode[countryCode]?.map { $0.regionCode }
     }
 
     /// Get an main ISO 639 compliant region code for a given country code.
@@ -108,7 +111,7 @@ final public class PhoneNumberUtil {
     ///
     /// - returns: ISO 639 compliant region code string.
     public func mainRegionCode(forCountryCode countryCode: Int32) -> String? {
-        return metadataManager.mainTerritoryByCountryCodes[countryCode]?.regionCode
+        return metadataManager.metadataByCountryCode[countryCode]?.regionCode
     }
 
     /// Get an international country code for an ISO 639 compliant region code
@@ -117,7 +120,7 @@ final public class PhoneNumberUtil {
     ///
     /// - returns: international country code (e.g. 33 for France).
     public func countryCode(forRegionCode regionCode: String) -> Int32? {
-        return metadataManager.territoriesByRegionCodes[regionCode]?.countryCode
+        return metadataManager.metadataByRegionCode[regionCode]?.countryCode
     }
 
     /// Get leading digits for an ISO 639 compliant region code.
@@ -126,7 +129,7 @@ final public class PhoneNumberUtil {
     ///
     /// - returns: leading digits (e.g. 876 for Jamaica).
     public func leadingDigits(forRegionCode regionCode: String) -> String? {
-        return metadataManager.territoriesByRegionCodes[regionCode]?.leadingDigits
+        return metadataManager.metadataByRegionCode[regionCode]?.leadingDigits
     }
 
     /// Determine the region code of a given phone number.
@@ -193,14 +196,14 @@ final public class PhoneNumberUtil {
     ///
     /// - returns: A MetadataTerritory object, or nil if no metadata was found for the country code
     public func metadata(forRegionCode regionCode: String) -> PhoneMetadata? {
-        return metadataManager.territoriesByRegionCodes[regionCode]
+        return metadataManager.metadataByRegionCode[regionCode]
     }
 
     /// Get an array of MetadataTerritory objects corresponding to a given country code.
     ///
     /// - parameter countryCode: international country code (e.g 44 for the UK)
     public func metadata(forCountryCode countryCode: Int32) -> [PhoneMetadata]? {
-        return metadataManager.territoriesByCountryCodes[countryCode]
+        return metadataManager.metadatasByCountryCode[countryCode]
     }
 
     /// Get an array of possible phone number lengths for the country, as specified by the parameters.
@@ -211,7 +214,7 @@ final public class PhoneNumberUtil {
     ///
     /// - returns: Array of possible lengths for the country. May be empty.
     public func possiblePhoneNumberLengths(regionCode: String, phoneNumberType: PhoneNumberType, lengthType: PhoneNumberPossibleLengthType) -> [Int] {
-        guard let territory = metadataManager.territoriesByRegionCodes[regionCode] else { return [] }
+        guard let territory = metadataManager.metadataByRegionCode[regionCode] else { return [] }
 
         let possibleLengths = possiblePhoneNumberLengths(forTerritory: territory, phoneNumberType: phoneNumberType)
 
@@ -314,7 +317,7 @@ extension PhoneNumberUtil {
             numberExtension = normalizePhoneNumber(rawExtension)
         }
         // Country code parse (4)
-        guard var regionMetadata = metadataManager.territoriesByRegionCodes[regionCode] else {
+        guard var regionMetadata = metadataManager.metadataByRegionCode[regionCode] else {
             throw PhoneNumberError.invalidCountryCode
         }
         var countryCode: Int32
@@ -332,7 +335,7 @@ extension PhoneNumberUtil {
         nationalNumber = normalizedNationalNumber
 
         // If country code is not default, grab correct metadata (6)
-        if countryCode != regionMetadata.countryCode, let countryMetadata = metadataManager.mainTerritoryByCountryCodes[countryCode] {
+        if countryCode != regionMetadata.countryCode, let countryMetadata = metadataManager.metadataByCountryCode[countryCode] {
             regionMetadata = countryMetadata
         }
         // National Prefix Strip (7)
@@ -351,7 +354,7 @@ extension PhoneNumberUtil {
         // Check if the number if of a known type (10)
         var type: PhoneNumberType = .unknown
         if !ignoreType {
-            if let regionCode = self.regionCodeHelper(nationalNumber: finalNationalNumber, countryCode: countryCode, leadingZero: leadingZero), let foundMetadata = metadataManager.territoriesByRegionCodes[regionCode] {
+            if let regionCode = self.regionCodeHelper(nationalNumber: finalNationalNumber, countryCode: countryCode, leadingZero: leadingZero), let foundMetadata = metadataManager.metadataByRegionCode[regionCode] {
                 regionMetadata = foundMetadata
             }
             type = self.type(String(nationalNumber), metadata: regionMetadata, leadingZero: leadingZero)
@@ -373,7 +376,7 @@ extension PhoneNumberUtil {
     ///   - leadingZero: whether or not the number has a leading zero.
     /// - Returns: ISO 639 compliant region code.
     func regionCodeHelper(nationalNumber: UInt64, countryCode: Int32, leadingZero: Bool) -> String? {
-        guard let territories = metadataManager.territoriesByCountryCodes[countryCode] else { return nil }
+        guard let territories = metadataManager.metadatasByCountryCode[countryCode] else { return nil }
 
         if territories.count == 1 {
             return territories[0].regionCode
@@ -482,7 +485,7 @@ extension PhoneNumberUtil {
             }
             let stringRange = NSRange(location: startPosition, length: i)
             let subNumber = fullNumber.substring(with: stringRange)
-            if let potentialCountryCode = Int32(subNumber), metadataManager.territoriesByCountryCodes[potentialCountryCode] != nil {
+            if let potentialCountryCode = Int32(subNumber), metadataManager.metadatasByCountryCode[potentialCountryCode] != nil {
                 nationalNumber = fullNumber.substring(from: i)
                 return potentialCountryCode
             }

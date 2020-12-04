@@ -33,8 +33,8 @@ final public class AsYouTypeFormatter {
     public var maxDigits: Int?
 
     func updateMetadataForDefaultRegion() {
-        if let regionMetadata = metadataManager.territoriesByRegionCodes[defaultRegionCode] {
-            defaultMetadata = metadataManager.mainTerritoryByCountryCodes[regionMetadata.countryCode]
+        if let regionMetadata = metadataManager.metadataByRegionCode[defaultRegionCode] {
+            defaultMetadata = metadataManager.metadataByCountryCode[regionMetadata.countryCode]
         } else {
             defaultMetadata = nil
         }
@@ -223,7 +223,7 @@ final public class AsYouTypeFormatter {
         }
         if let potentialCountryCode = util.extractPotentialCountryCode(rawNumber, nationalNumber: &numberWithoutCountryCallingCode), potentialCountryCode != 0 {
             processedNumber = numberWithoutCountryCallingCode
-            currentMetadata = metadataManager.mainTerritoryByCountryCodes[potentialCountryCode]
+            currentMetadata = metadataManager.metadataByCountryCode[potentialCountryCode]
             let potentialCountryCodeString = String(potentialCountryCode)
             prefixBeforeNationalNumber.append(potentialCountryCodeString)
             prefixBeforeNationalNumber.append(" ")

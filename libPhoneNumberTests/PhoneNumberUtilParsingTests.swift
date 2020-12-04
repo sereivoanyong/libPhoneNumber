@@ -29,7 +29,7 @@ class PhoneNumberUtilParsingTests: XCTestCase {
     }
 
     func testUSMetadata() {
-        let sut = util.metadataManager.territoriesByRegionCodes["US"]!
+        let sut = util.metadataManager.metadataByRegionCode["US"]!
         XCTAssertEqual(sut.regionCode, "US")
         XCTAssertEqual(sut.countryCode, 1)
         XCTAssertEqual(sut.internationalPrefix, "011")
@@ -251,7 +251,7 @@ class PhoneNumberUtilParsingTests: XCTestCase {
     }
 
     func testAllExampleNumbers() {
-        let metaDataArray = util.metadataManager.territories.filter { $0.regionCode.count == 2 }
+        let metaDataArray = util.metadataManager.metadatas.filter { $0.regionCode.count == 2 }
         for metadata in metaDataArray {
             let codeID = metadata.regionCode
             let metadataWithTypes: [(PhoneNumberDesc?, PhoneNumberType?)] = [

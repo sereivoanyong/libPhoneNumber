@@ -20,7 +20,7 @@ class PhoneNumberUtilTests: XCTestCase {
     }
 
     func testMetadataMainCountryFetch() {
-        let countryMetadata = util.metadataManager.mainTerritoryByCountryCodes[1]
+        let countryMetadata = util.metadataManager.metadataByCountryCode[1]
         XCTAssertEqual(countryMetadata?.regionCode, "US")
     }
 
