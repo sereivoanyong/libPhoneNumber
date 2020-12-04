@@ -25,9 +25,9 @@ class PhoneNumberUtilTests: XCTestCase {
     }
 
     func testMetadataMainCountryFunction() {
-        let countryName = util.mainRegionCode(forCountryCode: 1)!
+        let countryName = util.regionCode(forCountryCode: 1)!
         XCTAssertEqual(countryName, "US")
-        let invalidCountry = util.mainRegionCode(forCountryCode: 992322)
+        let invalidCountry = util.regionCode(forCountryCode: 992322)
         XCTAssertNil(invalidCountry)
     }
 
@@ -379,11 +379,11 @@ class PhoneNumberUtilTests: XCTestCase {
         }
     }
 
-    //  Test that metadata initiates correctly by checking all countries
-    func testAllCountries() {
-        let allCountries = util.allRegionCodes()
-        XCTAssert(allCountries.count > 0)
-    }
+  //  Test that metadata initiates correctly by checking all countries
+  func testAllRegionCodes() {
+    let allRegionCodes = util.supportedRegionCodes
+    XCTAssert(allRegionCodes.count > 0)
+  }
 
     //  Test code for country function -  valid country
     func testCodeForCountryValid() {

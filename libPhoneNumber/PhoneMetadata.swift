@@ -31,6 +31,7 @@ public struct PhoneMetadata: Decodable {
   public let uan: PhoneNumberDesc?
   public let numberFormats: [NumberFormat]
   public let leadingDigits: String?
+  public let mobileNumberPortableRegion: Bool
   
   private enum CodingKeys: String, CodingKey {
     
@@ -58,6 +59,7 @@ public struct PhoneMetadata: Decodable {
     case numberFormats = "numberFormat"
     case leadingDigits
     case availableFormats
+    case mobileNumberPortableRegion
   }
   
   public init(from decoder: Decoder) throws {
@@ -96,6 +98,7 @@ public struct PhoneMetadata: Decodable {
     voip = try container.decodeIfPresent(PhoneNumberDesc.self, forKey: .voip)
     uan = try container.decodeIfPresent(PhoneNumberDesc.self, forKey: .uan)
     leadingDigits = try container.decodeIfPresent(String.self, forKey: .leadingDigits)
+    mobileNumberPortableRegion = try container.decodeStringBoolIfPresent(forKey: .mobileNumberPortableRegion) ?? false
   }
 }
 

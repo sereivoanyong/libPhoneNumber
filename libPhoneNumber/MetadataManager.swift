@@ -8,13 +8,12 @@ import Foundation
 
 struct MetadataManager {
   
-  let metadatas: [PhoneMetadata]
   let metadataByRegionCode: [String: PhoneMetadata]
   let metadataByCountryCode: [Int32: PhoneMetadata]
   let metadatasByCountryCode: [Int32: [PhoneMetadata]] // Will be deprecated
   
   init() {
-    self.metadatas = (try? Self.metadatasFromResource(name: "PhoneNumberMetadata", extension: "json")) ?? []
+    let metadatas = (try? Self.metadatasFromResource(name: "PhoneNumberMetadata", extension: "json")) ?? []
     var metadataByRegionCode: [String: PhoneMetadata] = [:]
     var metadataByCountryCode: [Int32: PhoneMetadata] = [:]
     var metadatasByCountryCode: [Int32: [PhoneMetadata]] = [:]
@@ -34,6 +33,14 @@ struct MetadataManager {
     self.metadataByRegionCode = metadataByRegionCode
     self.metadataByCountryCode = metadataByCountryCode
     self.metadatasByCountryCode = metadatasByCountryCode
+  }
+  
+  func metadata(forRegionCode regionCode: String) -> PhoneMetadata? {
+    return metadataByRegionCode[regionCode]
+  }
+  
+  func metadataForNonGeographicalRegion(forCountryCode countryCode: Int32) -> PhoneMetadata? {
+    return metadataByCountryCode[countryCode]
   }
   
   private static func metadatasFromResource(name: String, extension: String, bundle: Bundle = .module) throws -> [PhoneMetadata] {

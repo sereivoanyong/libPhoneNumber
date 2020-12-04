@@ -7,6 +7,18 @@
 #if canImport(UIKit)
 import UIKit
 
+extension PhoneNumberUtil {
+
+    /// Configuration for the CountryCodePicker presented from PhoneNumberTextField if `withDefaultPickerUI` is `true`
+    public enum CountryCodePicker {
+        /// Common Country Codes are shown below the Current section in the CountryCodePicker by default
+        public static var commonCountryCodes: [String] = []
+
+        /// When the Picker is shown from the textfield it is presented modally
+        public static var forceModalPresentation: Bool = false
+    }
+}
+
 @available(iOS 11.0, *)
 public protocol CountryCodePickerDelegate: AnyObject {
     func countryCodePickerViewControllerDidPickCountry(_ country: CountryCodePickerViewController.Country)
@@ -27,7 +39,7 @@ public class CountryCodePickerViewController: UITableViewController {
     var hasCommon = true
 
     lazy var allRegionCodes = util
-        .allRegionCodes()
+        .supportedRegionCodes
         .compactMap({ Country(for: $0, with: self.util) })
         .sorted(by: { $0.name.caseInsensitiveCompare($1.name) == .orderedAscending })
 

@@ -251,7 +251,7 @@ class PhoneNumberUtilParsingTests: XCTestCase {
     }
 
     func testAllExampleNumbers() {
-        let metaDataArray = util.metadataManager.metadatas.filter { $0.regionCode.count == 2 }
+        let metaDataArray = util.metadataManager.metadataByRegionCode.values.filter { $0.regionCode.count == 2 }
         for metadata in metaDataArray {
             let codeID = metadata.regionCode
             let metadataWithTypes: [(PhoneNumberDesc?, PhoneNumberType?)] = [
