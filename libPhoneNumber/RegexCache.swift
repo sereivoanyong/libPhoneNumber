@@ -16,7 +16,7 @@ final class RegexCache {
           self.pattern = pattern
         }
 
-        static func == (lhs: RegexCache.Key, rhs: RegexCache.Key) -> Bool {
+        static func == (lhs: Key, rhs: Key) -> Bool {
           return lhs.pattern == rhs.pattern
         }
 
@@ -60,7 +60,7 @@ final class RegexCache {
 
     // MARK: Match helpers
 
-    func matchesAtStart(_ pattern: String, string: String) -> Bool {
+    func matchesAtStartByRegex(pattern: String, string: String) -> Bool {
         if let matches = try? matchesByRegex(pattern: pattern, string: string) {
             for match in matches {
                 if match.range.location == 0 {
@@ -71,14 +71,14 @@ final class RegexCache {
         return false
     }
 
-    func stringPositionByRegex(_ pattern: String, string: String) -> Int {
+    func stringPositionByRegex(pattern: String, string: String) -> Int {
         if let match = try? matchesByRegex(pattern: pattern, string: string).first {
             return match.range.location
         }
         return -1
     }
 
-    func matchesEntirely(_ pattern: String?, string: String) -> Bool {
+    func matchesEntirelyByRegex(pattern: String?, string: String) -> Bool {
         guard var pattern = pattern else {
             return false
         }
@@ -91,7 +91,7 @@ final class RegexCache {
         }
     }
 
-    func matchedStringByRegex(_ pattern: String, string: String) -> [String] {
+    func matchedStringByRegex(pattern: String, string: String) -> [String] {
         var matchedStrings: [String] = []
         if let matches = try? matchesByRegex(pattern: pattern, string: string) {
             for match in matches {
@@ -104,9 +104,9 @@ final class RegexCache {
 
     // MARK: String and replace
 
-    func replaceStringByRegex(_ pattern: String, string: String) -> String {
+    func replaceStringByRegex(pattern: String, string: String) -> String {
         var replacementResult = string
-        if let regex = try? self.regex(pattern: pattern) {
+        if let regex = try? regex(pattern: pattern) {
             let matches = regex.matches(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count))
             if matches.count == 1 {
                 let range = regex.rangeOfFirstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count))
@@ -121,9 +121,9 @@ final class RegexCache {
         return replacementResult
     }
 
-    func replaceStringByRegex(_ pattern: String, string: String, template: String) -> String {
+    func replaceStringByRegex(pattern: String, string: String, template: String) -> String {
         var replacementResult = string
-        if let regex = try? self.regex(pattern: pattern) {
+        if let regex = try? regex(pattern: pattern) {
             let matches = regex.matches(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count))
             if matches.count == 1 {
                 let range = regex.rangeOfFirstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count))
@@ -138,17 +138,15 @@ final class RegexCache {
         return replacementResult
     }
 
-    func replaceFirstStringByRegex(_ pattern: String, string: String, templateString: String) -> String {
-        do {
-            let regex = try self.regex(pattern: pattern)
+    func replaceFirstStringByRegex(pattern: String, string: String, template: String) -> String {
+        if let regex = try? regex(pattern: pattern) {
             let range = regex.rangeOfFirstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count))
             if range.length > 0 {
-                return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: templateString)
+                return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: template)
             }
             return string
-        } catch {
-            return String()
         }
+        return string
     }
 
     func stringByReplacingOccurrences(_ string: String, map: [String: String], keepUnmapped: Bool = false) -> String {
@@ -174,8 +172,8 @@ final class RegexCache {
         return false
     }
 
-    func testStringLengthAgainstPattern(_ pattern: String, string: String) -> Bool {
-        return matchesEntirely(pattern, string: string)
+    func testStringLengthAgainstPattern(pattern: String, string: String) -> Bool {
+        return matchesEntirelyByRegex(pattern: pattern, string: string)
     }
 }
 

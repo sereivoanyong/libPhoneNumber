@@ -31,15 +31,15 @@ open class PhoneNumberFormatter: Formatter {
 
     // MARK: Lifecycle
 
-    public init(util: PhoneNumberUtil, defaultRegionCode: String = PhoneNumberUtil.defaultRegionCode(), withPrefix: Bool = true) {
+    public init(util: PhoneNumberUtil, regionCode: String = PhoneNumberUtil.defaultRegionCode(), withPrefix: Bool = true) {
         self.util = util
-        self.partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: defaultRegionCode, withPrefix: withPrefix)
+        self.partialFormatter = AsYouTypeFormatter(util: util, regionCode: regionCode, withPrefix: withPrefix)
         super.init()
     }
 
     public required init?(coder: NSCoder) {
         util = PhoneNumberUtil()
-        partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: PhoneNumberUtil.defaultRegionCode(), withPrefix: true)
+        partialFormatter = AsYouTypeFormatter(util: util, regionCode: PhoneNumberUtil.defaultRegionCode(), withPrefix: true)
         super.init(coder: coder)
     }
 

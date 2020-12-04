@@ -293,8 +293,8 @@ class PhoneNumberUtilParsingTests: XCTestCase {
         let pattern = "[2-9]\\d{8}|860\\d{9}"
         let number = "860123456789"
         let regexCache = RegexCache()
-        XCTAssert(regexCache.matchesEntirely(pattern, string: number))
-        XCTAssertFalse(regexCache.matchesEntirely("8", string: number))
+        XCTAssert(regexCache.matchesEntirelyByRegex(pattern: pattern, string: number))
+        XCTAssertFalse(regexCache.matchesEntirelyByRegex(pattern: "8", string: number))
     }
 
     func testUSTollFreeNumberType() {

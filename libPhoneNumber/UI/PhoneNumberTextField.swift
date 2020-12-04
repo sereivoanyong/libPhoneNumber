@@ -50,7 +50,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
             """
         )
         set {
-            self.partialFormatter.defaultRegionCode = newValue
+            partialFormatter.defaultRegionCode = newValue
         }
     }
 
@@ -130,17 +130,13 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
 
     public var isPartialFormatterEnabled = true
 
-    public var maxDigits: Int? {
+    public var maximumDigits: Int? {
         didSet {
-            self.partialFormatter.maxDigits = self.maxDigits
+            self.partialFormatter.maximumDigits = maximumDigits
         }
     }
 
-    public private(set) lazy var partialFormatter: AsYouTypeFormatter = AsYouTypeFormatter(
-        util: util,
-        defaultRegionCode: defaultRegionCode,
-        withPrefix: withPrefix
-    )
+    lazy public private(set) var partialFormatter: AsYouTypeFormatter = AsYouTypeFormatter(util: util, regionCode: defaultRegionCode, withPrefix: withPrefix)
 
     let nonNumericSet: CharacterSet = {
         var mutableSet = CharacterSet.decimalDigits.inverted

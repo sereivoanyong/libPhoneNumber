@@ -8,7 +8,7 @@ import Foundation
 
 struct PhoneMetadataCollection: Decodable {
   
-  let territories: [PhoneMetadata]
+  let metadatas: [PhoneMetadata]
   
   private enum CodingKeys: String, CodingKey {
     
@@ -21,6 +21,6 @@ struct PhoneMetadataCollection: Decodable {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let metadataObject = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .phoneNumberMetadata)
     let territoryObject = try metadataObject.nestedContainer(keyedBy: CodingKeys.self, forKey: .territories)
-    territories = try territoryObject.decode([PhoneMetadata].self, forKey: .territory)
+    metadatas = try territoryObject.decode([PhoneMetadata].self, forKey: .territory)
   }
 }

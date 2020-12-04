@@ -41,10 +41,10 @@ struct MetadataManager {
       throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "missing metadata: \(name).\(`extension`)"])
     }
     let metadataCollection = try loadMetadataCollection(from: url)
-    if metadataCollection.territories.isEmpty {
+    if metadataCollection.metadatas.isEmpty {
       throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "empty metadata: \(name).\(`extension`)"])
     }
-    return metadataCollection.territories
+    return metadataCollection.metadatas
   }
   
   private static func loadMetadataCollection(from url: URL) throws -> PhoneMetadataCollection {

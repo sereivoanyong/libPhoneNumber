@@ -14,7 +14,7 @@ class AsYouTypeFormatterTests: XCTestCase {
 
     // +33689555555
     func testFrenchNumberFromFrenchRegion() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "FR")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "FR")
         var testNumber = "+"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "+")
         testNumber = "+3"
@@ -42,7 +42,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     }
 
     func testFrenchNumberIDDFromFrenchRegion() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "FR")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "FR")
         var testNumber = "0"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "0")
         testNumber = "00"
@@ -74,7 +74,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     // 268 464 1234
     // Test for number that is not the country code's main country
     func testAntiguaNumber() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "AG")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "AG")
         var number = "2"
         XCTAssertEqual(partialFormatter.formatPartial(number), "2")
         number = "26"
@@ -98,7 +98,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     }
 
     func testFrenchNumberFromAmericanRegion() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "US")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "US")
         var testNumber = "+"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "+")
         testNumber = "+3"
@@ -126,7 +126,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     }
 
     func testFrenchNumberIDDFromAmericanRegion() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "US")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "US")
         var testNumber = "0"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "0")
         testNumber = "01"
@@ -158,14 +158,14 @@ class AsYouTypeFormatterTests: XCTestCase {
     }
 
     func testInvalidNumberNotANumber() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "US")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "US")
         let testNumber = "ae4c08c6-be33-40ef-a417-e5166e307b5e"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "ae4c08c6-be33-40ef-a417-e5166e307b5e")
     }
 
     // +390549555555
     func testItalianLeadingZeroFromUS() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "US")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "US")
         var testNumber = "+"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "+")
         testNumber = "+3"
@@ -195,7 +195,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     }
 
     func testFrenchNumberLocal() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "FR")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "FR")
         var testNumber = "0"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "0")
         testNumber = "06"
@@ -219,7 +219,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     }
 
     func testUSTollFreeNumber() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "US")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "US")
         var testNumber = "8"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "8")
         testNumber = "80"
@@ -244,7 +244,7 @@ class AsYouTypeFormatterTests: XCTestCase {
 
     // 07739555555
     func testUKMobileNumber() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "GB")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "GB")
         var testNumber = "0"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "0")
         testNumber = "07"
@@ -271,7 +271,7 @@ class AsYouTypeFormatterTests: XCTestCase {
 
     // 07739555555,9
     func testUKMobileNumberWithDigitsPausesAndWaits() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "GB")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "GB")
         var testNumber = "0"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "0")
         testNumber = "07"
@@ -314,7 +314,7 @@ class AsYouTypeFormatterTests: XCTestCase {
 
     // +٩٧١٥٠٠٥٠٠٥٥٠ (+971500500550)
     func testAENumberWithHinduArabicNumerals() {
-         let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "AE")
+         let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "AE")
          var testNumber = "+"
          XCTAssertEqual(partialFormatter.formatPartial(testNumber), "+")
          testNumber = "+٩"
@@ -345,7 +345,7 @@ class AsYouTypeFormatterTests: XCTestCase {
 
     // +٩٧١5٠٠5٠٠55٠ (+971500500550)
     func testAENumberWithMixedHinduArabicNumerals() {
-         let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "AE")
+         let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "AE")
          var testNumber = "+"
          XCTAssertEqual(partialFormatter.formatPartial(testNumber), "+")
          testNumber = "+٩"
@@ -376,7 +376,7 @@ class AsYouTypeFormatterTests: XCTestCase {
 
     // +۹۷۱۵۰۰۵۰۰۵۵۰ (+971500500550)
     func testAENumberWithEasternArabicNumerals() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "AE")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "AE")
         var testNumber = "+"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "+")
         testNumber = "+۹"
@@ -407,7 +407,7 @@ class AsYouTypeFormatterTests: XCTestCase {
 
     // +۹۷۱5۰۰5۰۰55۰ (+971500500550)
     func testAENumberWithMixedEasternArabicNumerals() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "AE")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "AE")
         var testNumber = "+"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "+")
         testNumber = "+۹"
@@ -437,7 +437,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     }
 
     func testWithPrefixDisabled() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "CZ")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "CZ")
         partialFormatter.withPrefix = false
         let formatted = partialFormatter.formatPartial("+420777123456")
         XCTAssertEqual(formatted, "777 123 456")
@@ -446,19 +446,19 @@ class AsYouTypeFormatterTests: XCTestCase {
     // MARK: region prediction
 
     func testMinimalFrenchNumber() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "US")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "US")
         _ = partialFormatter.formatPartial("+33")
         XCTAssertEqual(partialFormatter.currentRegionCode, "FR")
     }
 
     func testMinimalUSNumberFromFrance() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "FR")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "FR")
         _ = partialFormatter.formatPartial("+1")
         XCTAssertEqual(partialFormatter.currentRegionCode, "US")
     }
 
     func testRegionResetsWithEachCallToFormatPartial() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "DE")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "DE")
         _ = partialFormatter.formatPartial("+1 212 555 1212")
         XCTAssertEqual(partialFormatter.currentRegionCode, "US")
         _ = partialFormatter.formatPartial("invalid raw number")
@@ -468,8 +468,8 @@ class AsYouTypeFormatterTests: XCTestCase {
     // MARK: max digits
 
     func testMaxDigits() {
-        func test(_ maxDigits: Int?, _ formatted: String) {
-            let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "US", maxDigits: maxDigits)
+        func test(_ maximumDigits: Int?, _ formatted: String) {
+            let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "US", maximumDigits: maximumDigits)
             XCTAssertEqual(partialFormatter.formatPartial("555 555 5555"), formatted)
         }
 
@@ -491,7 +491,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     // MARK: convenience initializer
 
     func testConvenienceInitializerAllowsFormatting() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "US")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "US")
 
         let testNumber = "8675309"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "867-5309")
@@ -499,7 +499,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     
     // *144
     func testBrazilianOperatorService() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "BR")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "BR")
         var testNumber = "*"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "*")
         testNumber = "*1"
@@ -512,7 +512,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     
     // *#06#
     func testImeiCodeRetrieval() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "BR")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "BR")
         var testNumber = "*"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "*")
         testNumber = "*#"
@@ -527,7 +527,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     
     // *#*6#
     func testAsteriskShouldNotBeRejectedInTheMiddle() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "BR")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "BR")
         var testNumber = "*"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "*")
         testNumber = "*#"
@@ -542,7 +542,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     
     // *#*6#
     func testPoundShouldNotBeRejectedInTheMiddle() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "BR")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "BR")
         var testNumber = "*"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "*")
         testNumber = "*#"
@@ -559,7 +559,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     
     // 650,9,2
     func testPausedPhoneNumber() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "US")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "US")
         var testNumber = "6"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "6")
         testNumber = "65"
@@ -578,7 +578,7 @@ class AsYouTypeFormatterTests: XCTestCase {
     
     // 121;4
     func testWaitPhoneNumber() {
-        let partialFormatter = AsYouTypeFormatter(util: util, defaultRegionCode: "US")
+        let partialFormatter = AsYouTypeFormatter(util: util, regionCode: "US")
         var testNumber = "1"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "1")
         testNumber = "12"

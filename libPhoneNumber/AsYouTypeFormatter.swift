@@ -9,19 +9,17 @@ import Foundation
 /// Partial formatter
 final public class AsYouTypeFormatter {
 
-    private let util: PhoneNumberUtil
-
+    let util: PhoneNumberUtil
     let regexCache: RegexCache
-    let metadataManager: MetadataManager
 
-    public init(util: PhoneNumberUtil, defaultRegionCode: String = PhoneNumberUtil.defaultRegionCode(), withPrefix: Bool = true, maxDigits: Int? = nil) {
+    public init(util: PhoneNumberUtil, regionCode: String, withPrefix: Bool = true, maximumDigits: Int? = nil) {
         self.util = util
         self.regexCache = util.regexCache
-        self.metadataManager = util.metadataManager
-        self.defaultRegionCode = defaultRegionCode
-        self.updateMetadataForDefaultRegion()
+        self.defaultRegionCode = regionCode
         self.withPrefix = withPrefix
-        self.maxDigits = maxDigits
+        self.maximumDigits = maximumDigits
+
+        self.updateMetadataForDefaultRegion()
     }
 
     public var defaultRegionCode: String {
@@ -30,11 +28,11 @@ final public class AsYouTypeFormatter {
         }
     }
 
-    public var maxDigits: Int?
+    public var maximumDigits: Int?
 
     func updateMetadataForDefaultRegion() {
-        if let regionMetadata = metadataManager.metadataByRegionCode[defaultRegionCode] {
-            defaultMetadata = metadataManager.metadataByCountryCode[regionMetadata.countryCode]
+        if let metadata = util.metadata(forRegionCode: defaultRegionCode) {
+            defaultMetadata = util.metadata(forCountryCode: metadata.countryCode)
         } else {
             defaultMetadata = nil
         }
@@ -45,7 +43,7 @@ final public class AsYouTypeFormatter {
     var currentMetadata: PhoneMetadata?
     var prefixBeforeNationalNumber = String()
     var shouldAddSpaceAfterNationalPrefix = false
-    var withPrefix = true
+    var withPrefix: Bool
 
     // MARK: Status
 
@@ -68,7 +66,7 @@ final public class AsYouTypeFormatter {
 
         nationalNumber = extractNationalPrefix(nationalNumber)
 
-        if let maxDigits = maxDigits {
+        if let maxDigits = maximumDigits {
             let extra = nationalNumber.count - maxDigits
 
             if extra > 0 {
@@ -144,7 +142,7 @@ final public class AsYouTypeFormatter {
             // accept any sequence of digits and whitespace, prefixed or not by a plus sign
             let validPartialPattern = "[+＋]?(\\s*\\d)+\\s*$|\(PhoneNumberPatterns.validPhoneNumberPattern)"
             let validNumberMatches = try regexCache.matchesByRegex(pattern: validPartialPattern, string: rawNumber)
-            let validStart = regexCache.stringPositionByRegex(PhoneNumberPatterns.validStartPattern, string: rawNumber)
+            let validStart = regexCache.stringPositionByRegex(pattern: PhoneNumberPatterns.validStartPattern, string: rawNumber)
             if validNumberMatches.count == 0 || validStart != 0 {
                 return false
             }
@@ -181,7 +179,7 @@ final public class AsYouTypeFormatter {
         var processedNumber = rawNumber
         if let internationalPrefix = currentMetadata?.internationalPrefix {
             let prefixPattern = String(format: PhoneNumberPatterns.iddPattern, arguments: [internationalPrefix])
-            let matches = regexCache.matchedStringByRegex(prefixPattern, string: rawNumber)
+            let matches = regexCache.matchedStringByRegex(pattern: prefixPattern, string: rawNumber)
             if let m = matches.first {
                 let startCallingCode = m.count
                 let index = rawNumber.index(rawNumber.startIndex, offsetBy: startCallingCode)
@@ -200,7 +198,7 @@ final public class AsYouTypeFormatter {
         } else {
             if let nationalPrefix = currentMetadata?.nationalPrefixForParsing {
                 let nationalPrefixPattern = String(format: PhoneNumberPatterns.nationalPrefixParsingPattern, arguments: [nationalPrefix])
-                let matches = regexCache.matchedStringByRegex(nationalPrefixPattern, string: rawNumber)
+                let matches = regexCache.matchedStringByRegex(pattern: nationalPrefixPattern, string: rawNumber)
                 if let m = matches.first {
                     startOfNationalNumber = m.count
                 }
@@ -223,7 +221,7 @@ final public class AsYouTypeFormatter {
         }
         if let potentialCountryCode = util.extractPotentialCountryCode(rawNumber, nationalNumber: &numberWithoutCountryCallingCode), potentialCountryCode != 0 {
             processedNumber = numberWithoutCountryCallingCode
-            currentMetadata = metadataManager.metadataByCountryCode[potentialCountryCode]
+            currentMetadata = util.metadata(forCountryCode: potentialCountryCode)
             let potentialCountryCodeString = String(potentialCountryCode)
             prefixBeforeNationalNumber.append(potentialCountryCodeString)
             prefixBeforeNationalNumber.append(" ")
@@ -265,11 +263,11 @@ final public class AsYouTypeFormatter {
                 if isFormatEligible(format) {
                     tempPossibleFormats.append(format)
                     if let leadingDigitPattern = format.leadingDigitsPatterns?.last {
-                        if regexCache.stringPositionByRegex(leadingDigitPattern, string: String(rawNumber)) == 0 {
+                        if regexCache.stringPositionByRegex(pattern: leadingDigitPattern, string: String(rawNumber)) == 0 {
                             possibleFormats.append(format)
                         }
                     } else {
-                        if regexCache.matchesEntirely(format.pattern, string: String(rawNumber)) {
+                        if regexCache.matchesEntirelyByRegex(pattern: format.pattern, string: String(rawNumber)) {
                             possibleFormats.append(format)
                         }
                     }
@@ -297,7 +295,7 @@ final public class AsYouTypeFormatter {
                                 shouldAddSpaceAfterNationalPrefix = true
                             }
                         }
-                        let formattedNumber = regexCache.replaceStringByRegex(pattern, string: rawNumber, template: formatTemplate)
+                        let formattedNumber = regexCache.replaceStringByRegex(pattern: pattern, string: rawNumber, template: formatTemplate)
                         return formattedNumber
                     }
                 } catch {}
@@ -335,13 +333,13 @@ final public class AsYouTypeFormatter {
     }
 
     func getFormattingTemplate(_ numberPattern: String, numberFormat: String, rawNumber: String) -> String? {
-        let matches = regexCache.matchedStringByRegex(numberPattern, string: PhoneNumberConstants.longPhoneNumber)
+        let matches = regexCache.matchedStringByRegex(pattern: numberPattern, string: PhoneNumberConstants.longPhoneNumber)
         if let match = matches.first {
             if match.count < rawNumber.count {
                 return nil
             }
-            var template = regexCache.replaceStringByRegex(numberPattern, string: match, template: numberFormat)
-            template = regexCache.replaceStringByRegex("9", string: template, template: PhoneNumberConstants.digitPlaceholder)
+            var template = regexCache.replaceStringByRegex(pattern: numberPattern, string: match, template: numberFormat)
+            template = regexCache.replaceStringByRegex(pattern: "9", string: template, template: PhoneNumberConstants.digitPlaceholder)
             return template
         }
         return nil
