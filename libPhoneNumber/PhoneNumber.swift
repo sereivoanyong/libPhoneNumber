@@ -17,13 +17,13 @@ public struct PhoneNumber: Hashable {
     case unspecified = 0
   }
   
-  public let countryCode: Int32
+  public var countryCode: Int32
   public let nationalNumber: UInt64
   public let `extension`: String?
-  public let italianLeadingZero: Bool
-  public let numberOfLeadingZeros: Int
+  public var italianLeadingZero: Bool
+  public var numberOfLeadingZeros: Int
   public let rawInput: String
-  public let countryCodeSource: CountryCodeSource
+  public var countryCodeSource: CountryCodeSource
   public let preferredDomesticCarrierCode: String?
   
   public let type: PhoneNumberType

@@ -181,6 +181,6 @@ final class RegexCache {
 
 extension String {
     @inlinable func substring(with range: NSRange) -> String {
-        return (self as NSString).substring(with: range)
+        return String(self[Range<Index>(range, in: self)!])
     }
 }

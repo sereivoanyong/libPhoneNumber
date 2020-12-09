@@ -21,11 +21,11 @@ public enum PhoneNumberParseError: Error {
   /// This indicates the string started with an international dialing prefix, but after this was
   /// stripped from the number, had less digits than any valid phone number (including country
   /// code) could have.
-  case tooShortAfterIDD
+  case tooShortAfterIDD(String)
   
   /// This indicates the string, after any country code has been stripped, had less digits than any
   /// valid phone number could have.
-  case tooShortNSN
+  case tooShortNSN(String)
   
   /// This indicates the string had more digits than any valid phone number could have.
   case tooLong(String)

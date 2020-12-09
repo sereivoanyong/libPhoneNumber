@@ -60,6 +60,34 @@ public enum PhoneNumberType {
   case unknown
 }
 
+/// Possible outcomes when testing if a PhoneNumber is possible.
+public enum ValidationResult {
+  
+  /// The number length matches that of valid numbers for this region.
+  case isPossible
+  
+  /// The number length matches that of local numbers for this region only (i.e. numbers that may
+  /// be able to be dialled within an area, but do not have all the information to be dialled from
+  /// anywhere inside or outside the country).
+  case isPossibleLocalOnly
+  
+  /// The number has an invalid country calling code.
+  case invalidCountryCode
+  
+  /// The number is shorter than all valid numbers for this region.
+  case tooShort
+  
+  /// The number is longer than the shortest valid numbers for this region, shorter than the
+  /// longest valid numbers for this region, and does not itself have a number length that matches
+  /// valid numbers for this region. This can also be returned in the case where
+  /// isPossibleNumberForTypeWithReason was called, and there are no numbers of this type at all
+  /// for this region.
+  case invalidLength
+  
+  /// The number is longer than all valid numbers for this region.
+  case tooLong
+}
+
 public enum PhoneNumberPossibleLengthType {
   
   case national
@@ -72,10 +100,6 @@ struct PhoneNumberConstants {
     static let defaultRegionCode = "US"
     static let defaultExtnPrefix = " ext. "
     static let longPhoneNumber = "999999999999999"
-    static let minLengthForNSN = 2
-    static let maxInputStringLength = 250
-    static let maxLengthCountryCode = 3
-    static let maxLengthForNSN = 16
     static let nonBreakingSpace = "\u{00a0}"
     static let plusChars = "+＋"
     static let pausesAndWaitsChars = ",;"

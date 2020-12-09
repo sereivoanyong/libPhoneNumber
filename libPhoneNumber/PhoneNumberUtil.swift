@@ -19,7 +19,7 @@ final public class PhoneNumberUtil {
   /// The ITU says the maximum length should be 15, but we have found longer numbers in Germany.
   static let maximumLengthForNSN: Int = 17
   /// The maximum length of the country calling code.
-  static let maximumLengthForCountryCode: Int32 = 3
+  static let maximumLengthForCountryCode: Int = 3
   // We don't allow input strings for parsing to be longer than 250 chars. This prevents malicious
   // input from overflowing the regular-expression engine.
   private static let maximumInputStringLength: Int = 250
@@ -716,7 +716,7 @@ extension PhoneNumberUtil {
         }
         let countryCodeSource = stripInternationalPrefixAndNormalize(&fullNumber, possibleIddPrefix: possibleCountryIddPrefix)
         if countryCodeSource != .fromDefaultCountry {
-            if fullNumber.count <= PhoneNumberConstants.minLengthForNSN {
+            if fullNumber.count <= Self.minimumLengthForNSN {
                 throw PhoneNumberError.tooShort
             }
             if let potentialCountryCode = extractPotentialCountryCode(fullNumber, nationalNumber: &nationalNumber), potentialCountryCode != 0 {
@@ -756,7 +756,7 @@ extension PhoneNumberUtil {
             return 0
         }
         let numberLength = fullNumber.length
-        let maxCountryCode = PhoneNumberConstants.maxLengthCountryCode
+        let maxCountryCode = Self.maximumLengthForCountryCode
         var startPosition = 0
         if fullNumber.hasPrefix("+") {
             if fullNumber.length == 1 {
@@ -1076,12 +1076,12 @@ extension PhoneNumberUtil {
   /// Checks to see if the string of characters could possibly be a phone number at all. At the
   /// moment, checks to see that the string begins with at least 2 digits, ignoring any punctuation
   /// commonly found in phone numbers.
+  ///
   /// This method does not require the number to be normalized in advance - but does assume that
   /// leading non-number symbols have been removed, such as by the method extractPossibleNumber.
-  ///
   /// - Parameter string: string to be checked for viability as a phone number.
   /// - Returns: true if the number could be a phone number of some sort, otherwise false.
-  static func isViablePhoneNumber(string: String) -> Bool {
+  static func isViablePhoneNumber(_ string: String) -> Bool {
     if string.utf16.count < Self.minimumLengthForNSN {
       return false
     }
@@ -1103,14 +1103,14 @@ extension PhoneNumberUtil {
   ///
   /// - Parameter number: a StringBuilder of characters representing a phone number that will be
   ///   normalized in place
-  static func normalize(_ string: String) -> String {
-    var normalizedString: String
+  @discardableResult
+  static func normalize(_ string: inout String) -> String {
     if validAlphaPhonePattern.firstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count)) != nil {
-      normalizedString = normalizeHelper(string, normalizationReplacements: Self.alphaPhoneMappings, removeNonMatches: true)
+      string = normalizeHelper(string, normalizationReplacements: Self.alphaPhoneMappings, removeNonMatches: true)
     } else {
-      normalizedString = normalizeDigitsOnly(string)
+      string = normalizeDigitsOnly(string)
     }
-    return normalizedString
+    return string
   }
   
   // 795
@@ -1179,7 +1179,7 @@ extension PhoneNumberUtil {
   // 1044
   /// Returns all global network calling codes the library has metadata for.
   /// - Returns: An unordered set of the country calling codes for every non-geographical entity the
-  /// library supports.
+  ///   library supports.
   public func supportedGlobalNetworkCountryCodes() -> Set<Int32> {
     return countryCodesForNonGeographicalRegion
   }
@@ -1190,7 +1190,7 @@ extension PhoneNumberUtil {
   /// used to populate a drop-down box of country calling codes for a phone-number widget, for
   /// instance.
   /// - Returns: An unordered set of the country calling codes for every geographical and
-  /// non-geographical entity the library supports
+  ///   non-geographical entity the library supports.
   public func supportedCountryCodes() -> Set<Int32> {
     return Set<Int32>(regionCodesByCountryCode.keys)
   }
@@ -1270,12 +1270,34 @@ extension PhoneNumberUtil {
 //    "return formatNsn(number, metadata, numberFormat, null);
   }
   
+  // 2083
+  /// Gets a valid number for the specified region and number type.
+  /// - Parameters:
+  ///   - regionCode: the region for which an example number is needed.
+  ///   - type: the type of number that is needed.
+  /// - Returns: a valid number for the specified region and type. Returns null when the metadata
+  ///   does not contain such information or if an invalid region or region 001 was entered.
+  ///   For 001 (representing non-geographical numbers), call
+  ///   {@link #getExampleNumberForNonGeoEntity} instead.
+  public func exampleNumber(regionCode: String, type: PhoneNumberType) -> PhoneNumber? {
+    // Check the region code is valid.
+    if !isValid(regionCode: regionCode) {
+      return nil
+    }
+    if let desc = numberDesc(metadata: metadata(forRegionCode: regionCode)!, type: type) {
+      if let exampleNumber = desc.exampleNumber {
+        return try? parse(exampleNumber, regionCode: regionCode)
+      }
+    }
+    return nil
+  }
+  
   // 2108
   /// Gets a valid number for the specified number type (it may belong to any country).
   /// - Parameter type: the type of number that is needed.
   /// - Returns: a valid number for the specified type. Returns null when the metadata
-  /// does not contain such information. This should only happen when no numbers of this type are
-  /// allocated anywhere in the world anymore.
+  ///   does not contain such information. This should only happen when no numbers of this type are
+  ///   allocated anywhere in the world anymore.
   public func exampleNumber(type: PhoneNumberType) -> PhoneNumber? {
     for regionCode in supportedRegionCodes {
       if let exampleNumber = exampleNumber(regionCode: regionCode, type: type) {
@@ -1366,7 +1388,7 @@ extension PhoneNumberUtil {
   /// numbers).
   /// - Parameter number: the phone number whose origin we want to know.
   /// - Returns: the region where the phone number is from, or null if no region matches this calling
-  /// code.
+  ///   code.
   public func regionCode(for phoneNumber: PhoneNumber) -> String? {
     let countryCode = phoneNumber.countryCode
     guard let regionCodes = regionCodesByCountryCode[countryCode] else {
@@ -1444,79 +1466,334 @@ extension PhoneNumberUtil {
     return metadata.countryCode
   }
   
-  /// Parses a string and returns it as a phone number in proto buffer format. The method is quite
-  /// lenient and looks for a number in the input text (raw input) and does not check whether the
-  /// string is definitely only a phone number. To do this, it ignores punctuation and white-space,
-  /// as well as any text before the number (e.g. a leading "Tel: ") and trims the non-number bits.
-  /// It will accept a number in any format (E164, national, international etc), assuming it can be
-  /// interpreted with the defaultRegion supplied. It also attempts to convert any alpha characters
-  /// into digits if it thinks this is a vanity number of the type "1800 MICROSOFT".
+  // 2466
+  /// Returns the national dialling prefix for a specific region. For example, this would be 1 for
+  /// the United States, and 0 for New Zealand. Set stripNonDigits to true to strip symbols like "~"
+  /// (which indicates a wait for a dialling tone) from the prefix returned. If no national prefix is
+  /// present, we return null.
   ///
-  /// <p> This method will throw a {@link com.google.i18n.phonenumbers.NumberParseException} if the
-  /// number is not considered to be a possible number. Note that validation of whether the number
-  /// is actually a valid number for a particular region is not performed. This can be done
-  /// separately with {@link #isValidNumber}.
-  ///
-  /// <p> Note this method canonicalizes the phone number such that different representations can be
-  /// easily compared, no matter what form it was originally entered in (e.g. national,
-  /// international). If you want to record context about the number being parsed, such as the raw
-  /// input that was entered, how the country code was derived etc. then call {@link
-  /// #parseAndKeepRawInput} instead.
+  /// Warning: Do not use this method for do-your-own formatting - for some regions, the
+  /// national dialling prefix is used only for certain types of numbers. Use the library's
+  /// formatting functions to prefix the national prefix when required.
   ///
   /// - Parameters:
-  ///   - numberToParse:  number that we are attempting to parse. This can contain formatting such
-  ///     as +, ( and -, as well as a phone number extension. It can also be provided in RFC3966
-  ///     format.
-  ///   - defaultRegionCode:  region that we are expecting the number to be from. This is only used if
-  ///     the number being parsed is not written in international format. The country_code for the
-  ///     number in this case would be stored as that of the default region supplied. If the number
-  ///     is guaranteed to start with a '+' followed by the country calling code, then RegionCode.ZZ
-  ///     or null can be supplied.
-  /// - Throws: NumberParseException  if the string is not considered to be a viable phone number (e.g.
-  ///   too few or too many digits) or if no default region was supplied and the number is not in
-  ///   international format (does not start with +)
-  /// - Returns: A phone number proto buffer filled with the parsed number.
-  public func parse(_ numberToParse: String, defaultRegionCode: String) throws -> PhoneNumber {
-    fatalError()
-    // FIXME:
-//    return parse(numberToParse, defaultRegion, phoneNumber)
-  }
-  
-  // 3567
-  /// Returns true if the supplied region supports mobile number portability. Returns false for
-  /// invalid, unknown or regions that don't support mobile number portability.
-  /// - Parameter regionCode: the region for which we want to know whether it supports mobile number
-  ///   portability or not.
-  public func isMobileNumberPortableRegion(regionCode: String) -> Bool {
+  ///   - regionCode: the region that we want to get the dialling prefix for.
+  ///   - stripNonDigits: true to strip non-digits from the national dialling prefix.
+  /// - Returns: the dialling prefix for the region denoted by regionCode.
+  public func getNddPrefixForRegion(regionCode: String, stripNonDigits: Bool) -> String? {
     guard let metadata = metadata(forRegionCode: regionCode) else {
-      return false
-    }
-    return metadata.mobileNumberPortableRegion
-  }
-  
-  // 2083
-  /// Gets a valid number for the specified region and number type.
-  /// - Parameters:
-  ///   - regionCode: the region for which an example number is needed.
-  ///   - type: the type of number that is needed.
-  /// - Returns: a valid number for the specified region and type. Returns null when the metadata
-  ///   does not contain such information or if an invalid region or region 001 was entered.
-  ///   For 001 (representing non-geographical numbers), call
-  ///   {@link #getExampleNumberForNonGeoEntity} instead.
-  public func exampleNumber(regionCode: String, type: PhoneNumberType) -> PhoneNumber? {
-    // Check the region code is valid.
-    if !isValid(regionCode: regionCode) {
+      debugPrint("WARNING", "Invalid or missing region code (\(regionCode)) provided.");
       return nil
     }
-    if let desc = numberDesc(metadata: metadata(forRegionCode: regionCode)!, type: type) {
-      if let exampleNumber = desc.exampleNumber {
-        return try? parse(exampleNumber, regionCode: regionCode)
+    // If no national prefix was found, we return null.
+    guard var nationalPrefix = metadata.nationalPrefix, !nationalPrefix.isEmpty else {
+      return nil
+    }
+    if stripNonDigits {
+      // Note: if any other non-numeric symbols are ever used in national prefixes, these would have
+      // to be removed here as well.
+      nationalPrefix = nationalPrefix.replacingOccurrences(of: "~", with: "")
+    }
+    return nationalPrefix
+  }
+  
+  // 2493
+  /// Checks if this is a region under the North American Numbering Plan Administration (NANPA).
+  /// - Returns: true if regionCode is one of the regions under NANPA.
+  public func isNANPACountry(regionCode: String) -> Bool {
+    return nanpaRegionCodes.contains(regionCode)
+  }
+  
+  // 2507
+  /// Checks if the number is a valid vanity (alpha) number such as 800 MICROSOFT. A valid vanity
+  /// number will start with at least 3 digits and will have three or more alpha characters. This
+  /// does not do region-specific checks - to work out if this number is actually valid for a region,
+  /// it should be parsed and methods such as {@link #isPossibleNumberWithReason} and
+  /// {@link #isValidNumber} should be used.
+  /// - Parameter number: the number that needs to be checked.
+  /// - Returns: true if the number is a valid vanity number.
+  public func isAlphaNumber(number: String) -> Bool {
+    if !Self.isViablePhoneNumber(number) {
+      // Number is too short, or doesn't match the basic phone number pattern.
+      return false
+    }
+    var strippedNumber = number
+    maybeStripExtension(&strippedNumber)
+    return Self.validAlphaPhonePattern.firstMatch(in: strippedNumber, options: [], range: NSRange(location: 0, length: strippedNumber.utf16.count)) != nil
+  }
+  
+  /// Gets an `AsYouTypeFormatter` for the specific region.
+  /// - Parameter regionCode : the region where the phone number is being entered
+  /// - Returns: an `AsYouTypeFormatter` object, which can be used
+  ///   to format phone numbers in the specific region "as you type".
+  public func asYouTypeFormatter(regionCode: String) -> AsYouTypeFormatter {
+    return AsYouTypeFormatter(util: self, regionCode: regionCode)
+  }
+
+  /// Extracts country calling code from fullNumber, returns it and places the remaining number in
+  /// nationalNumber. It assumes that the leading plus sign or IDD has already been removed. Returns
+  /// 0 if fullNumber doesn't start with a valid country calling code, and leaves nationalNumber
+  /// unmodified.
+  func extractCountryCode(_ fullNumber: inout String, nationalNumber: inout String) -> Int32? {
+    if fullNumber.isEmpty || fullNumber.first == "0" {
+      // Country codes do not begin with a '0'.
+      return nil
+    }
+    for i in 1...min(Self.maximumLengthForCountryCode, fullNumber.count) {
+      if let potentialCountryCode = Int32(fullNumber.substring(with: NSRange(location: 0, length: i))), regionCodesByCountryCode.keys.contains(potentialCountryCode) {
+        nationalNumber += fullNumber[fullNumber.index(fullNumber.startIndex, offsetBy: i)...]
+        return potentialCountryCode
       }
     }
     return nil
   }
   
-  /*
+  // 2822
+  /**
+   * Tries to extract a country calling code from a number. This method will return zero if no
+   * country calling code is considered to be present. Country calling codes are extracted in the
+   * following ways:
+   * <ul>
+   *  <li> by stripping the international dialing prefix of the region the person is dialing from,
+   *       if this is present in the number, and looking at the next digits
+   *  <li> by stripping the '+' sign if present and then looking at the next digits
+   *  <li> by comparing the start of the number and the country calling code of the default region.
+   *       If the number is not considered possible for the numbering plan of the default region
+   *       initially, but starts with the country calling code of this region, validation will be
+   *       reattempted after stripping this country calling code. If this number is considered a
+   *       possible number, then the first digits will be considered the country calling code and
+   *       removed as such.
+   * </ul>
+   * It will throw a NumberParseException if the number starts with a '+' but the country calling
+   * code supplied after this does not match that of any known region.
+   *
+   * @param number  non-normalized telephone number that we wish to extract a country calling
+   *     code from - may begin with '+'
+   * @param defaultRegionMetadata  metadata about the region this number may be from
+   * @param nationalNumber  a string buffer to store the national significant number in, in the case
+   *     that a country calling code was extracted. The number is appended to any existing contents.
+   *     If no country calling code was extracted, this will be left unchanged.
+   * @param keepRawInput  true if the country_code_source and preferred_carrier_code fields of
+   *     phoneNumber should be populated.
+   * @param phoneNumber  the PhoneNumber object where the country_code and country_code_source need
+   *     to be populated. Note the country_code is always populated, whereas country_code_source is
+   *     only populated when keepCountryCodeSource is true.
+   * @return  the country calling code extracted or 0 if none could be extracted
+   */
+  // @VisibleForTesting
+  func maybeExtractCountryCode(_ number: String, defaultRegionMetadata: PhoneMetadata?, nationalNumber: inout String, keepRawInput: Bool, phoneNumber: inout PhoneNumber) throws -> Int32? {
+    if number.isEmpty {
+      return nil
+    }
+    var fullNumber = number
+    // Set the default prefix to be something that will never match.
+    var possibleCountryIddPrefix = "NonMatch"
+    if let defaultRegionMetadata = defaultRegionMetadata {
+      possibleCountryIddPrefix = defaultRegionMetadata.internationalPrefix!
+    }
+
+    let countryCodeSource = maybeStripInternationalPrefixAndNormalize(&fullNumber, possibleIddPrefix: possibleCountryIddPrefix)
+    if (keepRawInput) {
+      phoneNumber.countryCodeSource = countryCodeSource
+    }
+    if countryCodeSource != .fromDefaultCountry {
+      if fullNumber.count <= Self.minimumLengthForNSN {
+        throw PhoneNumberParseError.tooShortAfterIDD("Phone number had an IDD, but after this was not long enough to be a viable phone number.")
+      }
+      if let potentialCountryCode = extractCountryCode(&fullNumber, nationalNumber: &nationalNumber) {
+        phoneNumber.countryCode = potentialCountryCode
+        return potentialCountryCode
+      }
+
+      // If this fails, they must be using a strange country calling code that we don't recognize,
+      // or that doesn't exist.
+      throw PhoneNumberParseError.invalidCountryCode
+    } else if let defaultRegionMetadata = defaultRegionMetadata {
+      // Check to see if the number starts with the country calling code for the default region. If
+      // so, we remove the country calling code, and do some checks on the validity of the number
+      // before and after.
+      let defaultCountryCode = defaultRegionMetadata.countryCode
+      let defaultCountryCodeString = String(defaultCountryCode)
+      let normalizedNumber = fullNumber
+      if normalizedNumber.hasPrefix(defaultCountryCodeString) {
+        var potentialNationalNumber = String(normalizedNumber[normalizedNumber.index(normalizedNumber.startIndex, offsetBy: defaultCountryCodeString.count)...])
+        let generalDesc = defaultRegionMetadata.generalDesc
+        var carrierCode: String?
+        maybeStripNationalPrefixAndCarrierCode(&potentialNationalNumber, metadata: defaultRegionMetadata, carrierCode: &carrierCode /* Don't need the carrier code */)
+        // If the number was not valid before but is valid now, or if it was too long before, we
+        // consider the number with the country calling code stripped to be a better result and
+        // keep that instead.
+        if (!matcherApi.matchNationalNumber(fullNumber, generalDesc, false) && matcherApi.matchNationalNumber(potentialNationalNumber, generalDesc, false)) || testNumberLength(fullNumber, defaultRegionMetadata) == ValidationResult.TOO_LONG {
+          nationalNumber.append(potentialNationalNumber);
+          if keepRawInput {
+            phoneNumber.countryCodeSource = .fromNumberWithoutPlusSign
+          }
+          phoneNumber.countryCode = defaultCountryCode
+          return defaultCountryCode
+        }
+      }
+    }
+    // No country calling code present.
+    phoneNumber.countryCode = 0
+    return nil
+  }
+  
+  // 2894
+  /// Strips the IDD from the start of the number if present. Helper function used by
+  /// `maybeStripInternationalPrefixAndNormalize()`.
+  @discardableResult
+  private func parsePrefixAsIdd(iddPattern: NSRegularExpression, _ number: inout String) -> Bool{
+    if let m = iddPattern.firstMatch(in: number, options: .anchored, range: NSRange(location: 0, length: number.utf16.count)) {
+      // Only strip this if the first digit after the match is not a 0, since country calling codes
+      // cannot begin with 0.
+      let numberToMatchDigit = String(number[number.index(number.startIndex, offsetBy: m.range.upperBound)...])
+      let digitMatches = Self.capturingDigitsPattern.matches(in: numberToMatchDigit, options: [], range: NSRange(location: 0, length: numberToMatchDigit.utf16.count))
+      let normalizedGroup = Self.normalizeDigitsOnly(numberToMatchDigit.substring(with: digitMatches[1].range))
+      if normalizedGroup == "0" {
+        return false
+      }
+      number.removeSubrange(..<number.index(number.startIndex, offsetBy: m.range.upperBound))
+      return true;
+    }
+    return false
+  }
+  
+  // 2926
+  // @VisibleForTesting
+  /// Strips any international prefix (such as +, 00, 011) present in the number provided, normalizes
+  /// the resulting number, and indicates if an international prefix was present.
+  /// - Parameters:
+  ///   - number: the non-normalized telephone number that we wish to strip any international
+  ///     dialing prefix from
+  ///   - possibleIddPrefix: the international direct dialing prefix from the region we
+  ///     think this number may be dialed in
+  /// - Returns: the corresponding CountryCodeSource if an international dialing prefix could be
+  ///   removed from the number, otherwise `.fromDefaultCountry` if the number did
+  ///   not seem to be in international format
+  func maybeStripInternationalPrefixAndNormalize(_ number: inout String, possibleIddPrefix: String) -> PhoneNumber.CountryCodeSource {
+    if number.isEmpty {
+      return .fromDefaultCountry
+    }
+    // Check to see if the number begins with one or more plus signs.
+    if let m = Self.plusCharsPattern.firstMatch(in: number, options: .anchored, range: NSRange(location: 0, length: number.utf16.count)) {
+      number.removeSubrange(..<number.index(number.startIndex, offsetBy: m.range.upperBound))
+      // Can now normalize the rest of the number since we've consumed the "+" sign at the start.
+      Self.normalize(&number)
+      return .fromNumberWithPlusSign
+    }
+    // Attempt to parse the first digits as an international prefix.
+    let iddPattern = try! regexCache.regex(pattern: possibleIddPrefix)
+    Self.normalize(&number)
+    return parsePrefixAsIdd(iddPattern: iddPattern, &number) ? .fromNumberWithIDD : .fromDefaultCountry
+  }
+  
+  // 2958
+  // @VisibleForTesting
+  /// Strips any national prefix (such as 0, 1) present in the number provided.
+  /// - Parameters:
+  ///   - number: the normalized telephone number that we wish to strip any national
+  ///     dialing prefix from.
+  /// @param metadata  the metadata for the region that we think this number is from
+  /// @param carrierCode  a place to insert the carrier code if one is extracted
+  /// @return true if a national prefix or carrier code (or both) could be extracted
+  @discardableResult
+  func maybeStripNationalPrefixAndCarrierCode(_ number: inout String, metadata: PhoneMetadata, carrierCode: inout String?) -> Bool {
+    guard !number.isEmpty, let possibleNationalPrefix = metadata.nationalPrefixForParsing, possibleNationalPrefix.isEmpty else {
+      // Early return for numbers of zero length.
+      return false
+    }
+    let numberLength = number.count
+    // Attempt to parse the first digits as a national prefix.
+    let prefixMatcher = try! regexCache.regex(pattern: possibleNationalPrefix).matches(in: number, options: .anchored, range: NSRange(location: 0, length: number.utf16.count))
+    if !prefixMatcher.isEmpty {
+      let generalDesc = metadata.generalDesc
+      // Check if the original number is viable.
+      boolean isViableOriginalNumber = matcherApi.matchNationalNumber(number, generalDesc, false);
+      // prefixMatcher.group(numOfGroups) == null implies nothing was captured by the capturing
+      // groups in possibleNationalPrefix; therefore, no transformation is necessary, and we just
+      // remove the national prefix.
+      int numOfGroups = prefixMatcher.groupCount();
+      String transformRule = metadata.getNationalPrefixTransformRule();
+      if (transformRule == null || transformRule.length() == 0 || prefixMatcher.group(numOfGroups) == null) {
+        // If the original number was viable, and the resultant number is not, we return.
+        if (isViableOriginalNumber && !matcherApi.matchNationalNumber(number.substring(prefixMatcher.end()), generalDesc, false)) {
+          return false;
+        }
+        if (carrierCode != null && numOfGroups > 0 && prefixMatcher.group(numOfGroups) != null) {
+          carrierCode.append(prefixMatcher.group(1));
+        }
+        number.delete(0, prefixMatcher.end());
+        return true;
+      } else {
+        // Check that the resultant number is still viable. If not, return. Check this by copying
+        // the string buffer and making the transformation on the copy first.
+        StringBuilder transformedNumber = new StringBuilder(number);
+        transformedNumber.replace(0, numberLength, prefixMatcher.replaceFirst(transformRule));
+        if (isViableOriginalNumber && !matcherApi.matchNationalNumber(transformedNumber.toString(), generalDesc, false)) {
+          return false;
+        }
+        if (carrierCode != null && numOfGroups > 1) {
+          carrierCode.append(prefixMatcher.group(1));
+        }
+        number.replace(0, number.length(), transformedNumber.toString());
+        return true;
+      }
+    }
+    return false
+  }
+  
+  // 3017
+  // @VisibleForTesting
+  /// Strips any extension (as in, the part of the number dialled after the call is connected,
+  /// usually indicated with extn, ext, x or similar) from the end of the number, and returns it.
+  /// - Parameter number: the non-normalized telephone number that we wish to strip the extension from.
+  /// - Returns: the phone extension.
+  @discardableResult
+  func maybeStripExtension(_ number: inout String) -> String? {
+    // If we find a potential extension, and the number preceding this is a viable number, we assume
+    // it is an extension.
+    if let match = Self.extnPattern.firstMatch(in: number, options: [], range: NSRange(location: 0, length: number.utf16.count)),
+       Self.isViablePhoneNumber((number as NSString).substring(with: NSRange(location: 0, length: match.range.location))) {
+      // We find the one that captured some digits. If none
+      // did, then we will return the empty string.
+      let `extension` = (number as NSString).substring(with: match.range)
+      number.removeSubrange(number.index(number.startIndex, offsetBy: match.range.location)...)
+      return `extension`
+    }
+    return nil
+  }
+  
+  // 3041
+  /// Checks to see that the region code used is valid, or if it is not valid, that the number to
+  /// parse starts with a + symbol so that we can attempt to infer the region from the number.
+  /// - Returns: false if it cannot use the region provided and the region cannot be inferred.
+  private func checkRegionCodeForParsing(_ numberToParse: String, defaultRegionCode: String) -> Bool {
+    if !isValid(regionCode: defaultRegionCode) {
+      // If the number is null or empty, we can't infer the region.
+      if numberToParse.isEmpty || Self.plusCharsPattern.firstMatch(in: numberToParse, options: .anchored, range: NSRange(location: 0, length: numberToParse.utf16.count)) == nil {
+        return false
+      }
+    }
+    return true
+  }
+  
+  // 3176
+  /// A helper function to set the values related to leading zeros in a PhoneNumber.
+  static func setItalianLeadingZerosForPhoneNumber(nationalNumber: String, phoneNumber: inout PhoneNumber) {
+    if nationalNumber.count > 1 && nationalNumber.first == "0" {
+      phoneNumber.italianLeadingZero = true
+      var numberOfLeadingZeros = 1
+      // Note that if the national number is all "0"s, the last "0" is not counted as a leading
+      // zero.
+      while numberOfLeadingZeros < nationalNumber.count - 1 && nationalNumber[numberOfLeadingZeros] == "0" {
+        numberOfLeadingZeros += 1
+      }
+      if numberOfLeadingZeros != 1 {
+        phoneNumber.numberOfLeadingZeros = numberOfLeadingZeros
+      }
+    }
+  }
+  
   // 3202
   /// Parses a string and fills up the phoneNumber. This method is the same as the public
   /// parse() method, with the exception that it allows the default region to be null, for use by
@@ -1524,8 +1801,8 @@ extension PhoneNumberUtil {
   /// to be null or unknown ("ZZ").
   ///
   /// Note if any new field is added to this method that should always be filled in, even when
-  /// keepRawInput is false, it should also be handled in the copyCoreFieldsOnly() method.
-  private func parseHelper(numberToParse: String?, defaultRegion: String?, keepRawInput: Bool, checkRegion: Bool) throws -> PhoneNumber {
+  /// `keepRawInput` is false, it should also be handled in the copyCoreFieldsOnly() method.
+  private func parseHelper(_ numberToParse: String?, defaultRegion: String, keepRawInput: Bool, checkRegion: Bool) throws -> PhoneNumber {
     guard let numberToParse = numberToParse else {
       throw PhoneNumberParseError.notANumber("The phone number supplied was null.")
     }
@@ -1535,41 +1812,37 @@ extension PhoneNumberUtil {
     
     var nationalNumber = ""
     var numberBeingParsed = numberToParse
-    buildNationalNumberForParsing(numberBeingParsed, nationalNumber);
+    buildNationalNumberForParsing(numberBeingParsed, nationalNumber: &nationalNumber)
     
-    if (!isViablePhoneNumber(nationalNumber)) {
-      throw new NumberParseException(NumberParseException.ErrorType.NOT_A_NUMBER,
-                                     "The string supplied did not seem to be a phone number.");
+    if !Self.isViablePhoneNumber(nationalNumber) {
+      throw PhoneNumberParseError.notANumber("The string supplied did not seem to be a phone number.")
     }
     
     // Check the region supplied is valid, or that the extracted number starts with some sort of +
     // sign so the number's region can be determined.
-    if (checkRegion && !checkRegionForParsing(nationalNumber, defaultRegion)) {
-      throw new NumberParseException(NumberParseException.ErrorType.INVALID_COUNTRY_CODE,
-                                     "Missing or invalid default region.");
+    if checkRegion && !checkRegionCodeForParsing(nationalNumber, defaultRegionCode: defaultRegion) {
+      throw PhoneNumberParseError.invalidCountryCode
     }
     
-    if (keepRawInput) {
-      phoneNumber.setRawInput(numberBeingParsed);
+    if keepRawInput {
+      phoneNumber.rawInput = numberBeingParsed
     }
     // Attempt to parse extension first, since it doesn't require region-specific data and we want
     // to have the non-normalised number here.
-    String extension = maybeStripExtension(nationalNumber);
-    if (extension.length() > 0) {
-      phoneNumber.setExtension(extension);
+    if let `extension` = maybeStripExtension(&nationalNumber) {
+      phoneNumber.extension = `extension`
     }
     
-    PhoneMetadata regionMetadata = getMetadataForRegion(defaultRegion);
+    var regionMetadata = metadata(forRegionCode: defaultRegion)
     // Check to see if the number is given in international format so we know whether this number is
     // from the default region or not.
-    StringBuilder normalizedNationalNumber = new StringBuilder();
-    int countryCode = 0;
-    try {
+    var normalizedNationalNumber = ""
+    var countryCode: Int32?
+    do {
       // TODO: This method should really just take in the string buffer that has already
       // been created, and just remove the prefix, rather than taking in a string and then
       // outputting a string buffer.
-      countryCode = maybeExtractCountryCode(nationalNumber, regionMetadata,
-                                            normalizedNationalNumber, keepRawInput, phoneNumber);
+      countryCode = try maybeExtractCountryCode(nationalNumber, regionMetadata, normalizedNationalNumber, keepRawInput, phoneNumber)
     } catch (NumberParseException e) {
       Matcher matcher = PLUS_CHARS_PATTERN.matcher(nationalNumber);
       if (e.getErrorType() == NumberParseException.ErrorType.INVALID_COUNTRY_CODE
@@ -1586,62 +1859,55 @@ extension PhoneNumberUtil {
         throw new NumberParseException(e.getErrorType(), e.getMessage());
       }
     }
-    if (countryCode != 0) {
-      String phoneNumberRegion = getRegionCodeForCountryCode(countryCode);
-      if (!phoneNumberRegion.equals(defaultRegion)) {
+    if let countryCode = countryCode {
+      if let phoneNumberRegionCode = regionCode(forCountryCode: countryCode), phoneNumberRegionCode != defaultRegion {
         // Metadata cannot be null because the country calling code is valid.
-        regionMetadata = getMetadataForRegionOrCallingCode(countryCode, phoneNumberRegion);
+        regionMetadata = metadata(countryCode: countryCode, regionCode: phoneNumberRegionCode)
       }
     } else {
       // If no extracted country calling code, use the region supplied instead. The national number
       // is just the normalized version of the number we were given to parse.
-      normalizedNationalNumber.append(normalize(nationalNumber));
-      if (defaultRegion != null) {
-        countryCode = regionMetadata.getCountryCode();
+      normalizedNationalNumber += Self.normalize(&nationalNumber)
+      if defaultRegion != nil {
+        countryCode = regionMetadata?.countryCode
         phoneNumber.setCountryCode(countryCode);
       } else if (keepRawInput) {
         phoneNumber.clearCountryCodeSource();
       }
     }
-    if (normalizedNationalNumber.length() < MIN_LENGTH_FOR_NSN) {
-      throw new NumberParseException(NumberParseException.ErrorType.TOO_SHORT_NSN,
-                                     "The string supplied is too short to be a phone number.");
+    if normalizedNationalNumber.count < Self.minimumLengthForNSN {
+      throw PhoneNumberParseError.tooShortNSN("The string supplied is too short to be a phone number.")
     }
-    if (regionMetadata != null) {
-      StringBuilder carrierCode = new StringBuilder();
-      StringBuilder potentialNationalNumber = new StringBuilder(normalizedNationalNumber);
-      maybeStripNationalPrefixAndCarrierCode(potentialNationalNumber, regionMetadata, carrierCode);
+    if let regionMetadata = regionMetadata {
+      var carrierCode: String! = ""
+      var potentialNationalNumber = normalizedNationalNumber
+      maybeStripNationalPrefixAndCarrierCode(&potentialNationalNumber, metadata: regionMetadata, carrierCode: &carrierCode);
       // We require that the NSN remaining after stripping the national prefix and carrier code be
       // long enough to be a possible length for the region. Otherwise, we don't do the stripping,
       // since the original number could be a valid short number.
-      ValidationResult validationResult = testNumberLength(potentialNationalNumber, regionMetadata);
-      if (validationResult != ValidationResult.TOO_SHORT
-            && validationResult != ValidationResult.IS_POSSIBLE_LOCAL_ONLY
-            && validationResult != ValidationResult.INVALID_LENGTH) {
-        normalizedNationalNumber = potentialNationalNumber;
-        if (keepRawInput && carrierCode.length() > 0) {
-          phoneNumber.setPreferredDomesticCarrierCode(carrierCode.toString());
+      let validationResult: ValidationResult = testNumberLength(potentialNationalNumber, regionMetadata);
+      if validationResult != .tooShort && validationResult != .isPossibleLocalOnly && validationResult != .invalidLength {
+        normalizedNationalNumber = potentialNationalNumber
+        if keepRawInput && !carrierCode.isEmpty {
+          phoneNumber.preferredDomesticCarrierCode = carrierCode
         }
       }
     }
-    int lengthOfNationalNumber = normalizedNationalNumber.length();
-    if (lengthOfNationalNumber < MIN_LENGTH_FOR_NSN) {
-      throw new NumberParseException(NumberParseException.ErrorType.TOO_SHORT_NSN,
-                                     "The string supplied is too short to be a phone number.");
+    let lengthOfNationalNumber = normalizedNationalNumber.count
+    if lengthOfNationalNumber < Self.minimumLengthForNSN {
+      throw PhoneNumberParseError.tooShortNSN("The string supplied is too short to be a phone number.")
     }
-    if (lengthOfNationalNumber > MAX_LENGTH_FOR_NSN) {
-      throw new NumberParseException(NumberParseException.ErrorType.TOO_LONG,
-                                     "The string supplied is too long to be a phone number.");
+    if lengthOfNationalNumber > Self.maximumLengthForNSN {
+      throw PhoneNumberParseError.tooLong("The string supplied is too long to be a phone number.")
     }
-    setItalianLeadingZerosForPhoneNumber(normalizedNationalNumber, phoneNumber);
-    phoneNumber.setNationalNumber(Long.parseLong(normalizedNationalNumber.toString()));
+    setItalianLeadingZerosForPhoneNumber(nationalNumber: normalizedNationalNumber, phoneNumber: &phoneNumber)
+    phoneNumber.nationalNumber = Long.parseLong(normalizedNationalNumber.toString())
   }
-  */
   
   // 3321
   /// Converts numberToParse to a form that we can parse and write it to nationalNumber if it is
   /// written in RFC3966; otherwise extract a possible number out of it and write to nationalNumber.
-  private func buildNationalNumberForParsing(numberToParse: String, nationalNumber: inout String) {
+  private func buildNationalNumberForParsing(_ numberToParse: String, nationalNumber: inout String) {
     if let indexOfPhoneContext = numberToParse.range(of: Self.rfc3966PhoneContext)?.lowerBound {
       let phoneContextStart = numberToParse.index(indexOfPhoneContext, offsetBy: Self.rfc3966PhoneContext.count)
       // If the phone context contains a phone number prefix, we need to capture it, whereas domains
@@ -1702,6 +1968,56 @@ extension PhoneNumberUtil {
       type: .unknown
     )
   }
+  
+  /// Parses a string and returns it as a phone number in proto buffer format. The method is quite
+  /// lenient and looks for a number in the input text (raw input) and does not check whether the
+  /// string is definitely only a phone number. To do this, it ignores punctuation and white-space,
+  /// as well as any text before the number (e.g. a leading "Tel: ") and trims the non-number bits.
+  /// It will accept a number in any format (E164, national, international etc), assuming it can be
+  /// interpreted with the defaultRegion supplied. It also attempts to convert any alpha characters
+  /// into digits if it thinks this is a vanity number of the type "1800 MICROSOFT".
+  ///
+  /// <p> This method will throw a {@link com.google.i18n.phonenumbers.NumberParseException} if the
+  /// number is not considered to be a possible number. Note that validation of whether the number
+  /// is actually a valid number for a particular region is not performed. This can be done
+  /// separately with {@link #isValidNumber}.
+  ///
+  /// <p> Note this method canonicalizes the phone number such that different representations can be
+  /// easily compared, no matter what form it was originally entered in (e.g. national,
+  /// international). If you want to record context about the number being parsed, such as the raw
+  /// input that was entered, how the country code was derived etc. then call {@link
+  /// #parseAndKeepRawInput} instead.
+  ///
+  /// - Parameters:
+  ///   - numberToParse:  number that we are attempting to parse. This can contain formatting such
+  ///     as +, ( and -, as well as a phone number extension. It can also be provided in RFC3966
+  ///     format.
+  ///   - defaultRegionCode:  region that we are expecting the number to be from. This is only used if
+  ///     the number being parsed is not written in international format. The country_code for the
+  ///     number in this case would be stored as that of the default region supplied. If the number
+  ///     is guaranteed to start with a '+' followed by the country calling code, then RegionCode.ZZ
+  ///     or null can be supplied.
+  /// - Throws: NumberParseException  if the string is not considered to be a viable phone number (e.g.
+  ///   too few or too many digits) or if no default region was supplied and the number is not in
+  ///   international format (does not start with +)
+  /// - Returns: A phone number proto buffer filled with the parsed number.
+  public func parse(_ numberToParse: String, defaultRegionCode: String) throws -> PhoneNumber {
+    fatalError()
+    // FIXME:
+//    return parse(numberToParse, defaultRegion, phoneNumber)
+  }
+  
+  // 3567
+  /// Returns true if the supplied region supports mobile number portability. Returns false for
+  /// invalid, unknown or regions that don't support mobile number portability.
+  /// - Parameter regionCode: the region for which we want to know whether it supports mobile number
+  ///   portability or not.
+  public func isMobileNumberPortableRegion(regionCode: String) -> Bool {
+    guard let metadata = metadata(forRegionCode: regionCode) else {
+      return false
+    }
+    return metadata.mobileNumberPortableRegion
+  }
 }
 
 #if canImport(CoreTelephony)
@@ -1742,5 +2058,12 @@ extension PhoneNumberUtil {
     }
     #endif
     return Locale.current.regionCode ?? PhoneNumberConstants.defaultRegionCode
+  }
+}
+
+extension String {
+  
+  subscript(distance: Int) -> Character {
+    return self[index(startIndex, offsetBy: distance)]
   }
 }
