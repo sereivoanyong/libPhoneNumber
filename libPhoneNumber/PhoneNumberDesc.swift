@@ -12,6 +12,9 @@ public struct PhoneNumberDesc: Decodable {
   public let nationalNumberPattern: String?
   public let possibleNumberPattern: String?
   public let possibleLengths: PhoneNumberPossibleLengths?
+  
+  public let _possibleLengths: [Int] = []
+  public let _possibleLengthsForLocalOnly: [Int] = []
 }
 
 public struct PhoneNumberPossibleLengths: Decodable {

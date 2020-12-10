@@ -6,8 +6,8 @@
 
 import Foundation
 
-/// Simple ASCII digits map used to populate ALPHA_PHONE_MAPPINGS and
-/// ALL_PLUS_NUMBER_GROUPING_SYMBOLS.
+/// Simple ASCII digits map used to populate `alphaPhoneMappings` and
+/// `allPlusNumberGroupingSymbols`.
 private let kAsciiDigitMappings: [Character: Character] = ["0": "0", "1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "7", "8": "8", "9": "9"]
 
 final public class PhoneNumberUtil {
@@ -20,8 +20,8 @@ final public class PhoneNumberUtil {
   static let maximumLengthForNSN: Int = 17
   /// The maximum length of the country calling code.
   static let maximumLengthForCountryCode: Int = 3
-  // We don't allow input strings for parsing to be longer than 250 chars. This prevents malicious
-  // input from overflowing the regular-expression engine.
+  /// We don't allow input strings for parsing to be longer than 250 chars. This prevents malicious
+  /// input from overflowing the regular-expression engine.
   private static let maximumInputStringLength: Int = 250
   
   /// Region-code for the unknown region.
@@ -38,7 +38,7 @@ final public class PhoneNumberUtil {
   /// be the length of the area code plus the length of the mobile token.
   private static let mobileTokenMappings: [Int32: String] = [:]
   
-  /// Set of country codes that have geographically assigned mobile numbers (see GEO_MOBILE_COUNTRIES
+  /// Set of country codes that have geographically assigned mobile numbers (see `geoMobileCountryCodes`
   /// below) which are not based on *area codes*. For example, in China mobile numbers start with a
   /// carrier indicator, and beyond that are geographically assigned: this carrier indicator is not
   /// considered to be an area code.
@@ -51,8 +51,8 @@ final public class PhoneNumberUtil {
   /// Set of country calling codes that have geographically assigned mobile numbers. This may not be
   /// complete; we add calling codes case by case, as we find geographical mobile numbers or hear
   /// from user reports. Note that countries like the US, where we can't distinguish between
-  /// fixed-line or mobile numbers, are not listed here, since we consider FIXED_LINE_OR_MOBILE to be
-  /// a possibly geographically-related type anyway (like FIXED_LINE).
+  /// fixed-line or mobile numbers, are not listed here, since we consider `.fixedLineOrMobile` to be
+  /// a possibly geographically-related type anyway (like `.fixedLine`).
   private static let geoMobileCountryCodes: Set<Int32> = {
     var geoMobileCountryCodes = Set<Int32>()
     geoMobileCountryCodes.insert(52)  // Mexico
@@ -64,7 +64,7 @@ final public class PhoneNumberUtil {
   }()
   
   // 99
-  /// The PLUS_SIGN signifies the international prefix.
+  /// The `plusSign` signifies the international prefix.
   static let plusSign: Character = "+"
   
   private static let starSign: Character = "*"
@@ -83,7 +83,7 @@ final public class PhoneNumberUtil {
   /// will not reach the intended destination.
   private static let diallableCharMappings: [Character: Character] = kAsciiDigitMappings.merging([plusSign: plusSign, "*": "*", "#": "#"]) { _, _ in fatalError("duplicated characters") }
   
-  // Only upper-case variants of alpha characters are stored.
+  /// Only upper-case variants of alpha characters are stored.
   private static let alphaMappings: [Character: Character] = {
     var alphaMappings = [Character: Character](minimumCapacity: 40)
     alphaMappings["A"] = "2"
@@ -213,15 +213,14 @@ final public class PhoneNumberUtil {
   /// carrier codes, for example in Brazilian phone numbers. We also allow multiple "+" characters at
   /// the start.
   /// Corresponds to the following:
-  /// [digits]{minLengthNsn}|
-  /// plus_sign*(([punctuation]|[star])*[digits]){3,}([punctuation]|[star]|[digits]|[alpha])*
+  /// `[digits]{minimumLengthForNSN}|plus_sign*(([punctuation]|[star])*[digits]){3,}([punctuation]|[star]|[digits]|[alpha])*`
   ///
   /// The first reg-ex is to allow short numbers (two digits long) to be parsed if they are entered
   /// as "15" etc, but only if there is no punctuation in them. The second expression restricts the
   /// number of digits to three or more, but then allows them to be in international form, and to
   /// have alpha-characters and punctuation.
   ///
-  /// Note VALID_PUNCTUATION starts with a -, so must be the first in the range.
+  /// Note `validPunctuation` starts with a -, so must be the first in the range.
   private static let validPhoneNumber: String = "\(digits){\(minimumLengthForNSN)}|[\(plusChars)]*+(?:[\(validPunctuation)\(starSign)]*\(digits)){3,}[\(validPunctuation)\(starSign)\(validAlpha)\(digits)]*"
   
   // 309
@@ -235,7 +234,7 @@ final public class PhoneNumberUtil {
   
   // 316
   /// Helper method for constructing regular expressions for parsing. Creates an expression that
-  /// captures up to maxLength digits.
+  /// captures up to `maximumLength` digits.
   private static func extnDigits(maximumLength: Int) -> String {
     return "(\(digits){1,\(maximumLength)})"
   }
@@ -350,9 +349,13 @@ final public class PhoneNumberUtil {
   // 654
   /// A mapping from a country calling code to the region codes which denote the region represented
   /// by that country calling code. In the case of multiple regions sharing a calling code, such as
-  /// the NANPA regions, the one indicated with "isMainCountryForCode" in the metadata should be
+  /// the NANPA regions, the one indicated with `isMainCountryForCode` in the metadata should be
   /// first.
   private let regionCodesByCountryCode: [Int32: [String]]
+  
+  // 657
+  /// An API for validation checking.
+  private let matcherAPI: MatcherAPI = RegexBasedMatcher()
   
   // 662
   /// The set of regions that share country calling code 1.
@@ -366,7 +369,7 @@ final public class PhoneNumberUtil {
   
   // 672
   /// The set of region codes the library supports.
-  /// There are roughly 240 of them and we set the initial capacity of the HashSet to 320 to offer a
+  /// There are roughly 240 of them and we set the initial capacity of the Set to 320 to offer a
   /// load factor of roughly 0.75.
   public let supportedRegionCodes: Set<String>
   
@@ -592,7 +595,7 @@ extension PhoneNumberUtil {
         var nationalNumber = numberString
 
         let match = try regexCache.phoneDataDetectorMatch(numberString)
-        let matchedNumber = nationalNumber.substring(with: match.range)
+        let matchedNumber = nationalNumber[match.range]
         // Replace Arabic and Persian numerals and let the rest unchanged
         nationalNumber = regexCache.stringByReplacingOccurrences(matchedNumber, map: PhoneNumberPatterns.allNormalizationMappings, keepUnmapped: true)
 
@@ -857,12 +860,12 @@ extension PhoneNumberUtil {
             guard let match = try? regexCache.matchesByRegex(pattern: iddPattern, string: number).first else {
                 return false
             }
-            let matchedString = number.substring(with: match.range)
+            let matchedString = number[match.range]
             let matchEnd = matchedString.count
             let remainString = (number as NSString).substring(from: matchEnd)
             let capturingDigitPatterns = try NSRegularExpression(pattern: PhoneNumberPatterns.capturingDigitPattern, options: .caseInsensitive)
-            if let firstMatch = capturingDigitPatterns.firstMatch(in: remainString, options: [], range: NSRange(location: 0, length: remainString.utf16.count)) {
-                let digitMatched = remainString.substring(with: firstMatch.range)
+            if let firstMatch = capturingDigitPatterns.firstMatch(in: remainString) {
+                let digitMatched = remainString[firstMatch.range]
                 if !digitMatched.isEmpty {
                     let normalizedGroup = regexCache.stringByReplacingOccurrences(digitMatched, map: PhoneNumberPatterns.allNormalizationMappings)
                     if normalizedGroup == "0" {
@@ -887,9 +890,9 @@ extension PhoneNumberUtil {
     func stripExtension(_ number: inout String) -> String? {
         if let match = try? regexCache.matchesByRegex(pattern: PhoneNumberPatterns.extnPattern, string: number).first {
             let adjustedRange = NSRange(location: match.range.location + 1, length: match.range.length - 1)
-            let matchString = number.substring(with: adjustedRange)
+            let matchString = number[adjustedRange]
             let stringRange = NSRange(location: 0, length: match.range.location)
-            number = number.substring(with: stringRange)
+            number = number[stringRange]
             return matchString
         }
         return nil
@@ -933,11 +936,11 @@ extension PhoneNumberUtil {
             return
         }
         let nationalNumberRule = metadata.generalDesc?.nationalNumberPattern
-        let firstMatchString = number.substring(with: firstMatch.range)
+        let firstMatchString = number[firstMatch.range]
         let numOfGroups = firstMatch.numberOfRanges - 1
         var transformedNumber = ""
         let firstRange = firstMatch.range(at: numOfGroups)
-        let firstMatchStringWithGroup = firstRange.length > 0 && firstRange.location < number.utf16.count ? number.substring(with: firstRange) : ""
+        let firstMatchStringWithGroup = firstRange.length > 0 && firstRange.location < number.utf16.count ? number[firstRange] : ""
         let firstMatchStringWithGroupHasValue = regexCache.hasValue(firstMatchStringWithGroup)
         if let transformRule = metadata.nationalPrefixTransformRule, firstMatchStringWithGroupHasValue {
             transformedNumber = regexCache.replaceFirstStringByRegex(pattern: prefixPattern, string: number, template: transformRule)
@@ -1056,15 +1059,15 @@ extension PhoneNumberUtil {
   ///   string if no character used to start phone numbers (such as + or any digit) is found in the
   ///   number.
   func extractPossibleNumber(_ string: String) -> String {
-    if let match = Self.validStartCharPattern.firstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count)) {
-      var number = (string as NSString).substring(with: NSRange(location: match.range.location, length: string.utf16.count - match.range.location))
+    if let match = Self.validStartCharPattern.firstMatch(in: string) {
+      var number = string[match.range.lowerBound..<string.count]
       // Remove trailing non-alpha non-numerical characters.
-      if let trailingCharsMatch = Self.unwantedEndCharsPattern.firstMatch(in: number, options: [], range: NSRange(location: 0, length: number.utf16.count)) {
-        number = (number as NSString).substring(with: NSRange(location: 0, length: trailingCharsMatch.range.location))
+      if let trailingCharsMatch = Self.unwantedEndCharsPattern.firstMatch(in: number) {
+        number = number[0..<trailingCharsMatch.range.lowerBound]
       }
       // Check for extra numbers at the end.
-      if let secondNumberMatch = Self.secondNumberStartPattern.firstMatch(in: number, options: [], range: NSRange(location: 0, length: number.utf16.count)) {
-        number = (number as NSString).substring(with: NSRange(location: 0, length: secondNumberMatch.range.location))
+      if let secondNumberMatch = Self.secondNumberStartPattern.firstMatch(in: number) {
+        number = number[0..<secondNumberMatch.range.lowerBound]
       }
       return number
     } else {
@@ -1078,14 +1081,14 @@ extension PhoneNumberUtil {
   /// commonly found in phone numbers.
   ///
   /// This method does not require the number to be normalized in advance - but does assume that
-  /// leading non-number symbols have been removed, such as by the method extractPossibleNumber.
+  /// leading non-number symbols have been removed, such as by the method `extractPossibleNumber()`.
   /// - Parameter string: string to be checked for viability as a phone number.
-  /// - Returns: true if the number could be a phone number of some sort, otherwise false.
+  /// - Returns: `true` if the `string` could be a phone number of some sort, otherwise `false`.
   static func isViablePhoneNumber(_ string: String) -> Bool {
-    if string.utf16.count < Self.minimumLengthForNSN {
+    if string.count < Self.minimumLengthForNSN {
       return false
     }
-    return Self.validPhoneNumberPattern.firstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count)) != nil
+    return Self.validPhoneNumberPattern.firstMatch(in: string) != nil
   }
   
   // 778
@@ -1101,11 +1104,11 @@ extension PhoneNumberUtil {
   ///   - Arabic-Indic numerals are converted to European numerals.
   ///   - Spurious alpha characters are stripped.
   ///
-  /// - Parameter number: a StringBuilder of characters representing a phone number that will be
-  ///   normalized in place
+  /// - Parameter number: A StringBuilder of characters representing a phone number that will be
+  ///   normalized in place.
   @discardableResult
   static func normalize(_ string: inout String) -> String {
-    if validAlphaPhonePattern.firstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count)) != nil {
+    if validAlphaPhonePattern.firstMatch(in: string) != nil {
       string = normalizeHelper(string, normalizationReplacements: Self.alphaPhoneMappings, removeNonMatches: true)
     } else {
       string = normalizeDigitsOnly(string)
@@ -1155,13 +1158,13 @@ extension PhoneNumberUtil {
   // 1002
   /// Normalizes a string of characters representing a phone number by replacing all characters found
   /// in the accompanying map with the values therein, and stripping all other characters if
-  /// removeNonMatches is true.
+  /// `removeNonMatches` is `true`.
   /// - Parameters:
   ///   - string: a string of characters representing a phone number.
   ///   - normalizationReplacements: a mapping of characters to what they should be replaced by in
   ///     the normalized version of the phone number
   ///   - removeNonMatches: indicates whether characters that are not able to be replaced should
-  ///     be stripped from the number. If this is false, they will be left unchanged in the number.
+  ///     be stripped from the number. If this is `false`, they will be left unchanged in the number.
   /// - Returns: the normalized string version of the phone number.
   private static func normalizeHelper(_ string: String, normalizationReplacements: [Character: Character], removeNonMatches: Bool) -> String {
     var normalizedString = ""
@@ -1195,19 +1198,23 @@ extension PhoneNumberUtil {
     return Set<Int32>(regionCodesByCountryCode.keys)
   }
   
+  /// Returns true if there is any possible number data set for a particular `PhoneNumberDesc`.
+  private static func hasPossibleNumberData(desc: PhoneNumberDesc) -> Bool {
+    // If this is empty, it means numbers of this type inherit from the "general desc" -> the value
+    // "-1" means that no numbers exist for this type.
+    return desc._possibleLengths.count != 1 || desc._possibleLengths[0] != -1
+  }
+  
   // 1210
   /// Tests whether a phone number has a geographical association. It checks if the number is
   /// associated with a certain region in the country to which it belongs. Note that this doesn't
   /// verify if the number is actually in use.
-  @available(*, unavailable)
   public func isGeographical(_ phoneNumber: PhoneNumber) -> Bool {
-    fatalError()
-    // FIXME:
-//    return isNumberGeographical(getNumberType(phoneNumber), phoneNumber.getCountryCode());
+    return isGeographicalPhoneNumber(type: type(of: phoneNumber), countryCode: phoneNumber.countryCode)
   }
   
   // 1218
-  /// Overload of isNumberGeographical(PhoneNumber), since calculating the phone number type is
+  /// Overload of `isGeographical(_:)`, since calculating the phone number type is
   /// expensive; if we have already done this, we don't want to do it again.
   public func isGeographicalPhoneNumber(type: PhoneNumberType, countryCode: Int32) -> Bool {
     return type == .fixedLine || type == .fixedLineOrMobile || (Self.geoMobileCountryCodes.contains(countryCode) && type == .mobile)
@@ -1215,8 +1222,11 @@ extension PhoneNumberUtil {
   
   // 1228
   /// Helper function to check region code is not unknown or null.
-  private func isValid(regionCode: String) -> Bool {
-    return supportedRegionCodes.contains(regionCode)
+  private func isValid(regionCode: String?) -> Bool {
+    if let regionCode = regionCode {
+      return supportedRegionCodes.contains(regionCode)
+    }
+    return false
   }
   
   // 1235
@@ -1234,7 +1244,7 @@ extension PhoneNumberUtil {
   /// Gets the national significant number of a phone number. Note a national significant number
   /// doesn't contain a national prefix or any formatting.
   /// - Parameter number: the phone number for which the national significant number is needed.
-  /// - Returns: the national significant number of the PhoneNumber object passed in.
+  /// - Returns: the national significant number of the `PhoneNumber` object passed in.
   public func nationalSignificantNumber(of phoneNumber: PhoneNumber) -> String {
     // If leading zero(s) have been set, we prefix this now. Note this is not a national prefix.
     var nationalNumber = ""
@@ -1247,7 +1257,7 @@ extension PhoneNumberUtil {
   }
   
   // 1890
-  /// A helper function that is used by format and formatByPattern.
+  /// A helper function that is used by `format()` and `formatByPattern()`.
   private func prefixNumber(countryCode: Int32, numberFormat: PhoneNumberFormat, formattedNumber: inout String) {
     switch numberFormat {
     case .e164:
@@ -1261,13 +1271,71 @@ extension PhoneNumberUtil {
     }
   }
   
-  // 1911
-  /// Simple wrapper of formatNsn for the common case of no carrier code.
-  @available(*, unavailable)
-  private func formatNsn(string: String, metadata: PhoneMetadata, numberFormat: PhoneNumberFormat) -> String {
-    fatalError()
-    // FIXME:
-//    "return formatNsn(number, metadata, numberFormat, null);
+  // 1919
+  /// Note in some regions, the national number can be written in two completely different ways
+  /// depending on whether it forms part of the `.national` format or `.international` format. The
+  /// `numberFormat` parameter here is used to specify which format to use for those cases. If a
+  /// `carrierCode` is specified, this will be inserted into the formatted string to replace $CC.
+  private func formatNSN(_ number: String, metadata: PhoneMetadata, numberFormat: PhoneNumberFormat, carrierCode: String? = nil) -> String {
+    let intlNumberFormats = metadata.intlNumberFormats
+    // When the intlNumberFormats exists, we use that to format national number for the
+    // INTERNATIONAL format instead of using the numberDesc.numberFormats.
+    let availableFormats = intlNumberFormats.isEmpty || numberFormat == .national ? metadata.numberFormats : metadata.intlNumberFormats
+    if let formattingPattern = chooseFormattingPatternForNumber(availableFormats: availableFormats, nationalNumber: number) {
+      return formatNSNUsingPattern(nationalNumber: number, formattingPattern: formattingPattern, numberFormat: numberFormat, carrierCode: carrierCode)
+    } else {
+      return number
+    }
+  }
+  
+  // 1936
+  func chooseFormattingPatternForNumber(availableFormats: [NumberFormat], nationalNumber: String) -> NumberFormat? {
+    for numFormat in availableFormats {
+      let size = numFormat.leadingDigitsPatterns?.count ?? 0
+      if size == 0 || (try! regexCache.regex(
+              // We always use the last leading_digits_pattern, as it is the most detailed.
+            pattern: numFormat.leadingDigitsPatterns![size - 1]).firstMatch(in: nationalNumber, options: .anchored)) != nil {
+        if try! regexCache.regex(pattern: numFormat.pattern!).firstMatch(in: nationalNumber) != nil {
+          return numFormat
+        }
+      }
+    }
+    return nil
+  }
+  
+  // 1961
+  /// Note that `carrierCode` is optional - if `nil` or an empty string, no carrier code replacement
+  /// will take place.
+  private func formatNSNUsingPattern(nationalNumber: String, formattingPattern: NumberFormat, numberFormat: PhoneNumberFormat, carrierCode: String? = nil) -> String {
+    var numberFormatRule = formattingPattern.format!
+    let regex = try! regexCache.regex(pattern: formattingPattern.pattern!)
+    var formattedNationalNumber = ""
+    if numberFormat == .national, let carrierCode = carrierCode, !carrierCode.isEmpty, !formattingPattern.domesticCarrierCodeFormattingRule!.isEmpty {
+      // Replace the $CC in the formatting rule with the desired carrier code.
+      var carrierCodeFormattingRule = formattingPattern.domesticCarrierCodeFormattingRule!
+      carrierCodeFormattingRule = carrierCodeFormattingRule.replacingOccurrences(of: Self.ccString, with: carrierCode)
+      // Now replace the $FG in the formatting rule with the first group and the carrier code
+      // combined in the appropriate way.
+      numberFormatRule = Self.firstGroupPattern.stringByReplacingFirstMatch(in: numberFormatRule, withTemplate: carrierCodeFormattingRule)!
+      formattedNationalNumber = regex.stringByReplacingMatches(in: nationalNumber, withTemplate: numberFormatRule)
+    } else {
+      // Use the national prefix formatting rule instead.
+      if numberFormat == .national, let nationalPrefixFormattingRule = formattingPattern.nationalPrefixFormattingRule, !nationalPrefixFormattingRule.isEmpty {
+        let firstGroup = Self.firstGroupPattern.stringByReplacingFirstMatch(in: numberFormatRule, withTemplate: nationalPrefixFormattingRule)!
+        formattedNationalNumber = regex.stringByReplacingMatches(in: nationalNumber, withTemplate: firstGroup)
+      } else {
+        formattedNationalNumber = regex.stringByReplacingMatches(in: nationalNumber, withTemplate: numberFormatRule)
+      }
+    }
+    if numberFormat == .rfc3966 {
+      // Strip any leading punctuation.
+      if let match = Self.separatorPattern.firstMatch(in: formattedNationalNumber, options: .anchored) {
+        formattedNationalNumber = match.stringByReplacing(in: formattedNationalNumber, with: "")
+      }
+      // Replace the rest with a dash between each number group.
+      formattedNationalNumber = Self.separatorPattern.stringByReplacingMatches(in: formattedNationalNumber, withTemplate: "-")
+    }
+    return formattedNationalNumber
   }
   
   // 2083
@@ -1278,7 +1346,7 @@ extension PhoneNumberUtil {
   /// - Returns: a valid number for the specified region and type. Returns null when the metadata
   ///   does not contain such information or if an invalid region or region 001 was entered.
   ///   For 001 (representing non-geographical numbers), call
-  ///   {@link #getExampleNumberForNonGeoEntity} instead.
+  ///   `getExampleNumberForNonGeoEntity` instead.
   public func exampleNumber(regionCode: String, type: PhoneNumberType) -> PhoneNumber? {
     // Check the region code is valid.
     if !isValid(regionCode: regionCode) {
@@ -1349,14 +1417,75 @@ extension PhoneNumberUtil {
     }
   }
   
+  // 2218
+  /// Gets the type of a valid phone number.
+  /// - Parameter phoneNumber: The phone number that we want to know the type.
+  /// - Returns: The type of the phone number, or UNKNOWN if it is invalid.
+  public func type(of phoneNumber: PhoneNumber) -> PhoneNumberType {
+    let regionCode = self.regionCode(for: phoneNumber)!
+    guard let metadata = metadata(countryCode: phoneNumber.countryCode, regionCode: regionCode) else {
+      return PhoneNumberType.unknown
+    }
+    let nationalSignificantNumber = self.nationalSignificantNumber(of: phoneNumber)
+    return phoneNumberTypeHelper(nationalNumber: nationalSignificantNumber, metadata: metadata);
+  }
+  
+  // 2228
+  private func phoneNumberTypeHelper(nationalNumber: String, metadata: PhoneMetadata) -> PhoneNumberType {
+    if !isNumberMatchingDesc(nationalNumber, numberDesc: metadata.generalDesc) {
+      return .unknown
+    }
+
+    if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.premiumRate) {
+      return .premiumRate
+    }
+    if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.tollFree) {
+      return .tollFree
+    }
+    if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.sharedCost) {
+      return .sharedCost
+    }
+    if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.voip) {
+      return .voip
+    }
+    if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.personalNumber) {
+      return .personalNumber
+    }
+    if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.pager) {
+      return .pager
+    }
+    if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.uan) {
+      return .uan
+    }
+    if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.voicemail) {
+      return .voicemail
+    }
+
+    let isFixedLine = isNumberMatchingDesc(nationalNumber, numberDesc: metadata.fixedLine)
+    if isFixedLine {
+      if metadata.sameMobileAndFixedLinePattern {
+        return .fixedLineOrMobile
+      } else if isNumberMatchingDesc(nationalNumber, numberDesc: metadata.mobile) {
+        return .fixedLineOrMobile
+      }
+      return .fixedLine
+    }
+    // Otherwise, test to see if the number is mobile. Only do this if certain that the patterns for
+    // mobile and fixed line aren't the same.
+    if !metadata.sameMobileAndFixedLinePattern && isNumberMatchingDesc(nationalNumber, numberDesc: metadata.mobile) {
+      return .mobile
+    }
+    return .unknown
+  }
+  
   // 2280
-  /// Returns the metadata for the given region code or {@code null} if the region code is invalid
+  /// Returns the metadata for the given region code or `nil` if the region code is invalid
   /// or unknown.
-  func metadata(forRegionCode regionCode: String) -> PhoneMetadata? {
+  func metadata(forRegionCode regionCode: String?) -> PhoneMetadata? {
     if !isValid(regionCode: regionCode) {
       return nil
     }
-    return metadataManager.metadata(forRegionCode: regionCode)
+    return metadataManager.metadata(forRegionCode: regionCode!)
   }
   
   // 2287
@@ -1408,9 +1537,9 @@ extension PhoneNumberUtil {
     for regionCode in regionCodes {
       // If leadingDigits is present, use this. Otherwise, do full validation.
       // Metadata cannot be null because the region codes come from the country calling code map.
-      if let metadata = self.metadata(forRegionCode: regionCode) {
+      if let metadata = metadata(forRegionCode: regionCode) {
         if let leadingDigits = metadata.leadingDigits {
-          if try! regexCache.regex(pattern: leadingDigits).firstMatch(in: nationalNumber, options: [], range: NSRange(location: 0, length: nationalNumber.utf16.count)) != nil {
+          if try! regexCache.regex(pattern: leadingDigits).firstMatch(in: nationalNumber, options: .anchored) != nil {
             return regionCode
           }
         } else if phoneNumberType(nationalNumber: nationalNumber, metadata: metadata) != .unknown {
@@ -1425,7 +1554,7 @@ extension PhoneNumberUtil {
   /// Returns the region code that matches the specific country calling code. In the case of no
   /// region code being found, ZZ will be returned. In the case of multiple regions, the one
   /// designated in the metadata as the "main" region for this calling code will be returned. If the
-  /// countryCallingCode entered is valid but doesn't match a specific region (such as in the case of
+  /// `countryCode` entered is valid but doesn't match a specific region (such as in the case of
   /// non-geographical calling codes like 800) the value "001" will be returned (corresponding to
   /// the value for World in the UN M.49 schema).
   public func regionCode(forCountryCode countryCode: Int32) -> String? {
@@ -1444,7 +1573,7 @@ extension PhoneNumberUtil {
   /// Returns the country calling code for a specific region. For example, this would be 1 for the
   /// United States, and 64 for New Zealand.
   /// - Parameter regionCode: the region that we want to get the country calling code for.
-  /// - Returns: the country calling code for the region denoted by regionCode.
+  /// - Returns: the country calling code for the region denoted by `regionCode`.
   public func countryCode(forRegionCode regionCode: String) -> Int32? {
     if !isValid(regionCode: regionCode) {
       debugPrint("WARNING", "Invalid region code (\(regionCode)) provided.")
@@ -1458,7 +1587,7 @@ extension PhoneNumberUtil {
   /// United States, and 64 for New Zealand. Assumes the region is already valid.
   /// - Parameter regionCode: the region that we want to get the country calling code for.
   /// - Throws: `NSError` if the region is invalid.
-  /// - Returns: The country calling code for the region denoted by regionCode.
+  /// - Returns: The country calling code for the region denoted by `regionCode`.
   private func countryCode(forValidRegionCode regionCode: String) throws -> Int32 {
     guard let metadata = metadata(forRegionCode: regionCode) else {
       throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid region code: \(regionCode)"])
@@ -1468,7 +1597,7 @@ extension PhoneNumberUtil {
   
   // 2466
   /// Returns the national dialling prefix for a specific region. For example, this would be 1 for
-  /// the United States, and 0 for New Zealand. Set stripNonDigits to true to strip symbols like "~"
+  /// the United States, and 0 for New Zealand. Set `stripNonDigits` to true to strip symbols like "~"
   /// (which indicates a wait for a dialling tone) from the prefix returned. If no national prefix is
   /// present, we return null.
   ///
@@ -1479,7 +1608,7 @@ extension PhoneNumberUtil {
   /// - Parameters:
   ///   - regionCode: the region that we want to get the dialling prefix for.
   ///   - stripNonDigits: true to strip non-digits from the national dialling prefix.
-  /// - Returns: the dialling prefix for the region denoted by regionCode.
+  /// - Returns: the dialling prefix for the region denoted by `regionCode`.
   public func getNddPrefixForRegion(regionCode: String, stripNonDigits: Bool) -> String? {
     guard let metadata = metadata(forRegionCode: regionCode) else {
       debugPrint("WARNING", "Invalid or missing region code (\(regionCode)) provided.");
@@ -1499,7 +1628,7 @@ extension PhoneNumberUtil {
   
   // 2493
   /// Checks if this is a region under the North American Numbering Plan Administration (NANPA).
-  /// - Returns: true if regionCode is one of the regions under NANPA.
+  /// - Returns: true if `regionCode` is one of the regions under NANPA.
   public func isNANPACountry(regionCode: String) -> Bool {
     return nanpaRegionCodes.contains(regionCode)
   }
@@ -1508,10 +1637,10 @@ extension PhoneNumberUtil {
   /// Checks if the number is a valid vanity (alpha) number such as 800 MICROSOFT. A valid vanity
   /// number will start with at least 3 digits and will have three or more alpha characters. This
   /// does not do region-specific checks - to work out if this number is actually valid for a region,
-  /// it should be parsed and methods such as {@link #isPossibleNumberWithReason} and
-  /// {@link #isValidNumber} should be used.
+  /// it should be parsed and methods such as `isPossibleNumberWithReason` and
+  /// `isValidNumber` should be used.
   /// - Parameter number: the number that needs to be checked.
-  /// - Returns: true if the number is a valid vanity number.
+  /// - Returns: `true` if the number is a valid vanity number.
   public func isAlphaNumber(number: String) -> Bool {
     if !Self.isViablePhoneNumber(number) {
       // Number is too short, or doesn't match the basic phone number pattern.
@@ -1519,20 +1648,88 @@ extension PhoneNumberUtil {
     }
     var strippedNumber = number
     maybeStripExtension(&strippedNumber)
-    return Self.validAlphaPhonePattern.firstMatch(in: strippedNumber, options: [], range: NSRange(location: 0, length: strippedNumber.utf16.count)) != nil
+    return Self.validAlphaPhonePattern.firstMatch(in: strippedNumber) != nil
   }
   
+  // 2564
+  /// Helper method to check a number against possible lengths for this number type, and determine
+  /// whether it matches, or is too short or too long.
+  private func testNumberLength(_ number: String, metadata: PhoneMetadata, type: PhoneNumberType = .unknown) -> ValidationResult {
+    let descForType = numberDesc(metadata: metadata, type: type)!
+    // There should always be "possibleLengths" set for every element. This is declared in the XML
+    // schema which is verified by PhoneNumberMetadataSchemaTest.
+    // For size efficiency, where a sub-description (e.g. fixed-line) has the same possibleLengths
+    // as the parent, this is missing, so we fall back to the general desc (where no numbers of the
+    // type exist at all, there is one possible length (-1) which is guaranteed not to match the
+    // length of any real phone number).
+    var possibleLengths = descForType._possibleLengths.isEmpty ? (metadata.generalDesc?._possibleLengths ?? []) : descForType._possibleLengths
+
+    var localLengths = descForType._possibleLengthsForLocalOnly
+
+    if type == .fixedLineOrMobile {
+      if !Self.hasPossibleNumberData(desc: numberDesc(metadata: metadata, type: .fixedLine)!) {
+        // The rare case has been encountered where no fixedLine data is available (true for some
+        // non-geographical entities), so we just check mobile.
+        return testNumberLength(number, metadata: metadata, type: .mobile)
+      } else {
+        let mobileDesc = numberDesc(metadata: metadata, type: .mobile)!
+        if Self.hasPossibleNumberData(desc: mobileDesc) {
+          // Note that when adding the possible lengths from mobile, we have to again check they
+          // aren't empty since if they are this indicates they are the same as the general desc and
+          // should be obtained from there.
+          possibleLengths.append(contentsOf: mobileDesc._possibleLengths.isEmpty ? metadata.generalDesc!._possibleLengths : mobileDesc._possibleLengths)
+          // The current list is sorted; we need to merge in the new list and re-sort (duplicates
+          // are okay). Sorting isn't so expensive because the lists are very small.
+          possibleLengths.sort()
+
+          if localLengths.isEmpty {
+            localLengths = mobileDesc._possibleLengthsForLocalOnly
+          } else {
+            localLengths.append(contentsOf: mobileDesc._possibleLengthsForLocalOnly)
+            localLengths.sort()
+          }
+        }
+      }
+    }
+
+    // If the type is not supported at all (indicated by the possible lengths containing -1 at this
+    // point) we return invalid length.
+    if possibleLengths[0] == -1 {
+      return .invalidLength
+    }
+
+    let actualLength = number.count
+    // This is safe because there is never an overlap beween the possible lengths and the local-only
+    // lengths; this is checked at build time.
+    if localLengths.contains(actualLength) {
+      return .isPossibleLocalOnly
+    }
+
+    let minimumLength = possibleLengths[0]
+    if minimumLength == actualLength {
+      return .isPossible
+    } else if minimumLength > actualLength {
+      return .tooShort
+    } else if possibleLengths[possibleLengths.count - 1] < actualLength {
+      return .tooLong
+    }
+    // We skip the first element; we've already checked it.
+    return possibleLengths[1..<possibleLengths.count].contains(actualLength) ? .isPossible : .invalidLength
+  }
+  
+  // 2765
   /// Gets an `AsYouTypeFormatter` for the specific region.
-  /// - Parameter regionCode : the region where the phone number is being entered
-  /// - Returns: an `AsYouTypeFormatter` object, which can be used
+  /// - Parameter regionCode : The region where the phone number is being entered
+  /// - Returns: An `AsYouTypeFormatter` object, which can be used
   ///   to format phone numbers in the specific region "as you type".
   public func asYouTypeFormatter(regionCode: String) -> AsYouTypeFormatter {
     return AsYouTypeFormatter(util: self, regionCode: regionCode)
   }
-
-  /// Extracts country calling code from fullNumber, returns it and places the remaining number in
-  /// nationalNumber. It assumes that the leading plus sign or IDD has already been removed. Returns
-  /// 0 if fullNumber doesn't start with a valid country calling code, and leaves nationalNumber
+  
+  // 2763
+  /// Extracts country calling code from `fullNumber`, returns it and places the remaining number in
+  /// `nationalNumber`. It assumes that the leading plus sign or IDD has already been removed. Returns
+  /// 0 if `fullNumber` doesn't start with a valid country calling code, and leaves `nationalNumber`
   /// unmodified.
   func extractCountryCode(_ fullNumber: inout String, nationalNumber: inout String) -> Int32? {
     if fullNumber.isEmpty || fullNumber.first == "0" {
@@ -1540,8 +1737,8 @@ extension PhoneNumberUtil {
       return nil
     }
     for i in 1...min(Self.maximumLengthForCountryCode, fullNumber.count) {
-      if let potentialCountryCode = Int32(fullNumber.substring(with: NSRange(location: 0, length: i))), regionCodesByCountryCode.keys.contains(potentialCountryCode) {
-        nationalNumber += fullNumber[fullNumber.index(fullNumber.startIndex, offsetBy: i)...]
+      if let potentialCountryCode = Int32(fullNumber[0..<i]), regionCodesByCountryCode.keys.contains(potentialCountryCode) {
+        nationalNumber += fullNumber[i...]
         return potentialCountryCode
       }
     }
@@ -1549,38 +1746,35 @@ extension PhoneNumberUtil {
   }
   
   // 2822
-  /**
-   * Tries to extract a country calling code from a number. This method will return zero if no
-   * country calling code is considered to be present. Country calling codes are extracted in the
-   * following ways:
-   * <ul>
-   *  <li> by stripping the international dialing prefix of the region the person is dialing from,
-   *       if this is present in the number, and looking at the next digits
-   *  <li> by stripping the '+' sign if present and then looking at the next digits
-   *  <li> by comparing the start of the number and the country calling code of the default region.
-   *       If the number is not considered possible for the numbering plan of the default region
-   *       initially, but starts with the country calling code of this region, validation will be
-   *       reattempted after stripping this country calling code. If this number is considered a
-   *       possible number, then the first digits will be considered the country calling code and
-   *       removed as such.
-   * </ul>
-   * It will throw a NumberParseException if the number starts with a '+' but the country calling
-   * code supplied after this does not match that of any known region.
-   *
-   * @param number  non-normalized telephone number that we wish to extract a country calling
-   *     code from - may begin with '+'
-   * @param defaultRegionMetadata  metadata about the region this number may be from
-   * @param nationalNumber  a string buffer to store the national significant number in, in the case
-   *     that a country calling code was extracted. The number is appended to any existing contents.
-   *     If no country calling code was extracted, this will be left unchanged.
-   * @param keepRawInput  true if the country_code_source and preferred_carrier_code fields of
-   *     phoneNumber should be populated.
-   * @param phoneNumber  the PhoneNumber object where the country_code and country_code_source need
-   *     to be populated. Note the country_code is always populated, whereas country_code_source is
-   *     only populated when keepCountryCodeSource is true.
-   * @return  the country calling code extracted or 0 if none could be extracted
-   */
   // @VisibleForTesting
+  /// Tries to extract a country calling code from a number. This method will return zero if no
+  /// country calling code is considered to be present. Country calling codes are extracted in the
+  /// following ways:
+  /// - by stripping the international dialing prefix of the region the person is dialing from,
+  ///   if this is present in the number, and looking at the next digits
+  /// - by stripping the '+' sign if present and then looking at the next digits
+  /// - by comparing the start of the number and the country calling code of the default region.
+  ///   If the number is not considered possible for the numbering plan of the default region
+  ///   initially, but starts with the country calling code of this region, validation will be
+  ///   reattempted after stripping this country calling code. If this number is considered a
+  ///   possible number, then the first digits will be considered the country calling code and
+  ///   removed as such.
+  ///
+  /// - Parameters:
+  ///   - number: non-normalized telephone number that we wish to extract a country calling
+  ///     code from - may begin with '+'
+  ///   - defaultRegionMetadata: metadata about the region this number may be from
+  ///   - nationalNumber: a string buffer to store the national significant number in, in the case
+  ///     that a country calling code was extracted. The number is appended to any existing contents.
+  ///     If no country calling code was extracted, this will be left unchanged.
+  ///   - keepRawInput: true if the country_code_source and preferred_carrier_code fields of
+  ///     phoneNumber should be populated.
+  ///   - phoneNumber: the `PhoneNumber` object where the country_code and country_code_source need
+  ///     to be populated. Note the country_code is always populated, whereas country_code_source is
+  ///     only populated when `keepCountryCodeSource` is `true`.
+  /// - Throws: `NumberParseException` if the number starts with a '+' but the country calling
+  ///   code supplied after this does not match that of any known region.
+  /// - Returns: the country calling code extracted or 0 if none could be extracted.
   func maybeExtractCountryCode(_ number: String, defaultRegionMetadata: PhoneMetadata?, nationalNumber: inout String, keepRawInput: Bool, phoneNumber: inout PhoneNumber) throws -> Int32? {
     if number.isEmpty {
       return nil
@@ -1623,7 +1817,7 @@ extension PhoneNumberUtil {
         // If the number was not valid before but is valid now, or if it was too long before, we
         // consider the number with the country calling code stripped to be a better result and
         // keep that instead.
-        if (!matcherApi.matchNationalNumber(fullNumber, generalDesc, false) && matcherApi.matchNationalNumber(potentialNationalNumber, generalDesc, false)) || testNumberLength(fullNumber, defaultRegionMetadata) == ValidationResult.TOO_LONG {
+        if (!matcherAPI.matchNationalNumber(fullNumber, numberDesc: generalDesc, allowPrefixMatch: false) && matcherAPI.matchNationalNumber(potentialNationalNumber, numberDesc: generalDesc, allowPrefixMatch: false)) || testNumberLength(fullNumber, metadata: defaultRegionMetadata) == .tooLong {
           nationalNumber.append(potentialNationalNumber);
           if keepRawInput {
             phoneNumber.countryCodeSource = .fromNumberWithoutPlusSign
@@ -1643,17 +1837,18 @@ extension PhoneNumberUtil {
   /// `maybeStripInternationalPrefixAndNormalize()`.
   @discardableResult
   private func parsePrefixAsIdd(iddPattern: NSRegularExpression, _ number: inout String) -> Bool{
-    if let m = iddPattern.firstMatch(in: number, options: .anchored, range: NSRange(location: 0, length: number.utf16.count)) {
+    if let match = iddPattern.firstMatch(in: number, options: .anchored) {
       // Only strip this if the first digit after the match is not a 0, since country calling codes
       // cannot begin with 0.
-      let numberToMatchDigit = String(number[number.index(number.startIndex, offsetBy: m.range.upperBound)...])
-      let digitMatches = Self.capturingDigitsPattern.matches(in: numberToMatchDigit, options: [], range: NSRange(location: 0, length: numberToMatchDigit.utf16.count))
-      let normalizedGroup = Self.normalizeDigitsOnly(numberToMatchDigit.substring(with: digitMatches[1].range))
-      if normalizedGroup == "0" {
-        return false
+      let numberToMatchDigit = String(number[number.index(number.startIndex, offsetBy: match.range.upperBound)...])
+      if let digitMatch = Self.capturingDigitsPattern.firstMatch(in: numberToMatchDigit) {
+        let normalizedGroup = Self.normalizeDigitsOnly(numberToMatchDigit[digitMatch.range(at: 1)])
+        if normalizedGroup == "0" {
+          return false
+        }
       }
-      number.removeSubrange(..<number.index(number.startIndex, offsetBy: m.range.upperBound))
-      return true;
+      number.removeSubrange(..<number.index(number.startIndex, offsetBy: match.range.upperBound))
+      return true
     }
     return false
   }
@@ -1667,7 +1862,7 @@ extension PhoneNumberUtil {
   ///     dialing prefix from
   ///   - possibleIddPrefix: the international direct dialing prefix from the region we
   ///     think this number may be dialed in
-  /// - Returns: the corresponding CountryCodeSource if an international dialing prefix could be
+  /// - Returns: the corresponding `CountryCodeSource` if an international dialing prefix could be
   ///   removed from the number, otherwise `.fromDefaultCountry` if the number did
   ///   not seem to be in international format
   func maybeStripInternationalPrefixAndNormalize(_ number: inout String, possibleIddPrefix: String) -> PhoneNumber.CountryCodeSource {
@@ -1675,8 +1870,8 @@ extension PhoneNumberUtil {
       return .fromDefaultCountry
     }
     // Check to see if the number begins with one or more plus signs.
-    if let m = Self.plusCharsPattern.firstMatch(in: number, options: .anchored, range: NSRange(location: 0, length: number.utf16.count)) {
-      number.removeSubrange(..<number.index(number.startIndex, offsetBy: m.range.upperBound))
+    if let match = Self.plusCharsPattern.firstMatch(in: number, options: .anchored) {
+      number.removeSubrange(..<number.index(number.startIndex, offsetBy: match.range.upperBound))
       // Can now normalize the rest of the number since we've consumed the "+" sign at the start.
       Self.normalize(&number)
       return .fromNumberWithPlusSign
@@ -1693,9 +1888,9 @@ extension PhoneNumberUtil {
   /// - Parameters:
   ///   - number: the normalized telephone number that we wish to strip any national
   ///     dialing prefix from.
-  /// @param metadata  the metadata for the region that we think this number is from
-  /// @param carrierCode  a place to insert the carrier code if one is extracted
-  /// @return true if a national prefix or carrier code (or both) could be extracted
+  ///   - metadata: the metadata for the region that we think this number is from.
+  ///   - carrierCode: a place to insert the carrier code if one is extracted.
+  /// - Returns: `true` if a national prefix or carrier code (or both) could be extracted
   @discardableResult
   func maybeStripNationalPrefixAndCarrierCode(_ number: inout String, metadata: PhoneMetadata, carrierCode: inout String?) -> Bool {
     guard !number.isEmpty, let possibleNationalPrefix = metadata.nationalPrefixForParsing, possibleNationalPrefix.isEmpty else {
@@ -1704,39 +1899,40 @@ extension PhoneNumberUtil {
     }
     let numberLength = number.count
     // Attempt to parse the first digits as a national prefix.
-    let prefixMatcher = try! regexCache.regex(pattern: possibleNationalPrefix).matches(in: number, options: .anchored, range: NSRange(location: 0, length: number.utf16.count))
-    if !prefixMatcher.isEmpty {
+    if let prefixMatch = try! regexCache.regex(pattern: possibleNationalPrefix).firstMatch(in: number, options: .anchored) {
       let generalDesc = metadata.generalDesc
       // Check if the original number is viable.
-      boolean isViableOriginalNumber = matcherApi.matchNationalNumber(number, generalDesc, false);
+      let isViableOriginalNumber = matcherAPI.matchNationalNumber(number, numberDesc: generalDesc, allowPrefixMatch: false)
       // prefixMatcher.group(numOfGroups) == null implies nothing was captured by the capturing
       // groups in possibleNationalPrefix; therefore, no transformation is necessary, and we just
       // remove the national prefix.
-      int numOfGroups = prefixMatcher.groupCount();
-      String transformRule = metadata.getNationalPrefixTransformRule();
-      if (transformRule == null || transformRule.length() == 0 || prefixMatcher.group(numOfGroups) == null) {
+      let numOfGroups = prefixMatch.numberOfRanges
+      let transformRule = metadata.nationalPrefixTransformRule
+      if transformRule.isNilOrEmpty {
         // If the original number was viable, and the resultant number is not, we return.
-        if (isViableOriginalNumber && !matcherApi.matchNationalNumber(number.substring(prefixMatcher.end()), generalDesc, false)) {
-          return false;
+        if isViableOriginalNumber && !matcherAPI.matchNationalNumber(number[prefixMatch.range.upperBound...], numberDesc: generalDesc, allowPrefixMatch: false) {
+          return false
         }
-        if (carrierCode != null && numOfGroups > 0 && prefixMatcher.group(numOfGroups) != null) {
-          carrierCode.append(prefixMatcher.group(1));
+        if carrierCode == nil && numOfGroups > 0 {
+          carrierCode! += possibleNationalPrefix[prefixMatch.range(at: 1)]
         }
-        number.delete(0, prefixMatcher.end());
-        return true;
+        number.removeSubrange(0..<prefixMatch.range.upperBound)
+        return true
       } else {
         // Check that the resultant number is still viable. If not, return. Check this by copying
         // the string buffer and making the transformation on the copy first.
-        StringBuilder transformedNumber = new StringBuilder(number);
-        transformedNumber.replace(0, numberLength, prefixMatcher.replaceFirst(transformRule));
-        if (isViableOriginalNumber && !matcherApi.matchNationalNumber(transformedNumber.toString(), generalDesc, false)) {
-          return false;
+        var transformedNumber = number
+        var transformedPrefix = possibleNationalPrefix
+        transformedPrefix.replaceSubrange(prefixMatch.range, with: transformRule!)
+        transformedNumber.replaceSubrange(0..<numberLength, with: transformedPrefix)
+        if (isViableOriginalNumber && !matcherAPI.matchNationalNumber(transformedNumber, numberDesc: generalDesc, allowPrefixMatch: false)) {
+          return false
         }
-        if (carrierCode != null && numOfGroups > 1) {
-          carrierCode.append(prefixMatcher.group(1));
+        if carrierCode != nil && numOfGroups > 1 {
+          carrierCode! += possibleNationalPrefix[prefixMatch.range(at: 1)]
         }
-        number.replace(0, number.length(), transformedNumber.toString());
-        return true;
+        number.replaceSubrange(0..<number.count, with: transformedNumber)
+        return true
       }
     }
     return false
@@ -1746,19 +1942,20 @@ extension PhoneNumberUtil {
   // @VisibleForTesting
   /// Strips any extension (as in, the part of the number dialled after the call is connected,
   /// usually indicated with extn, ext, x or similar) from the end of the number, and returns it.
-  /// - Parameter number: the non-normalized telephone number that we wish to strip the extension from.
-  /// - Returns: the phone extension.
+  /// - Parameter number: The non-normalized telephone number that we wish to strip the extension from.
+  /// - Returns: The phone extension.
   @discardableResult
   func maybeStripExtension(_ number: inout String) -> String? {
     // If we find a potential extension, and the number preceding this is a viable number, we assume
     // it is an extension.
-    if let match = Self.extnPattern.firstMatch(in: number, options: [], range: NSRange(location: 0, length: number.utf16.count)),
-       Self.isViablePhoneNumber((number as NSString).substring(with: NSRange(location: 0, length: match.range.location))) {
-      // We find the one that captured some digits. If none
-      // did, then we will return the empty string.
-      let `extension` = (number as NSString).substring(with: match.range)
-      number.removeSubrange(number.index(number.startIndex, offsetBy: match.range.location)...)
-      return `extension`
+    if let match = Self.extnPattern.firstMatch(in: number), Self.isViablePhoneNumber(number[..<match.range.lowerBound]) {
+      if match.numberOfRanges > 1 {
+        // We find the one that captured some digits. If none
+        // did, then we will return the empty string.
+        let `extension` = number[match.range(at: 1)]
+        number.removeSubrange(number.index(number.startIndex, offsetBy: match.range.location)...)
+        return `extension`
+      }
     }
     return nil
   }
@@ -1766,21 +1963,75 @@ extension PhoneNumberUtil {
   // 3041
   /// Checks to see that the region code used is valid, or if it is not valid, that the number to
   /// parse starts with a + symbol so that we can attempt to infer the region from the number.
-  /// - Returns: false if it cannot use the region provided and the region cannot be inferred.
-  private func checkRegionCodeForParsing(_ numberToParse: String, defaultRegionCode: String) -> Bool {
+  /// - Returns: `false` if it cannot use the region provided and the region cannot be inferred.
+  private func checkRegionCodeForParsing(_ stringToParse: String, defaultRegionCode: String?) -> Bool {
     if !isValid(regionCode: defaultRegionCode) {
       // If the number is null or empty, we can't infer the region.
-      if numberToParse.isEmpty || Self.plusCharsPattern.firstMatch(in: numberToParse, options: .anchored, range: NSRange(location: 0, length: numberToParse.utf16.count)) == nil {
+      if stringToParse.isEmpty || Self.plusCharsPattern.firstMatch(in: stringToParse, options: .anchored) == nil {
         return false
       }
     }
     return true
   }
   
+  // 3085
+  /// Parses a string and returns it as a phone number in proto buffer format. The method is quite
+  /// lenient and looks for a number in the input text (raw input) and does not check whether the
+  /// string is definitely only a phone number. To do this, it ignores punctuation and white-space,
+  /// as well as any text before the number (e.g. a leading "Tel: ") and trims the non-number bits.
+  /// It will accept a number in any format (`.e164`, `.national`, `.international` etc), assuming it can be
+  /// interpreted with the `defaultRegionCode` supplied. It also attempts to convert any alpha characters
+  /// into digits if it thinks this is a vanity number of the type "1800 MICROSOFT".
+  ///
+  /// This method will throw a `PhoneNumberParseError` if the
+  /// number is not considered to be a possible number. Note that validation of whether the number
+  /// is actually a valid number for a particular region is not performed. This can be done
+  /// separately with `isValidNumber`.
+  ///
+  /// Note this method canonicalizes the phone number such that different representations can be
+  /// easily compared, no matter what form it was originally entered in (e.g. `.national`,
+  /// `.international`). If you want to record context about the number being parsed, such as the raw
+  /// input that was entered, how the country code was derived etc. then call
+  /// `parseAndKeepRawInput` instead.
+  ///
+  /// - Parameters:
+  ///   - stringToParse: Number that we are attempting to parse. This can contain formatting such
+  ///     as +, ( and -, as well as a phone number extension. It can also be provided in `.rfc3966`
+  ///     format.
+  ///   - defaultRegionCode: Region that we are expecting the number to be from. This is only used if
+  ///     the number being parsed is not written in international format. The `countryCode` for the
+  ///     number in this case would be stored as that of the default region code supplied. If the number
+  ///     is guaranteed to start with a '+' followed by the country calling code, then RegionCode.ZZ
+  ///     or null can be supplied.
+  /// - Throws: `PhoneNumberParseException`  if the string is not considered to be a viable phone number (e.g.
+  ///   too few or too many digits) or if no default region was supplied and the number is not in
+  ///   international format (does not start with +)
+  /// - Returns: A phone number proto buffer filled with the parsed number.
+  public func parse(_ stringToParse: String, defaultRegionCode: String) throws -> PhoneNumber {
+    return try parseHelper(stringToParse, defaultRegionCode: defaultRegionCode, keepRawInput: false, checkRegion: true)
+  }
+  
+  // 3115
+  /// Parses a string and returns it in proto buffer format. This method differs from `parse(_:defaultRegionCode:)`
+  /// in that it always populates the `rawInput` field of the protocol buffer with `numberToParse` as
+  /// well as the `countryCodeSource` field.
+  /// - Parameters:
+  ///   - stringToParse: number that we are attempting to parse. This can contain formatting such
+  ///     as +, ( and -, as well as a phone number extension.
+  ///   - defaultRegionCode: the code of region that we are expecting the phone number to be from. This is only used if
+  ///     the phone number being parsed is not written in international format. The country calling code
+  ///     for the number in this case would be stored as that of the default region code supplied.
+  /// - Throws: `PhoneNumberParseError`  if the string is not considered to be a viable phone number or if
+  ///   no default region code was supplied.
+  /// - Returns: A phone number proto buffer filled with the parsed number.
+  public func parseAndKeepRawInput(_ stringToParse: String, defaultRegionCode: String?) throws -> PhoneNumber {
+    return try parseHelper(stringToParse, defaultRegionCode: defaultRegionCode, keepRawInput: true, checkRegion: true)
+  }
+  
   // 3176
-  /// A helper function to set the values related to leading zeros in a PhoneNumber.
+  /// A helper function to set the values related to leading zeros in a `PhoneNumber`.
   static func setItalianLeadingZerosForPhoneNumber(nationalNumber: String, phoneNumber: inout PhoneNumber) {
-    if nationalNumber.count > 1 && nationalNumber.first == "0" {
+    if nationalNumber.count > 1 && nationalNumber[0] == "0" {
       phoneNumber.italianLeadingZero = true
       var numberOfLeadingZeros = 1
       // Note that if the national number is all "0"s, the last "0" is not counted as a leading
@@ -1795,24 +2046,25 @@ extension PhoneNumberUtil {
   }
   
   // 3202
-  /// Parses a string and fills up the phoneNumber. This method is the same as the public
-  /// parse() method, with the exception that it allows the default region to be null, for use by
-  /// isNumberMatch(). checkRegion should be set to false if it is permitted for the default region
+  /// Parses a string. This method is the same as the public
+  /// `parse()` method, with the exception that it allows the default region to be null, for use by
+  /// `isNumberMatch()`. `checkRegion` should be set to `false` if it is permitted for the default region
   /// to be null or unknown ("ZZ").
   ///
   /// Note if any new field is added to this method that should always be filled in, even when
-  /// `keepRawInput` is false, it should also be handled in the copyCoreFieldsOnly() method.
-  private func parseHelper(_ numberToParse: String?, defaultRegion: String, keepRawInput: Bool, checkRegion: Bool) throws -> PhoneNumber {
-    guard let numberToParse = numberToParse else {
+  /// `keepRawInput` is `false`, it should also be handled in the `copyCoreFieldsOnly()` method.
+  private func parseHelper(_ stringToParse: String?, defaultRegionCode: String?, keepRawInput: Bool, checkRegion: Bool) throws -> PhoneNumber {
+    guard let stringToParse = stringToParse else {
       throw PhoneNumberParseError.notANumber("The phone number supplied was null.")
     }
-    guard numberToParse.utf16.count <= Self.maximumInputStringLength else {
+    guard stringToParse.count <= Self.maximumInputStringLength else {
       throw PhoneNumberParseError.tooLong("The string supplied was too long to parse.")
     }
     
+    var phoneNumber = PhoneNumber(countryCode: 0, nationalNumber: 0, extension: nil, italianLeadingZero: false, numberOfLeadingZeros: 0, rawInput: nil, countryCodeSource: .unspecified, preferredDomesticCarrierCode: nil, type: .unknown)
+    
     var nationalNumber = ""
-    var numberBeingParsed = numberToParse
-    buildNationalNumberForParsing(numberBeingParsed, nationalNumber: &nationalNumber)
+    buildNationalNumberForParsing(stringToParse, nationalNumber: &nationalNumber)
     
     if !Self.isViablePhoneNumber(nationalNumber) {
       throw PhoneNumberParseError.notANumber("The string supplied did not seem to be a phone number.")
@@ -1820,12 +2072,12 @@ extension PhoneNumberUtil {
     
     // Check the region supplied is valid, or that the extracted number starts with some sort of +
     // sign so the number's region can be determined.
-    if checkRegion && !checkRegionCodeForParsing(nationalNumber, defaultRegionCode: defaultRegion) {
+    if checkRegion && !checkRegionCodeForParsing(nationalNumber, defaultRegionCode: defaultRegionCode) {
       throw PhoneNumberParseError.invalidCountryCode
     }
     
     if keepRawInput {
-      phoneNumber.rawInput = numberBeingParsed
+      phoneNumber.rawInput = stringToParse
     }
     // Attempt to parse extension first, since it doesn't require region-specific data and we want
     // to have the non-normalised number here.
@@ -1833,7 +2085,7 @@ extension PhoneNumberUtil {
       phoneNumber.extension = `extension`
     }
     
-    var regionMetadata = metadata(forRegionCode: defaultRegion)
+    var regionMetadata = metadata(forRegionCode: defaultRegionCode)
     // Check to see if the number is given in international format so we know whether this number is
     // from the default region or not.
     var normalizedNationalNumber = ""
@@ -1842,25 +2094,21 @@ extension PhoneNumberUtil {
       // TODO: This method should really just take in the string buffer that has already
       // been created, and just remove the prefix, rather than taking in a string and then
       // outputting a string buffer.
-      countryCode = try maybeExtractCountryCode(nationalNumber, regionMetadata, normalizedNationalNumber, keepRawInput, phoneNumber)
-    } catch (NumberParseException e) {
-      Matcher matcher = PLUS_CHARS_PATTERN.matcher(nationalNumber);
-      if (e.getErrorType() == NumberParseException.ErrorType.INVALID_COUNTRY_CODE
-            && matcher.lookingAt()) {
+      countryCode = try maybeExtractCountryCode(nationalNumber, defaultRegionMetadata: regionMetadata, nationalNumber: &normalizedNationalNumber, keepRawInput: keepRawInput, phoneNumber: &phoneNumber)
+    } catch {
+      let error = error as! PhoneNumberParseError
+      if case .invalidCountryCode = error, let matcher = Self.plusCharsPattern.firstMatch(in: nationalNumber, options: .anchored) {
         // Strip the plus-char, and try again.
-        countryCode = maybeExtractCountryCode(nationalNumber.substring(matcher.end()),
-                                              regionMetadata, normalizedNationalNumber,
-                                              keepRawInput, phoneNumber);
-        if (countryCode == 0) {
-          throw new NumberParseException(NumberParseException.ErrorType.INVALID_COUNTRY_CODE,
-                                         "Could not interpret numbers after plus-sign.");
+        countryCode = try! maybeExtractCountryCode(nationalNumber[matcher.range.upperBound...], defaultRegionMetadata: regionMetadata, nationalNumber: &normalizedNationalNumber, keepRawInput: keepRawInput, phoneNumber: &phoneNumber)
+        if countryCode == 0 {
+          throw PhoneNumberParseError.invalidCountryCode
         }
       } else {
-        throw new NumberParseException(e.getErrorType(), e.getMessage());
+        throw error
       }
     }
     if let countryCode = countryCode {
-      if let phoneNumberRegionCode = regionCode(forCountryCode: countryCode), phoneNumberRegionCode != defaultRegion {
+      if let phoneNumberRegionCode = regionCode(forCountryCode: countryCode), phoneNumberRegionCode != defaultRegionCode {
         // Metadata cannot be null because the country calling code is valid.
         regionMetadata = metadata(countryCode: countryCode, regionCode: phoneNumberRegionCode)
       }
@@ -1868,11 +2116,11 @@ extension PhoneNumberUtil {
       // If no extracted country calling code, use the region supplied instead. The national number
       // is just the normalized version of the number we were given to parse.
       normalizedNationalNumber += Self.normalize(&nationalNumber)
-      if defaultRegion != nil {
-        countryCode = regionMetadata?.countryCode
-        phoneNumber.setCountryCode(countryCode);
+      if defaultRegionCode != nil {
+        countryCode = regionMetadata!.countryCode
+        phoneNumber.countryCode = countryCode!
       } else if (keepRawInput) {
-        phoneNumber.clearCountryCodeSource();
+        phoneNumber.countryCodeSource = .unspecified
       }
     }
     if normalizedNationalNumber.count < Self.minimumLengthForNSN {
@@ -1885,7 +2133,7 @@ extension PhoneNumberUtil {
       // We require that the NSN remaining after stripping the national prefix and carrier code be
       // long enough to be a possible length for the region. Otherwise, we don't do the stripping,
       // since the original number could be a valid short number.
-      let validationResult: ValidationResult = testNumberLength(potentialNationalNumber, regionMetadata);
+      let validationResult: ValidationResult = testNumberLength(potentialNationalNumber, metadata: regionMetadata);
       if validationResult != .tooShort && validationResult != .isPossibleLocalOnly && validationResult != .invalidLength {
         normalizedNationalNumber = potentialNationalNumber
         if keepRawInput && !carrierCode.isEmpty {
@@ -1900,26 +2148,27 @@ extension PhoneNumberUtil {
     if lengthOfNationalNumber > Self.maximumLengthForNSN {
       throw PhoneNumberParseError.tooLong("The string supplied is too long to be a phone number.")
     }
-    setItalianLeadingZerosForPhoneNumber(nationalNumber: normalizedNationalNumber, phoneNumber: &phoneNumber)
-    phoneNumber.nationalNumber = Long.parseLong(normalizedNationalNumber.toString())
+    Self.setItalianLeadingZerosForPhoneNumber(nationalNumber: normalizedNationalNumber, phoneNumber: &phoneNumber)
+    phoneNumber.nationalNumber = UInt64(normalizedNationalNumber)!
+    return phoneNumber
   }
   
   // 3321
-  /// Converts numberToParse to a form that we can parse and write it to nationalNumber if it is
-  /// written in RFC3966; otherwise extract a possible number out of it and write to nationalNumber.
-  private func buildNationalNumberForParsing(_ numberToParse: String, nationalNumber: inout String) {
-    if let indexOfPhoneContext = numberToParse.range(of: Self.rfc3966PhoneContext)?.lowerBound {
-      let phoneContextStart = numberToParse.index(indexOfPhoneContext, offsetBy: Self.rfc3966PhoneContext.count)
+  /// Converts `stringToParse` to a form that we can parse and write it to `nationalNumber` if it is
+  /// written in `rfc3966`; otherwise extract a possible number out of it and write to `nationalNumber`.
+  private func buildNationalNumberForParsing(_ stringToParse: String, nationalNumber: inout String) {
+    if let indexOfPhoneContext = stringToParse.range(of: Self.rfc3966PhoneContext)?.lowerBound {
+      let phoneContextStart = stringToParse.index(indexOfPhoneContext, offsetBy: Self.rfc3966PhoneContext.count)
       // If the phone context contains a phone number prefix, we need to capture it, whereas domains
       // will be ignored.
-      if ..<numberToParse.endIndex ~= phoneContextStart && numberToParse[phoneContextStart] == Self.plusSign {
+      if ..<stringToParse.endIndex ~= phoneContextStart && stringToParse[phoneContextStart] == Self.plusSign {
         // Additional parameters might follow the phone context. If so, we will remove them here
         // because the parameters after phone context are not important for parsing the
         // phone number.
-        if let phoneContextEnd = numberToParse.range(of: ";", range: phoneContextStart..<numberToParse.endIndex)?.lowerBound {
-          nationalNumber += numberToParse[phoneContextStart...phoneContextEnd]
+        if let phoneContextEnd = stringToParse.range(of: ";", range: phoneContextStart..<stringToParse.endIndex)?.lowerBound {
+          nationalNumber += stringToParse[phoneContextStart...phoneContextEnd]
         } else {
-          nationalNumber += numberToParse[phoneContextStart...]
+          nationalNumber += stringToParse[phoneContextStart...]
         }
       }
 
@@ -1928,16 +2177,16 @@ extension PhoneNumberUtil {
       // handle the case when "tel:" is missing, as we have seen in some of the phone number inputs.
       // In that case, we append everything from the beginning.
       let indexOfNationalNumber: String.Index
-      if let indexOfRfc3966Prefix = numberToParse.range(of: Self.rfc3966Prefix)?.lowerBound {
-        indexOfNationalNumber = numberToParse.index(indexOfRfc3966Prefix, offsetBy: Self.rfc3966Prefix.count)
+      if let indexOfRfc3966Prefix = stringToParse.range(of: Self.rfc3966Prefix)?.lowerBound {
+        indexOfNationalNumber = stringToParse.index(indexOfRfc3966Prefix, offsetBy: Self.rfc3966Prefix.count)
       } else {
-        indexOfNationalNumber = numberToParse.startIndex
+        indexOfNationalNumber = stringToParse.startIndex
       }
-      nationalNumber += numberToParse[indexOfNationalNumber...indexOfPhoneContext]
+      nationalNumber += stringToParse[indexOfNationalNumber...indexOfPhoneContext]
     } else {
       // Extract a possible number from the string passed in (this strips leading characters that
       // could not be the start of a phone number.)
-      nationalNumber.append(extractPossibleNumber(numberToParse))
+      nationalNumber.append(extractPossibleNumber(stringToParse))
     }
 
     // Delete the isdn-subaddress and everything after it if it is present. Note extension won't
@@ -1954,7 +2203,7 @@ extension PhoneNumberUtil {
   // 3371
   /// Returns a new phone number containing only the fields needed to uniquely identify a phone
   /// number, rather than any fields that capture the context in which the phone number was created.
-  /// These fields correspond to those set in parse() rather than parseAndKeepRawInput().
+  /// These fields correspond to those set in `parse()` rather than `parseAndKeepRawInput()`.
   private static func copyCoreFieldsOnly(phoneNumberIn: PhoneNumber) -> PhoneNumber {
     return PhoneNumber(
       countryCode: phoneNumberIn.countryCode,
@@ -1969,50 +2218,12 @@ extension PhoneNumberUtil {
     )
   }
   
-  /// Parses a string and returns it as a phone number in proto buffer format. The method is quite
-  /// lenient and looks for a number in the input text (raw input) and does not check whether the
-  /// string is definitely only a phone number. To do this, it ignores punctuation and white-space,
-  /// as well as any text before the number (e.g. a leading "Tel: ") and trims the non-number bits.
-  /// It will accept a number in any format (E164, national, international etc), assuming it can be
-  /// interpreted with the defaultRegion supplied. It also attempts to convert any alpha characters
-  /// into digits if it thinks this is a vanity number of the type "1800 MICROSOFT".
-  ///
-  /// <p> This method will throw a {@link com.google.i18n.phonenumbers.NumberParseException} if the
-  /// number is not considered to be a possible number. Note that validation of whether the number
-  /// is actually a valid number for a particular region is not performed. This can be done
-  /// separately with {@link #isValidNumber}.
-  ///
-  /// <p> Note this method canonicalizes the phone number such that different representations can be
-  /// easily compared, no matter what form it was originally entered in (e.g. national,
-  /// international). If you want to record context about the number being parsed, such as the raw
-  /// input that was entered, how the country code was derived etc. then call {@link
-  /// #parseAndKeepRawInput} instead.
-  ///
-  /// - Parameters:
-  ///   - numberToParse:  number that we are attempting to parse. This can contain formatting such
-  ///     as +, ( and -, as well as a phone number extension. It can also be provided in RFC3966
-  ///     format.
-  ///   - defaultRegionCode:  region that we are expecting the number to be from. This is only used if
-  ///     the number being parsed is not written in international format. The country_code for the
-  ///     number in this case would be stored as that of the default region supplied. If the number
-  ///     is guaranteed to start with a '+' followed by the country calling code, then RegionCode.ZZ
-  ///     or null can be supplied.
-  /// - Throws: NumberParseException  if the string is not considered to be a viable phone number (e.g.
-  ///   too few or too many digits) or if no default region was supplied and the number is not in
-  ///   international format (does not start with +)
-  /// - Returns: A phone number proto buffer filled with the parsed number.
-  public func parse(_ numberToParse: String, defaultRegionCode: String) throws -> PhoneNumber {
-    fatalError()
-    // FIXME:
-//    return parse(numberToParse, defaultRegion, phoneNumber)
-  }
-  
   // 3567
-  /// Returns true if the supplied region supports mobile number portability. Returns false for
+  /// Returns `true` if the supplied region supports mobile number portability. Returns `false` for
   /// invalid, unknown or regions that don't support mobile number portability.
   /// - Parameter regionCode: the region for which we want to know whether it supports mobile number
   ///   portability or not.
-  public func isMobileNumberPortableRegion(regionCode: String) -> Bool {
+  public func isMobileNumberPortable(regionCode: String) -> Bool {
     guard let metadata = metadata(forRegionCode: regionCode) else {
       return false
     }
@@ -2061,9 +2272,94 @@ extension PhoneNumberUtil {
   }
 }
 
+extension Int {
+  
+  static func ..< (minimum: Self, maximum: Self) -> NSRange {
+    return NSRange(location: minimum, length: maximum - minimum - 1)
+  }
+}
+
+extension NSRange {
+  
+  func index<S: StringProtocol>(in string: S) -> Range<String.Index> {
+    return string.index(string.startIndex, offsetBy: lowerBound)..<string.index(string.startIndex, offsetBy: upperBound)
+  }
+}
+
 extension String {
   
   subscript(distance: Int) -> Character {
     return self[index(startIndex, offsetBy: distance)]
+  }
+  
+  subscript(range: PartialRangeFrom<Int>) -> String {
+    return String(self[index(startIndex, offsetBy: range.lowerBound)...])
+  }
+  
+  subscript(range: PartialRangeUpTo<Int>) -> String {
+    return String(self[..<index(startIndex, offsetBy: range.upperBound)])
+  }
+  
+  subscript(range: NSRange) -> String {
+    return String(self[range.index(in: self)])
+  }
+  
+  mutating func replaceSubrange<C: Collection>(_ bounds: NSRange, with newElements: C) where C.Element == Character {
+    replaceSubrange(bounds.index(in: self), with: newElements)
+  }
+  
+  mutating func removeSubrange(_ bounds: NSRange) {
+    removeSubrange(bounds.index(in: self))
+  }
+}
+
+extension NSRegularExpression {
+  
+  final func matches(in string: String, options: MatchingOptions = []) -> [NSTextCheckingResult] {
+    return matches(in: string, options: options, range: NSRange(location: 0, length: string.utf16.count))
+  }
+
+  final func numberOfMatches(in string: String, options: MatchingOptions = []) -> Int {
+    return numberOfMatches(in: string, options: options, range: NSRange(location: 0, length: string.utf16.count))
+  }
+
+  final func firstMatch(in string: String, options: MatchingOptions = []) -> NSTextCheckingResult? {
+    return firstMatch(in: string, options: options, range: NSRange(location: 0, length: string.utf16.count))
+  }
+
+  final func rangeOfFirstMatch(in string: String, options: MatchingOptions = []) -> NSRange {
+    return rangeOfFirstMatch(in: string, options: options, range: NSRange(location: 0, length: string.utf16.count))
+  }
+  
+  final func stringByReplacingMatches(in string: String, options: MatchingOptions = [], withTemplate template: String) -> String {
+    return stringByReplacingMatches(in: string, options: options, range: NSRange(location: 0, length: string.utf16.count), withTemplate: template)
+  }
+  
+  final func stringByReplacingFirstMatch(in string: String, options: MatchingOptions = [], withTemplate template: String) -> String? {
+    guard let firstMatch = firstMatch(in: string, options: options, range: NSRange(location: 0, length: string.utf16.count)) else {
+      return nil
+    }
+    return string.replacingCharacters(in: firstMatch.range.index(in: string), with: template)
+  }
+}
+
+extension NSTextCheckingResult {
+  
+  final func stringByReplacing(in string: String, with replacementString: String) -> String {
+    var result = string
+    result.replaceSubrange(range, with: replacementString)
+    return result
+  }
+}
+
+extension Optional where Wrapped: Collection {
+  
+  var isNilOrEmpty: Bool {
+    switch self {
+    case .some(let collection):
+      return collection.isEmpty
+    case .none:
+      return true
+    }
   }
 }

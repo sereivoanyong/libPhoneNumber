@@ -15,909 +15,909 @@ enum RegionCodesByCountryCode {
   static func regionCodesByCountryCode() -> [Int32: [String]] {
     // The capacity is set to 286 as there are 215 different entries,
     // and this offers a load factor of roughly 0.75.
-    var countryCodeToRegionCodeMap = [Int32: [String]](minimumCapacity: 286)
-    
-    var listWithRegionCode: [String]
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("US")
-    listWithRegionCode.append("AG")
-    listWithRegionCode.append("AI")
-    listWithRegionCode.append("AS")
-    listWithRegionCode.append("BB")
-    listWithRegionCode.append("BM")
-    listWithRegionCode.append("BS")
-    listWithRegionCode.append("CA")
-    listWithRegionCode.append("DM")
-    listWithRegionCode.append("DO")
-    listWithRegionCode.append("GD")
-    listWithRegionCode.append("GU")
-    listWithRegionCode.append("JM")
-    listWithRegionCode.append("KN")
-    listWithRegionCode.append("KY")
-    listWithRegionCode.append("LC")
-    listWithRegionCode.append("MP")
-    listWithRegionCode.append("MS")
-    listWithRegionCode.append("PR")
-    listWithRegionCode.append("SX")
-    listWithRegionCode.append("TC")
-    listWithRegionCode.append("TT")
-    listWithRegionCode.append("VC")
-    listWithRegionCode.append("VG")
-    listWithRegionCode.append("VI")
-    countryCodeToRegionCodeMap[1] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("RU")
-    listWithRegionCode.append("KZ")
-    countryCodeToRegionCodeMap[7] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("EG")
-    countryCodeToRegionCodeMap[20] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("ZA")
-    countryCodeToRegionCodeMap[27] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GR")
-    countryCodeToRegionCodeMap[30] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NL")
-    countryCodeToRegionCodeMap[31] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BE")
-    countryCodeToRegionCodeMap[32] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("FR")
-    countryCodeToRegionCodeMap[33] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("ES")
-    countryCodeToRegionCodeMap[34] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("HU")
-    countryCodeToRegionCodeMap[36] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("IT")
-    listWithRegionCode.append("VA")
-    countryCodeToRegionCodeMap[39] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("RO")
-    countryCodeToRegionCodeMap[40] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CH")
-    countryCodeToRegionCodeMap[41] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AT")
-    countryCodeToRegionCodeMap[43] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GB")
-    listWithRegionCode.append("GG")
-    listWithRegionCode.append("IM")
-    listWithRegionCode.append("JE")
-    countryCodeToRegionCodeMap[44] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("DK")
-    countryCodeToRegionCodeMap[45] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SE")
-    countryCodeToRegionCodeMap[46] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NO")
-    listWithRegionCode.append("SJ")
-    countryCodeToRegionCodeMap[47] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PL")
-    countryCodeToRegionCodeMap[48] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("DE")
-    countryCodeToRegionCodeMap[49] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PE")
-    countryCodeToRegionCodeMap[51] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MX")
-    countryCodeToRegionCodeMap[52] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CU")
-    countryCodeToRegionCodeMap[53] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AR")
-    countryCodeToRegionCodeMap[54] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BR")
-    countryCodeToRegionCodeMap[55] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CL")
-    countryCodeToRegionCodeMap[56] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CO")
-    countryCodeToRegionCodeMap[57] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("VE")
-    countryCodeToRegionCodeMap[58] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MY")
-    countryCodeToRegionCodeMap[60] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AU")
-    listWithRegionCode.append("CC")
-    listWithRegionCode.append("CX")
-    countryCodeToRegionCodeMap[61] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("ID")
-    countryCodeToRegionCodeMap[62] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PH")
-    countryCodeToRegionCodeMap[63] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NZ")
-    countryCodeToRegionCodeMap[64] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SG")
-    countryCodeToRegionCodeMap[65] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TH")
-    countryCodeToRegionCodeMap[66] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("JP")
-    countryCodeToRegionCodeMap[81] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("KR")
-    countryCodeToRegionCodeMap[82] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("VN")
-    countryCodeToRegionCodeMap[84] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CN")
-    countryCodeToRegionCodeMap[86] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TR")
-    countryCodeToRegionCodeMap[90] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("IN")
-    countryCodeToRegionCodeMap[91] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PK")
-    countryCodeToRegionCodeMap[92] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AF")
-    countryCodeToRegionCodeMap[93] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("LK")
-    countryCodeToRegionCodeMap[94] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MM")
-    countryCodeToRegionCodeMap[95] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("IR")
-    countryCodeToRegionCodeMap[98] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SS")
-    countryCodeToRegionCodeMap[211] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MA")
-    listWithRegionCode.append("EH")
-    countryCodeToRegionCodeMap[212] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("DZ")
-    countryCodeToRegionCodeMap[213] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TN")
-    countryCodeToRegionCodeMap[216] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("LY")
-    countryCodeToRegionCodeMap[218] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GM")
-    countryCodeToRegionCodeMap[220] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SN")
-    countryCodeToRegionCodeMap[221] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MR")
-    countryCodeToRegionCodeMap[222] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("ML")
-    countryCodeToRegionCodeMap[223] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GN")
-    countryCodeToRegionCodeMap[224] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CI")
-    countryCodeToRegionCodeMap[225] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BF")
-    countryCodeToRegionCodeMap[226] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NE")
-    countryCodeToRegionCodeMap[227] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TG")
-    countryCodeToRegionCodeMap[228] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BJ")
-    countryCodeToRegionCodeMap[229] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MU")
-    countryCodeToRegionCodeMap[230] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("LR")
-    countryCodeToRegionCodeMap[231] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SL")
-    countryCodeToRegionCodeMap[232] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GH")
-    countryCodeToRegionCodeMap[233] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NG")
-    countryCodeToRegionCodeMap[234] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TD")
-    countryCodeToRegionCodeMap[235] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CF")
-    countryCodeToRegionCodeMap[236] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CM")
-    countryCodeToRegionCodeMap[237] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CV")
-    countryCodeToRegionCodeMap[238] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("ST")
-    countryCodeToRegionCodeMap[239] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GQ")
-    countryCodeToRegionCodeMap[240] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GA")
-    countryCodeToRegionCodeMap[241] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CG")
-    countryCodeToRegionCodeMap[242] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CD")
-    countryCodeToRegionCodeMap[243] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AO")
-    countryCodeToRegionCodeMap[244] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GW")
-    countryCodeToRegionCodeMap[245] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("IO")
-    countryCodeToRegionCodeMap[246] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AC")
-    countryCodeToRegionCodeMap[247] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SC")
-    countryCodeToRegionCodeMap[248] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SD")
-    countryCodeToRegionCodeMap[249] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("RW")
-    countryCodeToRegionCodeMap[250] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("ET")
-    countryCodeToRegionCodeMap[251] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SO")
-    countryCodeToRegionCodeMap[252] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("DJ")
-    countryCodeToRegionCodeMap[253] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("KE")
-    countryCodeToRegionCodeMap[254] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TZ")
-    countryCodeToRegionCodeMap[255] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("UG")
-    countryCodeToRegionCodeMap[256] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BI")
-    countryCodeToRegionCodeMap[257] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MZ")
-    countryCodeToRegionCodeMap[258] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("ZM")
-    countryCodeToRegionCodeMap[260] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MG")
-    countryCodeToRegionCodeMap[261] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("RE")
-    listWithRegionCode.append("YT")
-    countryCodeToRegionCodeMap[262] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("ZW")
-    countryCodeToRegionCodeMap[263] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NA")
-    countryCodeToRegionCodeMap[264] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MW")
-    countryCodeToRegionCodeMap[265] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("LS")
-    countryCodeToRegionCodeMap[266] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BW")
-    countryCodeToRegionCodeMap[267] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SZ")
-    countryCodeToRegionCodeMap[268] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("KM")
-    countryCodeToRegionCodeMap[269] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SH")
-    listWithRegionCode.append("TA")
-    countryCodeToRegionCodeMap[290] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("ER")
-    countryCodeToRegionCodeMap[291] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AW")
-    countryCodeToRegionCodeMap[297] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("FO")
-    countryCodeToRegionCodeMap[298] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GL")
-    countryCodeToRegionCodeMap[299] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GI")
-    countryCodeToRegionCodeMap[350] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PT")
-    countryCodeToRegionCodeMap[351] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("LU")
-    countryCodeToRegionCodeMap[352] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("IE")
-    countryCodeToRegionCodeMap[353] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("IS")
-    countryCodeToRegionCodeMap[354] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AL")
-    countryCodeToRegionCodeMap[355] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MT")
-    countryCodeToRegionCodeMap[356] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CY")
-    countryCodeToRegionCodeMap[357] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("FI")
-    listWithRegionCode.append("AX")
-    countryCodeToRegionCodeMap[358] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BG")
-    countryCodeToRegionCodeMap[359] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("LT")
-    countryCodeToRegionCodeMap[370] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("LV")
-    countryCodeToRegionCodeMap[371] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("EE")
-    countryCodeToRegionCodeMap[372] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MD")
-    countryCodeToRegionCodeMap[373] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AM")
-    countryCodeToRegionCodeMap[374] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BY")
-    countryCodeToRegionCodeMap[375] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AD")
-    countryCodeToRegionCodeMap[376] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MC")
-    countryCodeToRegionCodeMap[377] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SM")
-    countryCodeToRegionCodeMap[378] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("UA")
-    countryCodeToRegionCodeMap[380] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("RS")
-    countryCodeToRegionCodeMap[381] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("ME")
-    countryCodeToRegionCodeMap[382] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("XK")
-    countryCodeToRegionCodeMap[383] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("HR")
-    countryCodeToRegionCodeMap[385] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SI")
-    countryCodeToRegionCodeMap[386] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BA")
-    countryCodeToRegionCodeMap[387] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MK")
-    countryCodeToRegionCodeMap[389] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CZ")
-    countryCodeToRegionCodeMap[420] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SK")
-    countryCodeToRegionCodeMap[421] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("LI")
-    countryCodeToRegionCodeMap[423] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("FK")
-    countryCodeToRegionCodeMap[500] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BZ")
-    countryCodeToRegionCodeMap[501] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GT")
-    countryCodeToRegionCodeMap[502] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SV")
-    countryCodeToRegionCodeMap[503] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("HN")
-    countryCodeToRegionCodeMap[504] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NI")
-    countryCodeToRegionCodeMap[505] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CR")
-    countryCodeToRegionCodeMap[506] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PA")
-    countryCodeToRegionCodeMap[507] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PM")
-    countryCodeToRegionCodeMap[508] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("HT")
-    countryCodeToRegionCodeMap[509] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GP")
-    listWithRegionCode.append("BL")
-    listWithRegionCode.append("MF")
-    countryCodeToRegionCodeMap[590] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BO")
-    countryCodeToRegionCodeMap[591] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GY")
-    countryCodeToRegionCodeMap[592] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("EC")
-    countryCodeToRegionCodeMap[593] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GF")
-    countryCodeToRegionCodeMap[594] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PY")
-    countryCodeToRegionCodeMap[595] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MQ")
-    countryCodeToRegionCodeMap[596] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SR")
-    countryCodeToRegionCodeMap[597] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("UY")
-    countryCodeToRegionCodeMap[598] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CW")
-    listWithRegionCode.append("BQ")
-    countryCodeToRegionCodeMap[599] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TL")
-    countryCodeToRegionCodeMap[670] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NF")
-    countryCodeToRegionCodeMap[672] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BN")
-    countryCodeToRegionCodeMap[673] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NR")
-    countryCodeToRegionCodeMap[674] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PG")
-    countryCodeToRegionCodeMap[675] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TO")
-    countryCodeToRegionCodeMap[676] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SB")
-    countryCodeToRegionCodeMap[677] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("VU")
-    countryCodeToRegionCodeMap[678] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("FJ")
-    countryCodeToRegionCodeMap[679] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PW")
-    countryCodeToRegionCodeMap[680] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("WF")
-    countryCodeToRegionCodeMap[681] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("CK")
-    countryCodeToRegionCodeMap[682] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NU")
-    countryCodeToRegionCodeMap[683] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("WS")
-    countryCodeToRegionCodeMap[685] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("KI")
-    countryCodeToRegionCodeMap[686] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NC")
-    countryCodeToRegionCodeMap[687] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TV")
-    countryCodeToRegionCodeMap[688] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PF")
-    countryCodeToRegionCodeMap[689] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TK")
-    countryCodeToRegionCodeMap[690] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("FM")
-    countryCodeToRegionCodeMap[691] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MH")
-    countryCodeToRegionCodeMap[692] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("001")
-    countryCodeToRegionCodeMap[800] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("001")
-    countryCodeToRegionCodeMap[808] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("KP")
-    countryCodeToRegionCodeMap[850] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("HK")
-    countryCodeToRegionCodeMap[852] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MO")
-    countryCodeToRegionCodeMap[853] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("KH")
-    countryCodeToRegionCodeMap[855] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("LA")
-    countryCodeToRegionCodeMap[856] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("001")
-    countryCodeToRegionCodeMap[870] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("001")
-    countryCodeToRegionCodeMap[878] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BD")
-    countryCodeToRegionCodeMap[880] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("001")
-    countryCodeToRegionCodeMap[881] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("001")
-    countryCodeToRegionCodeMap[882] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("001")
-    countryCodeToRegionCodeMap[883] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TW")
-    countryCodeToRegionCodeMap[886] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("001")
-    countryCodeToRegionCodeMap[888] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MV")
-    countryCodeToRegionCodeMap[960] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("LB")
-    countryCodeToRegionCodeMap[961] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("JO")
-    countryCodeToRegionCodeMap[962] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SY")
-    countryCodeToRegionCodeMap[963] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("IQ")
-    countryCodeToRegionCodeMap[964] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("KW")
-    countryCodeToRegionCodeMap[965] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("SA")
-    countryCodeToRegionCodeMap[966] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("YE")
-    countryCodeToRegionCodeMap[967] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("OM")
-    countryCodeToRegionCodeMap[968] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("PS")
-    countryCodeToRegionCodeMap[970] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AE")
-    countryCodeToRegionCodeMap[971] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("IL")
-    countryCodeToRegionCodeMap[972] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BH")
-    countryCodeToRegionCodeMap[973] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("QA")
-    countryCodeToRegionCodeMap[974] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("BT")
-    countryCodeToRegionCodeMap[975] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("MN")
-    countryCodeToRegionCodeMap[976] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("NP")
-    countryCodeToRegionCodeMap[977] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("001")
-    countryCodeToRegionCodeMap[979] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TJ")
-    countryCodeToRegionCodeMap[992] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("TM")
-    countryCodeToRegionCodeMap[993] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("AZ")
-    countryCodeToRegionCodeMap[994] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("GE")
-    countryCodeToRegionCodeMap[995] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("KG")
-    countryCodeToRegionCodeMap[996] = listWithRegionCode
-    
-    listWithRegionCode = []
-    listWithRegionCode.append("UZ")
-    countryCodeToRegionCodeMap[998] = listWithRegionCode
-    
-    return countryCodeToRegionCodeMap
+    var regionCodesByCountryCode = [Int32: [String]](minimumCapacity: 286)
+    
+    var regionCodes: [String]
+    
+    regionCodes = []
+    regionCodes.append("US")
+    regionCodes.append("AG")
+    regionCodes.append("AI")
+    regionCodes.append("AS")
+    regionCodes.append("BB")
+    regionCodes.append("BM")
+    regionCodes.append("BS")
+    regionCodes.append("CA")
+    regionCodes.append("DM")
+    regionCodes.append("DO")
+    regionCodes.append("GD")
+    regionCodes.append("GU")
+    regionCodes.append("JM")
+    regionCodes.append("KN")
+    regionCodes.append("KY")
+    regionCodes.append("LC")
+    regionCodes.append("MP")
+    regionCodes.append("MS")
+    regionCodes.append("PR")
+    regionCodes.append("SX")
+    regionCodes.append("TC")
+    regionCodes.append("TT")
+    regionCodes.append("VC")
+    regionCodes.append("VG")
+    regionCodes.append("VI")
+    regionCodesByCountryCode[1] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("RU")
+    regionCodes.append("KZ")
+    regionCodesByCountryCode[7] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("EG")
+    regionCodesByCountryCode[20] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("ZA")
+    regionCodesByCountryCode[27] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GR")
+    regionCodesByCountryCode[30] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NL")
+    regionCodesByCountryCode[31] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BE")
+    regionCodesByCountryCode[32] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("FR")
+    regionCodesByCountryCode[33] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("ES")
+    regionCodesByCountryCode[34] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("HU")
+    regionCodesByCountryCode[36] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("IT")
+    regionCodes.append("VA")
+    regionCodesByCountryCode[39] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("RO")
+    regionCodesByCountryCode[40] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CH")
+    regionCodesByCountryCode[41] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AT")
+    regionCodesByCountryCode[43] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GB")
+    regionCodes.append("GG")
+    regionCodes.append("IM")
+    regionCodes.append("JE")
+    regionCodesByCountryCode[44] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("DK")
+    regionCodesByCountryCode[45] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SE")
+    regionCodesByCountryCode[46] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NO")
+    regionCodes.append("SJ")
+    regionCodesByCountryCode[47] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PL")
+    regionCodesByCountryCode[48] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("DE")
+    regionCodesByCountryCode[49] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PE")
+    regionCodesByCountryCode[51] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MX")
+    regionCodesByCountryCode[52] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CU")
+    regionCodesByCountryCode[53] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AR")
+    regionCodesByCountryCode[54] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BR")
+    regionCodesByCountryCode[55] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CL")
+    regionCodesByCountryCode[56] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CO")
+    regionCodesByCountryCode[57] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("VE")
+    regionCodesByCountryCode[58] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MY")
+    regionCodesByCountryCode[60] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AU")
+    regionCodes.append("CC")
+    regionCodes.append("CX")
+    regionCodesByCountryCode[61] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("ID")
+    regionCodesByCountryCode[62] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PH")
+    regionCodesByCountryCode[63] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NZ")
+    regionCodesByCountryCode[64] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SG")
+    regionCodesByCountryCode[65] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TH")
+    regionCodesByCountryCode[66] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("JP")
+    regionCodesByCountryCode[81] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("KR")
+    regionCodesByCountryCode[82] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("VN")
+    regionCodesByCountryCode[84] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CN")
+    regionCodesByCountryCode[86] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TR")
+    regionCodesByCountryCode[90] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("IN")
+    regionCodesByCountryCode[91] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PK")
+    regionCodesByCountryCode[92] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AF")
+    regionCodesByCountryCode[93] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("LK")
+    regionCodesByCountryCode[94] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MM")
+    regionCodesByCountryCode[95] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("IR")
+    regionCodesByCountryCode[98] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SS")
+    regionCodesByCountryCode[211] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MA")
+    regionCodes.append("EH")
+    regionCodesByCountryCode[212] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("DZ")
+    regionCodesByCountryCode[213] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TN")
+    regionCodesByCountryCode[216] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("LY")
+    regionCodesByCountryCode[218] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GM")
+    regionCodesByCountryCode[220] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SN")
+    regionCodesByCountryCode[221] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MR")
+    regionCodesByCountryCode[222] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("ML")
+    regionCodesByCountryCode[223] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GN")
+    regionCodesByCountryCode[224] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CI")
+    regionCodesByCountryCode[225] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BF")
+    regionCodesByCountryCode[226] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NE")
+    regionCodesByCountryCode[227] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TG")
+    regionCodesByCountryCode[228] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BJ")
+    regionCodesByCountryCode[229] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MU")
+    regionCodesByCountryCode[230] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("LR")
+    regionCodesByCountryCode[231] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SL")
+    regionCodesByCountryCode[232] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GH")
+    regionCodesByCountryCode[233] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NG")
+    regionCodesByCountryCode[234] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TD")
+    regionCodesByCountryCode[235] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CF")
+    regionCodesByCountryCode[236] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CM")
+    regionCodesByCountryCode[237] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CV")
+    regionCodesByCountryCode[238] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("ST")
+    regionCodesByCountryCode[239] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GQ")
+    regionCodesByCountryCode[240] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GA")
+    regionCodesByCountryCode[241] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CG")
+    regionCodesByCountryCode[242] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CD")
+    regionCodesByCountryCode[243] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AO")
+    regionCodesByCountryCode[244] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GW")
+    regionCodesByCountryCode[245] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("IO")
+    regionCodesByCountryCode[246] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AC")
+    regionCodesByCountryCode[247] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SC")
+    regionCodesByCountryCode[248] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SD")
+    regionCodesByCountryCode[249] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("RW")
+    regionCodesByCountryCode[250] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("ET")
+    regionCodesByCountryCode[251] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SO")
+    regionCodesByCountryCode[252] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("DJ")
+    regionCodesByCountryCode[253] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("KE")
+    regionCodesByCountryCode[254] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TZ")
+    regionCodesByCountryCode[255] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("UG")
+    regionCodesByCountryCode[256] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BI")
+    regionCodesByCountryCode[257] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MZ")
+    regionCodesByCountryCode[258] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("ZM")
+    regionCodesByCountryCode[260] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MG")
+    regionCodesByCountryCode[261] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("RE")
+    regionCodes.append("YT")
+    regionCodesByCountryCode[262] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("ZW")
+    regionCodesByCountryCode[263] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NA")
+    regionCodesByCountryCode[264] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MW")
+    regionCodesByCountryCode[265] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("LS")
+    regionCodesByCountryCode[266] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BW")
+    regionCodesByCountryCode[267] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SZ")
+    regionCodesByCountryCode[268] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("KM")
+    regionCodesByCountryCode[269] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SH")
+    regionCodes.append("TA")
+    regionCodesByCountryCode[290] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("ER")
+    regionCodesByCountryCode[291] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AW")
+    regionCodesByCountryCode[297] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("FO")
+    regionCodesByCountryCode[298] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GL")
+    regionCodesByCountryCode[299] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GI")
+    regionCodesByCountryCode[350] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PT")
+    regionCodesByCountryCode[351] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("LU")
+    regionCodesByCountryCode[352] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("IE")
+    regionCodesByCountryCode[353] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("IS")
+    regionCodesByCountryCode[354] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AL")
+    regionCodesByCountryCode[355] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MT")
+    regionCodesByCountryCode[356] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CY")
+    regionCodesByCountryCode[357] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("FI")
+    regionCodes.append("AX")
+    regionCodesByCountryCode[358] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BG")
+    regionCodesByCountryCode[359] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("LT")
+    regionCodesByCountryCode[370] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("LV")
+    regionCodesByCountryCode[371] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("EE")
+    regionCodesByCountryCode[372] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MD")
+    regionCodesByCountryCode[373] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AM")
+    regionCodesByCountryCode[374] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BY")
+    regionCodesByCountryCode[375] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AD")
+    regionCodesByCountryCode[376] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MC")
+    regionCodesByCountryCode[377] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SM")
+    regionCodesByCountryCode[378] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("UA")
+    regionCodesByCountryCode[380] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("RS")
+    regionCodesByCountryCode[381] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("ME")
+    regionCodesByCountryCode[382] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("XK")
+    regionCodesByCountryCode[383] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("HR")
+    regionCodesByCountryCode[385] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SI")
+    regionCodesByCountryCode[386] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BA")
+    regionCodesByCountryCode[387] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MK")
+    regionCodesByCountryCode[389] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CZ")
+    regionCodesByCountryCode[420] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SK")
+    regionCodesByCountryCode[421] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("LI")
+    regionCodesByCountryCode[423] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("FK")
+    regionCodesByCountryCode[500] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BZ")
+    regionCodesByCountryCode[501] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GT")
+    regionCodesByCountryCode[502] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SV")
+    regionCodesByCountryCode[503] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("HN")
+    regionCodesByCountryCode[504] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NI")
+    regionCodesByCountryCode[505] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CR")
+    regionCodesByCountryCode[506] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PA")
+    regionCodesByCountryCode[507] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PM")
+    regionCodesByCountryCode[508] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("HT")
+    regionCodesByCountryCode[509] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GP")
+    regionCodes.append("BL")
+    regionCodes.append("MF")
+    regionCodesByCountryCode[590] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BO")
+    regionCodesByCountryCode[591] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GY")
+    regionCodesByCountryCode[592] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("EC")
+    regionCodesByCountryCode[593] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GF")
+    regionCodesByCountryCode[594] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PY")
+    regionCodesByCountryCode[595] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MQ")
+    regionCodesByCountryCode[596] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SR")
+    regionCodesByCountryCode[597] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("UY")
+    regionCodesByCountryCode[598] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CW")
+    regionCodes.append("BQ")
+    regionCodesByCountryCode[599] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TL")
+    regionCodesByCountryCode[670] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NF")
+    regionCodesByCountryCode[672] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BN")
+    regionCodesByCountryCode[673] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NR")
+    regionCodesByCountryCode[674] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PG")
+    regionCodesByCountryCode[675] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TO")
+    regionCodesByCountryCode[676] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SB")
+    regionCodesByCountryCode[677] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("VU")
+    regionCodesByCountryCode[678] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("FJ")
+    regionCodesByCountryCode[679] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PW")
+    regionCodesByCountryCode[680] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("WF")
+    regionCodesByCountryCode[681] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("CK")
+    regionCodesByCountryCode[682] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NU")
+    regionCodesByCountryCode[683] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("WS")
+    regionCodesByCountryCode[685] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("KI")
+    regionCodesByCountryCode[686] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NC")
+    regionCodesByCountryCode[687] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TV")
+    regionCodesByCountryCode[688] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PF")
+    regionCodesByCountryCode[689] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TK")
+    regionCodesByCountryCode[690] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("FM")
+    regionCodesByCountryCode[691] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MH")
+    regionCodesByCountryCode[692] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("001")
+    regionCodesByCountryCode[800] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("001")
+    regionCodesByCountryCode[808] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("KP")
+    regionCodesByCountryCode[850] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("HK")
+    regionCodesByCountryCode[852] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MO")
+    regionCodesByCountryCode[853] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("KH")
+    regionCodesByCountryCode[855] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("LA")
+    regionCodesByCountryCode[856] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("001")
+    regionCodesByCountryCode[870] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("001")
+    regionCodesByCountryCode[878] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BD")
+    regionCodesByCountryCode[880] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("001")
+    regionCodesByCountryCode[881] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("001")
+    regionCodesByCountryCode[882] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("001")
+    regionCodesByCountryCode[883] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TW")
+    regionCodesByCountryCode[886] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("001")
+    regionCodesByCountryCode[888] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MV")
+    regionCodesByCountryCode[960] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("LB")
+    regionCodesByCountryCode[961] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("JO")
+    regionCodesByCountryCode[962] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SY")
+    regionCodesByCountryCode[963] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("IQ")
+    regionCodesByCountryCode[964] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("KW")
+    regionCodesByCountryCode[965] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("SA")
+    regionCodesByCountryCode[966] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("YE")
+    regionCodesByCountryCode[967] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("OM")
+    regionCodesByCountryCode[968] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("PS")
+    regionCodesByCountryCode[970] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AE")
+    regionCodesByCountryCode[971] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("IL")
+    regionCodesByCountryCode[972] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BH")
+    regionCodesByCountryCode[973] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("QA")
+    regionCodesByCountryCode[974] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("BT")
+    regionCodesByCountryCode[975] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("MN")
+    regionCodesByCountryCode[976] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("NP")
+    regionCodesByCountryCode[977] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("001")
+    regionCodesByCountryCode[979] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TJ")
+    regionCodesByCountryCode[992] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("TM")
+    regionCodesByCountryCode[993] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("AZ")
+    regionCodesByCountryCode[994] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("GE")
+    regionCodesByCountryCode[995] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("KG")
+    regionCodesByCountryCode[996] = regionCodes
+    
+    regionCodes = []
+    regionCodes.append("UZ")
+    regionCodesByCountryCode[998] = regionCodes
+    
+    return regionCodesByCountryCode
   }
 }

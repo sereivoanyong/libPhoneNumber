@@ -36,31 +36,82 @@ extension PhoneNumberError: LocalizedError {
     }
 }
 
+/// `international` and `national` formats are consistent with the definition in ITU-T Recommendation
+/// E.123. However we follow local conventions such as using '-' instead of whitespace as
+/// separators. For example, the number of the Google Switzerland office will be written as
+/// "+41 44 668 1800" in `international` format, and as "044 668 1800" in `national` format. `e164`
+/// format is as per `international` format but with no formatting applied, e.g. "+41446681800".
+/// `rfc3966` is as per `international` format, but with all spaces and other separating symbols
+/// replaced with a hyphen, and with any phone number extension appended with ";ext=". It also
+/// will have a prefix of "tel:" added, e.g. "tel:+41-44-668-1800".
+///
+/// Note: If you are considering storing the number in a neutral format, you are highly advised to
+/// use the `PhoneNumber` class.
 public enum PhoneNumberFormat {
   
-  case e164 // +33689123456
-  case international // +33 6 89 12 34 56
-  case national // 06 89 12 34 56
-  case rfc3966
+  case e164 // +41446681800
+  
+  case international // +41 44 668 1800
+  
+  case national // 044 668 1800
+  
+  case rfc3966 // tel:+41-44-668-1800
 }
 
+/// Type of phone numbers.
 public enum PhoneNumberType {
   
   case fixedLine
+  
   case mobile
+  
+  /// In some regions (e.g. the USA), it is impossible to distinguish between `fixedLine` and
+  /// `mobile` numbers by looking at the phone number itself.
   case fixedLineOrMobile
+  
+  /// Freephone lines
   case tollFree
+  
   case premiumRate
+  
+  /// The cost of this call is shared between the caller and the recipient, and is hence typically
+  /// less than `premiumRate` calls. See http://en.wikipedia.org/wiki/Shared_Cost_Service for
+  /// more information.
   case sharedCost
+  
+  /// Voice over IP numbers. This includes TSoIP (Telephony Service over IP).
   case voip
+  
+  /// A personal number is associated with a particular person, and may be routed to either a
+  /// `mobile` or `fixedLine` number. Some more information can be found here:
+  /// http://en.wikipedia.org/wiki/Personal_Numbers
   case personalNumber
+  
   case pager
+  
+  /// Used for "Universal Access Numbers" or "Company Numbers". They may be further routed to
+  /// specific offices, but allow one number to be used for a company.
   case uan
+  
+  /// Used for "Voice Mail Access Numbers".
   case voicemail
+  
+  /// A phone number is of type `unknown` when it does not fit any of the known patterns for a
+  /// specific region.
   case unknown
 }
 
-/// Possible outcomes when testing if a PhoneNumber is possible.
+/// Types of phone number matches. See detailed description beside the `isNumberMatch()` method.
+public enum MatchType {
+  
+  case notANumber
+  case noMatch
+  case shortNSNMatch
+  case nsnMatch
+  case exactMatch
+}
+
+/// Possible outcomes when testing if a `PhoneNumber` is possible.
 public enum ValidationResult {
   
   /// The number length matches that of valid numbers for this region.

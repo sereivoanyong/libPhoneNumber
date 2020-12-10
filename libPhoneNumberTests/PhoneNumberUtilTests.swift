@@ -411,7 +411,7 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTFail()
             return
         }
-        XCTAssertEqual(util.regionCode(of: phoneNumber), "IT")
+        XCTAssertEqual(util.regionCode(for: phoneNumber), "IT")
     }
     
     // In the case of multiple
@@ -422,6 +422,6 @@ class PhoneNumberUtilTests: XCTestCase {
             XCTFail()
             return
         }
-        XCTAssertEqual(util.regionCode(of: phoneNumber), "US")
+        XCTAssertEqual(util.regionCode(for: phoneNumber), "US")
     }
 }

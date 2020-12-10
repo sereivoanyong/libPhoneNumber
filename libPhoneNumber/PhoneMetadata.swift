@@ -16,6 +16,9 @@ public struct PhoneMetadata: Decodable {
   public let nationalPrefixFormattingRule: String?
   public let nationalPrefixForParsing: String?
   public let nationalPrefixTransformRule: String?
+  public let sameMobileAndFixedLinePattern: Bool
+  public let intlNumberFormats: [NumberFormat]
+  
   public let preferredExtnPrefix: String?
   public let emergency: PhoneNumberDesc?
   public let fixedLine: PhoneNumberDesc?
@@ -33,6 +36,7 @@ public struct PhoneMetadata: Decodable {
   public let leadingDigits: String?
   public let mobileNumberPortableRegion: Bool
   
+  
   private enum CodingKeys: String, CodingKey {
     
     case regionCode = "id"
@@ -43,6 +47,7 @@ public struct PhoneMetadata: Decodable {
     case nationalPrefixFormattingRule
     case nationalPrefixForParsing
     case nationalPrefixTransformRule
+    case sameMobileAndFixedLinePattern
     case preferredExtnPrefix
     case emergency
     case fixedLine
@@ -77,13 +82,16 @@ public struct PhoneMetadata: Decodable {
       let availableFormats = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .availableFormats)
       let temporaryFormatList = availableFormats.decodeArrayOrObject(forKey: .numberFormats) as [NumberFormat]
       numberFormats = temporaryFormatList.withDefaultNationalPrefixFormattingRule(nationalPrefixFormattingRule)
+      intlNumberFormats = temporaryFormatList.withDefaultNationalPrefixFormattingRule(nationalPrefixFormattingRule)
     } else {
       numberFormats = []
+      intlNumberFormats = []
     }
     
     // Default parsing logic
     internationalPrefix = try container.decodeIfPresent(String.self, forKey: .internationalPrefix)
     nationalPrefixTransformRule = try container.decodeIfPresent(String.self, forKey: .nationalPrefixTransformRule)
+    sameMobileAndFixedLinePattern = try container.decodeStringBoolIfPresent(forKey: .mainCountryForCode) ?? false
     preferredExtnPrefix = try container.decodeIfPresent(String.self, forKey: .preferredExtnPrefix)
     emergency = try container.decodeIfPresent(PhoneNumberDesc.self, forKey: .emergency)
     fixedLine = try container.decodeIfPresent(PhoneNumberDesc.self, forKey: .fixedLine)

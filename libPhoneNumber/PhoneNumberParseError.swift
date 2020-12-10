@@ -7,7 +7,6 @@
 import Foundation
 
 // A.k.a `NumberParseException`
-
 public enum PhoneNumberParseError: Error {
   
   /// The country code supplied did not belong to a supported country or non-geographical entity.

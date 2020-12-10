@@ -95,7 +95,7 @@ final class RegexCache {
         var matchedStrings: [String] = []
         if let matches = try? matchesByRegex(pattern: pattern, string: string) {
             for match in matches {
-                let processedString = string.substring(with: match.range)
+                let processedString = string[match.range]
                 matchedStrings.append(processedString)
             }
         }
@@ -174,13 +174,5 @@ final class RegexCache {
 
     func testStringLengthAgainstPattern(pattern: String, string: String) -> Bool {
         return matchesEntirelyByRegex(pattern: pattern, string: string)
-    }
-}
-
-// MARK: Extensions
-
-extension String {
-    @inlinable func substring(with range: NSRange) -> String {
-        return String(self[Range<Index>(range, in: self)!])
     }
 }
